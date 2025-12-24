@@ -233,11 +233,11 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
 
             if (showResult && isSelected) {
               backgroundColor = isCorrect
-                  ? Colors.green.withOpacity(0.2)
-                  : Colors.red.withOpacity(0.2);
+                  ? Colors.green.withValues(alpha: 0.2)
+                  : Colors.red.withValues(alpha: 0.2);
               borderColor = isCorrect ? Colors.green : Colors.red;
             } else if (showResult && isCorrect) {
-              backgroundColor = Colors.green.withOpacity(0.1);
+              backgroundColor = Colors.green.withValues(alpha: 0.1);
               borderColor = Colors.green;
             }
 
@@ -251,7 +251,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
                   decoration: BoxDecoration(
                     color: backgroundColor ?? Theme.of(context).cardColor,
                     border: Border.all(
-                      color: borderColor ?? Colors.grey.withOpacity(0.3),
+                      color: borderColor ?? Colors.grey.withValues(alpha: 0.3),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(12),
