@@ -37,4 +37,4 @@ jobs:
         uses: actions/upload-artifact@v4 # Fixed: Updated from v3 to v4
         with:
           name: tamil-setu-app
-          path: tamil_setu/build/app/outputs/flutter-apk/tamil-setu-app.apk
+          path: tamil_setu/build/app/outputs/flutter-apk/app-release.apk

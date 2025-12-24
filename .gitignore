@@ -19,12 +19,16 @@
 /build/
 
 # Android
-android/**/*.gradle
 android/**/gradlew
 android/**/gradlew.bat
 android/local.properties
 android/**/generated/
-android/**/gradle/
+android/**/gradle-wrapper.jar
+android/**/gradle-wrapper.properties
+android/.gradle/
+android/captures/
+android/app/build/
+android/build/
 
 # iOS
 ios/Flutter/Generated.xcconfig
