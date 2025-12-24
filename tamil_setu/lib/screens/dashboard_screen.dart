@@ -75,7 +75,7 @@ class _ProgressHeader extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -99,7 +99,7 @@ class _ProgressHeader extends StatelessWidget {
                     '$completedCount/${curriculum.length} lessons',
                     style: TextStyle(
                       fontSize: 16,
-                      color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                      color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -119,7 +119,7 @@ class _ProgressHeader extends StatelessWidget {
                 '$overallProgress% Complete',
                 style: TextStyle(
                   fontSize: 14,
-                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                  color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
                   fontWeight: FontWeight.w500,
                 ),
               ),
