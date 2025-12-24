@@ -84,7 +84,8 @@ This project is open source and available under the MIT License.
 
 ## 👥 Author
 
-[vivekkr1809](https://github.com/vivekkr1809)
+[Pranav](https://github.com/pranavm1502)
+[Vivek](https://github.com/vivekkr1809)
 
 ---
 
