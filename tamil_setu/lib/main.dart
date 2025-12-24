@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/progress_provider.dart';
+import 'providers/theme_provider.dart';
 import 'screens/dashboard_screen.dart';
 
 void main() {
@@ -16,17 +17,26 @@ class TamilSetuApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => ProgressProvider()..initialize(),
-      child: MaterialApp(
-        title: 'Tamil Setu',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.orange,
-          scaffoldBackgroundColor: Colors.orange[50],
-          useMaterial3: true,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => ProgressProvider()..initialize(),
         ),
-        home: const DashboardScreen(),
+        ChangeNotifierProvider(
+          create: (context) => ThemeProvider()..initialize(),
+        ),
+      ],
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return MaterialApp(
+            title: 'Tamil Setu',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeProvider.lightTheme,
+            darkTheme: ThemeProvider.darkTheme,
+            themeMode: themeProvider.themeMode,
+            home: const DashboardScreen(),
+          );
+        },
       ),
     );
   }
