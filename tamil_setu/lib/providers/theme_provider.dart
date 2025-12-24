@@ -42,20 +42,19 @@ class ThemeProvider with ChangeNotifier {
       brightness: Brightness.light,
       primarySwatch: Colors.orange,
       scaffoldBackgroundColor: Colors.orange[50],
-      colorScheme: ColorScheme.light(
+      colorScheme: const ColorScheme.light(
         primary: Colors.orange,
         secondary: Colors.orangeAccent,
         surface: Colors.white,
-        background: Colors.orange[50]!,
       ),
-      cardTheme: CardTheme(
+      cardTheme: const CardThemeData(
         elevation: 4,
         color: Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.all(Radius.circular(12)),
         ),
       ),
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
         elevation: 2,
@@ -70,21 +69,20 @@ class ThemeProvider with ChangeNotifier {
       brightness: Brightness.dark,
       primarySwatch: Colors.orange,
       scaffoldBackgroundColor: const Color(0xFF1A1A1A),
-      colorScheme: ColorScheme.dark(
+      colorScheme: const ColorScheme.dark(
         primary: Colors.orange,
         secondary: Colors.orangeAccent,
-        surface: const Color(0xFF2A2A2A),
-        background: const Color(0xFF1A1A1A),
+        surface: Color(0xFF2A2A2A),
       ),
-      cardTheme: CardTheme(
+      cardTheme: const CardThemeData(
         elevation: 4,
-        color: const Color(0xFF2A2A2A),
+        color: Color(0xFF2A2A2A),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.all(Radius.circular(12)),
         ),
       ),
-      appBarTheme: AppBarTheme(
-        backgroundColor: const Color(0xFF2A2A2A),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Color(0xFF2A2A2A),
         foregroundColor: Colors.white,
         elevation: 2,
       ),
