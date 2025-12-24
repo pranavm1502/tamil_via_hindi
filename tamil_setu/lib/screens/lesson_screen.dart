@@ -3,6 +3,7 @@ import '../models/lesson.dart';
 import '../models/word_pair.dart';
 import '../services/tts_service.dart';
 import 'quiz_view.dart';
+import 'multiple_choice_quiz.dart';
 
 /// Screen showing a single lesson with Learn and Quiz tabs.
 class LessonScreen extends StatefulWidget {
@@ -28,7 +29,7 @@ class _LessonScreenState extends State<LessonScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _initTts();
   }
 
@@ -83,8 +84,9 @@ class _LessonScreenState extends State<LessonScreen>
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
-            Tab(icon: Icon(Icons.book), text: "Learn"),
-            Tab(icon: Icon(Icons.quiz), text: "Quiz"),
+            Tab(icon: Icon(Icons.book), text: 'Learn'),
+            Tab(icon: Icon(Icons.quiz), text: 'Flashcards'),
+            Tab(icon: Icon(Icons.check_box), text: 'MCQ'),
           ],
         ),
       ),
@@ -93,6 +95,10 @@ class _LessonScreenState extends State<LessonScreen>
         children: [
           _buildLearnTab(),
           QuizView(
+            words: widget.lesson.words,
+            lessonIndex: widget.lessonIndex,
+          ),
+          MultipleChoiceQuiz(
             words: widget.lesson.words,
             lessonIndex: widget.lessonIndex,
           ),
@@ -155,7 +161,7 @@ class _WordCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "(${pair.pronunciation})",
+                    '(${pair.pronunciation})',
                     style: const TextStyle(
                       fontSize: 16,
                       color: Colors.blueGrey,

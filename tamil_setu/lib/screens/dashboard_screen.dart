@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../data/curriculum.dart';
 import '../models/lesson.dart';
 import '../providers/progress_provider.dart';
+import '../providers/theme_provider.dart';
 import 'lesson_screen.dart';
 
 /// Main dashboard screen showing all available lessons.
@@ -16,6 +17,23 @@ class DashboardScreen extends StatelessWidget {
         title: const Text("Tamil Setu (हिंदी ➡️ தமிழ்)"),
         centerTitle: true,
         elevation: 2,
+        actions: [
+          Consumer<ThemeProvider>(
+            builder: (context, themeProvider, child) {
+              return IconButton(
+                icon: Icon(
+                  themeProvider.isDarkMode
+                      ? Icons.light_mode
+                      : Icons.dark_mode,
+                ),
+                onPressed: () => themeProvider.toggleTheme(),
+                tooltip: themeProvider.isDarkMode
+                    ? 'Switch to Light Mode'
+                    : 'Switch to Dark Mode',
+              );
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -42,6 +60,8 @@ class DashboardScreen extends StatelessWidget {
 class _ProgressHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Consumer<ProgressProvider>(
       builder: (context, progress, child) {
         final overallProgress = progress.getOverallProgress(curriculum.length);
@@ -51,7 +71,7 @@ class _ProgressHeader extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           margin: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: theme.cardColor,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
@@ -67,18 +87,19 @@ class _ProgressHeader extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     'Your Progress',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      color: theme.textTheme.bodyLarge?.color,
                     ),
                   ),
                   Text(
                     '$completedCount/${curriculum.length} lessons',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
-                      color: Colors.grey,
+                      color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
                     ),
                   ),
                 ],
@@ -86,7 +107,9 @@ class _ProgressHeader extends StatelessWidget {
               const SizedBox(height: 12),
               LinearProgressIndicator(
                 value: overallProgress / 100,
-                backgroundColor: Colors.grey[300],
+                backgroundColor: theme.brightness == Brightness.dark
+                    ? Colors.grey[800]
+                    : Colors.grey[300],
                 color: Colors.orange,
                 minHeight: 8,
                 borderRadius: BorderRadius.circular(4),
@@ -96,7 +119,7 @@ class _ProgressHeader extends StatelessWidget {
                 '$overallProgress% Complete',
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.grey[700],
+                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
                   fontWeight: FontWeight.w500,
                 ),
               ),
