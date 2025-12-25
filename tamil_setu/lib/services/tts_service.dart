@@ -21,7 +21,7 @@ class TtsService {
     if (_isInitialized) return _isAvailable;
 
     try {
-      await _flutterTts.setLanguage("ta-IN");
+      await _flutterTts.setLanguage('ta-IN');
       await _flutterTts.setSpeechRate(0.4);
       await _flutterTts.setPitch(1.0);
 

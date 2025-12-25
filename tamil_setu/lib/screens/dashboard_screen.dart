@@ -14,7 +14,7 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Tamil Setu (हिंदी ➡️ தமிழ்)"),
+        title: const Text('Tamil Setu (हिंदी ➡️ தமிழ்)'),
         centerTitle: true,
         elevation: 2,
         actions: [
@@ -156,7 +156,7 @@ class _LessonCard extends StatelessWidget {
               child: isCompleted
                   ? const Icon(Icons.check, color: Colors.white)
                   : Text(
-                      "${index + 1}",
+                      '${index + 1}',
                       style: const TextStyle(color: Colors.white),
                     ),
             ),

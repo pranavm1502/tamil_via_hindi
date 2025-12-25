@@ -60,15 +60,15 @@ class _QuizViewState extends State<QuizView> {
     Color color;
 
     if (percentage >= 80) {
-      message = "Excellent! बहुत अच्छा!";
+      message = 'Excellent! बहुत अच्छा!';
       icon = Icons.star;
       color = Colors.green;
     } else if (percentage >= 60) {
-      message = "Good job! अच्छा!";
+      message = 'Good job! अच्छा!';
       icon = Icons.thumb_up;
       color = Colors.orange;
     } else {
-      message = "Keep practicing! अभ्यास करते रहो!";
+      message = 'Keep practicing! अभ्यास करते रहो!';
       icon = Icons.school;
       color = Colors.blue;
     }
@@ -84,17 +84,17 @@ class _QuizViewState extends State<QuizView> {
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
         icon: Icon(icon, size: 48, color: color),
-        title: const Text("Quiz Complete!"),
+        title: const Text('Quiz Complete!'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "You scored $score out of ${shuffledWords.length}",
+              'You scored $score out of ${shuffledWords.length}',
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 8),
             Text(
-              "$percentage%",
+              '$percentage%',
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
@@ -114,14 +114,14 @@ class _QuizViewState extends State<QuizView> {
               Navigator.pop(ctx);
               _restartQuiz();
             },
-            child: const Text("Retry Quiz"),
+            child: const Text('Retry Quiz'),
           ),
           FilledButton(
             onPressed: () {
               Navigator.pop(ctx);
               Navigator.pop(context);
             },
-            child: const Text("Finish"),
+            child: const Text('Finish'),
           ),
         ],
       ),
@@ -132,7 +132,7 @@ class _QuizViewState extends State<QuizView> {
   Widget build(BuildContext context) {
     if (shuffledWords.isEmpty) {
       return const Center(
-        child: Text("No words available for quiz."),
+        child: Text('No words available for quiz.'),
       );
     }
 
@@ -152,7 +152,7 @@ class _QuizViewState extends State<QuizView> {
           ),
           const SizedBox(height: 8),
           Text(
-            "Question ${currentIndex + 1}/${shuffledWords.length}",
+            'Question ${currentIndex + 1}/${shuffledWords.length}',
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
@@ -172,7 +172,7 @@ class _QuizViewState extends State<QuizView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    "Translate this Hindi word:",
+                    'Translate this Hindi word:',
                     style: TextStyle(color: Colors.grey),
                   ),
                   const SizedBox(height: 10),
@@ -202,7 +202,7 @@ class _QuizViewState extends State<QuizView> {
                     ),
                   ] else
                     const Text(
-                      "?",
+                      '?',
                       style: TextStyle(fontSize: 40, color: Colors.orange),
                     ),
                 ],
@@ -220,7 +220,7 @@ class _QuizViewState extends State<QuizView> {
               onPressed: () => setState(() => showAnswer = true),
               icon: const Icon(Icons.visibility),
               label: const Text(
-                "Show Answer",
+                'Show Answer',
                 style: TextStyle(fontSize: 18),
               ),
             )
@@ -236,7 +236,7 @@ class _QuizViewState extends State<QuizView> {
                     ),
                     onPressed: () => _nextCard(false),
                     icon: const Icon(Icons.close),
-                    label: const Text("Wrong"),
+                    label: const Text('Wrong'),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -249,7 +249,7 @@ class _QuizViewState extends State<QuizView> {
                     ),
                     onPressed: () => _nextCard(true),
                     icon: const Icon(Icons.check),
-                    label: const Text("Correct"),
+                    label: const Text('Correct'),
                   ),
                 ),
               ],
