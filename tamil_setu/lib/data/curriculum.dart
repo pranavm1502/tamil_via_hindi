@@ -13,6 +13,7 @@ Future<List<Lesson>> loadCurriculumData() async {
 
     // 2. Decode JSON
     final List<dynamic> data = json.decode(response);
+    // debugPrint('Loaded ${data.length} lesson levels from master_content.json');
 
     // 3. Convert JSON objects to Lesson objects
     return data.map((json) => Lesson.fromJson(json)).toList();
