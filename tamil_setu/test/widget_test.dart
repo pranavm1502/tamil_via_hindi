@@ -5,7 +5,27 @@ import 'package:tamil_setu/main.dart';
 // Import the helper file to access 'makeTestableWidget'
 import 'test_helpers.dart'; 
 
+import 'package:flutter/services.dart'; 
+
 void main() {
+  // 1. Initialize the binding so we can intercept messages
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  // 2. Mock Flutter TTS to say "Success" instantly
+  const MethodChannel('flutter_tts').setMockMethodCallHandler((MethodCall methodCall) async {
+    return 1; // Return "1" or "null" to signal success
+  });
+
+  // 3. Mock AudioPlayers (if used on startup)
+  const MethodChannel('xyz.luan/audioplayers').setMockMethodCallHandler((MethodCall methodCall) async {
+    return 1;
+  });
+  
+  // 4. Mock PathProvider (commonly used with Audio/TTS for storage)
+  const MethodChannel('plugins.flutter.io/path_provider').setMockMethodCallHandler((MethodCall methodCall) async {
+    return '.'; // Return a fake path
+  });
+
   testWidgets('Tamil Setu app launches and loads dashboard',
       (WidgetTester tester) async {
     // 1. Build the app using the wrapper to inject Providers
