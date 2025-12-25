@@ -19,4 +19,11 @@ class ContentProvider with ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+
+  /// For testing: Set lessons directly without loading from assets
+  void setLessonsForTesting(List<Lesson> lessons) {
+    _lessons = lessons;
+    _isLoading = false;
+    notifyListeners();
+  }
 }
