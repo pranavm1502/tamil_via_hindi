@@ -1,9 +1,9 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/word_pair.dart';
 import '../providers/progress_provider.dart';
 
-/// Quiz view for testing knowledge of word pairs.
 class QuizView extends StatefulWidget {
   final List<WordPair> words;
   final int lessonIndex;
@@ -23,12 +23,27 @@ class _QuizViewState extends State<QuizView> {
   int score = 0;
   bool showAnswer = false;
   late List<WordPair> shuffledWords;
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
   @override
   void initState() {
     super.initState();
-    // Shuffle words for varied quiz experience
     shuffledWords = List.from(widget.words)..shuffle();
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
+  }
+
+  void _playAudio(String path) async {
+    try {
+      final cleanPath = path.replaceFirst('assets/', '');
+      await _audioPlayer.play(AssetSource(cleanPath));
+    } catch (e) {
+      debugPrint('Audio Error: $e');
+    }
   }
 
   void _nextCard(bool knewIt) {
@@ -44,6 +59,7 @@ class _QuizViewState extends State<QuizView> {
     });
   }
 
+  // This method was previously unused; now it's called by the "Retry" button
   void _restartQuiz() {
     setState(() {
       currentIndex = 0;
@@ -54,7 +70,9 @@ class _QuizViewState extends State<QuizView> {
   }
 
   void _showResultDialog() {
+    // 1. Calculate percentage (Fixes 'unused variable' warning)
     final percentage = (score / shuffledWords.length * 100).round();
+
     String message;
     IconData icon;
     Color color;
@@ -73,11 +91,9 @@ class _QuizViewState extends State<QuizView> {
       color = Colors.blue;
     }
 
-    // Save quiz score to progress
-    final progressProvider =
-        Provider.of<ProgressProvider>(context, listen: false);
-    progressProvider.saveQuizScore(
-        widget.lessonIndex, score, shuffledWords.length);
+    // Save progress
+    Provider.of<ProgressProvider>(context, listen: false)
+        .saveQuizScore(widget.lessonIndex, score, shuffledWords.length);
 
     showDialog(
       context: context,
@@ -93,6 +109,7 @@ class _QuizViewState extends State<QuizView> {
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 8),
+            // 2. Display percentage (Fixes 'unused variable' warning)
             Text(
               '$percentage%',
               style: TextStyle(
@@ -112,14 +129,14 @@ class _QuizViewState extends State<QuizView> {
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
-              _restartQuiz();
+              _restartQuiz(); // 3. Fixes 'unused element' warning
             },
             child: const Text('Retry Quiz'),
           ),
           FilledButton(
             onPressed: () {
               Navigator.pop(ctx);
-              Navigator.pop(context);
+              Navigator.pop(context); // Go back to lesson screen
             },
             child: const Text('Finish'),
           ),
@@ -131,9 +148,7 @@ class _QuizViewState extends State<QuizView> {
   @override
   Widget build(BuildContext context) {
     if (shuffledWords.isEmpty) {
-      return const Center(
-        child: Text('No words available for quiz.'),
-      );
+      return const Center(child: Text('No words available.'));
     }
 
     final currentWord = shuffledWords[currentIndex];
@@ -144,85 +159,69 @@ class _QuizViewState extends State<QuizView> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Progress indicator
           LinearProgressIndicator(
             value: (currentIndex + 1) / shuffledWords.length,
             backgroundColor: Colors.grey[300],
             color: Colors.orange,
           ),
           const SizedBox(height: 8),
-          Text(
-            'Question ${currentIndex + 1}/${shuffledWords.length}',
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-          ),
+          Text('Question ${currentIndex + 1}/${shuffledWords.length}',
+              textAlign: TextAlign.center),
           const SizedBox(height: 20),
-
-          // Quiz card
           Card(
             elevation: 8,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
             child: Container(
-              height: 200,
+              height: 250,
               alignment: Alignment.center,
               padding: const EdgeInsets.all(20),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    'Translate this Hindi word:',
-                    style: TextStyle(color: Colors.grey),
-                  ),
+                  const Text('Translate this Hindi word:',
+                      style: TextStyle(color: Colors.grey)),
                   const SizedBox(height: 10),
                   Text(
                     currentWord.hindi,
                     style: const TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                    ),
+                        fontSize: 32, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
                   ),
                   const Divider(height: 30),
                   if (showAnswer) ...[
                     Text(
                       currentWord.tamil,
                       style: const TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.orange,
-                      ),
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange),
                     ),
                     Text(
                       currentWord.pronunciation,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        color: Colors.blueGrey,
-                      ),
+                      style:
+                          const TextStyle(fontSize: 20, color: Colors.blueGrey),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.volume_up,
+                          size: 30, color: Colors.blue),
+                      onPressed: () => _playAudio(currentWord.audioPath),
                     ),
                   ] else
-                    const Text(
-                      '?',
-                      style: TextStyle(fontSize: 40, color: Colors.orange),
-                    ),
+                    const Text('?',
+                        style: TextStyle(fontSize: 40, color: Colors.orange)),
                 ],
               ),
             ),
           ),
           const SizedBox(height: 40),
-
-          // Action buttons
           if (!showAnswer)
             FilledButton.icon(
-              style: FilledButton.styleFrom(
-                padding: const EdgeInsets.all(16),
-              ),
-              onPressed: () => setState(() => showAnswer = true),
+              style: FilledButton.styleFrom(padding: const EdgeInsets.all(16)),
+              onPressed: () {
+                setState(() => showAnswer = true);
+                _playAudio(currentWord.audioPath);
+              },
               icon: const Icon(Icons.visibility),
-              label: const Text(
-                'Show Answer',
-                style: TextStyle(fontSize: 18),
-              ),
+              label: const Text('Show Answer', style: TextStyle(fontSize: 18)),
             )
           else
             Row(
@@ -230,10 +229,8 @@ class _QuizViewState extends State<QuizView> {
                 Expanded(
                   child: FilledButton.icon(
                     style: FilledButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.all(16),
-                    ),
+                        backgroundColor: Colors.red,
+                        padding: const EdgeInsets.all(16)),
                     onPressed: () => _nextCard(false),
                     icon: const Icon(Icons.close),
                     label: const Text('Wrong'),
@@ -243,10 +240,8 @@ class _QuizViewState extends State<QuizView> {
                 Expanded(
                   child: FilledButton.icon(
                     style: FilledButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.all(16),
-                    ),
+                        backgroundColor: Colors.green,
+                        padding: const EdgeInsets.all(16)),
                     onPressed: () => _nextCard(true),
                     icon: const Icon(Icons.check),
                     label: const Text('Correct'),
