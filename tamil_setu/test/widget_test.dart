@@ -1,54 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // 1. Add this import
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'package:tamil_setu/main.dart';
 import 'test_helpers.dart';
 
 void main() {
-  // 2. Initialize bindings
+  // 1. Initialize bindings
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  // 3. CRITICAL FIX: Mock Shared Preferences so the app doesn't hang waiting for storage
+  // 2. Mock Shared Preferences (Critical for your app)
   SharedPreferences.setMockInitialValues({});
 
-  // 4. Mock Flutter TTS
-  const MethodChannel('flutter_tts')
-      .setMockMethodCallHandler((MethodCall methodCall) async {
-    return 1;
-  });
+  // 3. Mock Flutter TTS (New Syntax)
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(
+    const MethodChannel('flutter_tts'),
+    (MethodCall methodCall) async {
+      return 1; // Return success
+    },
+  );
 
-  // 5. Mock AudioPlayers
-  const MethodChannel('xyz.luan/audioplayers')
-      .setMockMethodCallHandler((MethodCall methodCall) async {
-    return 1;
-  });
+  // 4. Mock AudioPlayers (New Syntax)
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(
+    const MethodChannel('xyz.luan/audioplayers'),
+    (MethodCall methodCall) async {
+      return 1; // Return success
+    },
+  );
 
-  // 6. Mock PathProvider
-  const MethodChannel('plugins.flutter.io/path_provider')
-      .setMockMethodCallHandler((MethodCall methodCall) async {
-    return '.';
-  });
+  // 5. Mock PathProvider (New Syntax)
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(
+    const MethodChannel('plugins.flutter.io/path_provider'),
+    (MethodCall methodCall) async {
+      return '.'; // Return a fake dot path
+    },
+  );
 
-//   testWidgets('DEBUG: Check what is stuck on screen', (WidgetTester tester) async {
-//   // 1. Build app
-//   await tester.pumpWidget(makeTestableWidget(child: const TamilSetuApp()));
-
-//   // 2. Instead of 'pumpAndSettle' (which crashes), just wait 2 seconds
-//   await tester.pump(const Duration(seconds: 2));
-
-//   // 3. Print what is currently visible
-//   if (find.byType(CircularProgressIndicator).evaluate().isNotEmpty) {
-//     print("🚨 DEBUG: App is STUCK showing a CircularProgressIndicator (Loading Spinner)");
-//   } else if (find.byType(ErrorWidget).evaluate().isNotEmpty) {
-//     print("🚨 DEBUG: App crashed with an internal error (ErrorWidget visible)");
-//   } else {
-//     print("🚨 DEBUG: App seems to have loaded. Found widgets: ${find.byType(Card).evaluate().length} Cards");
-//   }
-// });
   testWidgets('Tamil Setu app launches and loads dashboard',
       (WidgetTester tester) async {
+    // Note: Ensure your makeTestableWidget in test_helpers.dart
+    // uses the "..loadContent()" fix we discussed!
     await tester.pumpWidget(makeTestableWidget(child: const TamilSetuApp()));
+
+    // Wait for the JSON load and spinner to finish
     await tester.pumpAndSettle();
 
     expect(find.text('Tamil Setu (हिंदी ➡️ தமிழ்)'), findsOneWidget);
@@ -73,8 +70,23 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Learn'), findsOneWidget);
-    // Ensure this matches the actual text in your app (Flashcards vs Quiz)
     expect(find.text('Flashcards'), findsOneWidget);
     expect(find.text('MCQ'), findsOneWidget);
   });
+//   testWidgets('DEBUG: Check what is stuck on screen', (WidgetTester tester) async {
+//   // 1. Build app
+//   await tester.pumpWidget(makeTestableWidget(child: const TamilSetuApp()));
+
+//   // 2. Instead of 'pumpAndSettle' (which crashes), just wait 2 seconds
+//   await tester.pump(const Duration(seconds: 2));
+
+//   // 3. Print what is currently visible
+//   if (find.byType(CircularProgressIndicator).evaluate().isNotEmpty) {
+//     print("🚨 DEBUG: App is STUCK showing a CircularProgressIndicator (Loading Spinner)");
+//   } else if (find.byType(ErrorWidget).evaluate().isNotEmpty) {
+//     print("🚨 DEBUG: App crashed with an internal error (ErrorWidget visible)");
+//   } else {
+//     print("🚨 DEBUG: App seems to have loaded. Found widgets: ${find.byType(Card).evaluate().length} Cards");
+//   }
+// });
 }
