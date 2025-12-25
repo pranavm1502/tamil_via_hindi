@@ -2,20 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/progress_provider.dart';
 import 'providers/theme_provider.dart';
+import 'providers/content_provider.dart'; // 1. Add this import
 import 'screens/dashboard_screen.dart';
 
 void main() async {
-  // 1. Ensure Flutter bindings are initialized for SharedPreferences
+  // 1. Ensure Flutter bindings are initialized
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 2. Initialize providers before the app starts to prevent UI flickering
+  // 2. Initialize ALL providers
   final progressProvider = ProgressProvider();
   final themeProvider = ThemeProvider();
+  final contentProvider = ContentProvider(); // New instance
 
-  // Load persistent data
+  // 3. Load ALL persistent data before the app starts
   await Future.wait([
-    progressProvider.loadProgress(), // Using the loadProgress we discussed
+    progressProvider.loadProgress(),
     themeProvider.initialize(),
+    contentProvider.loadContent(), // Load JSON here to prevent loading spinners later
   ]);
 
   runApp(
@@ -23,6 +26,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider.value(value: progressProvider),
         ChangeNotifierProvider.value(value: themeProvider),
+        ChangeNotifierProvider.value(value: contentProvider), // Register it here
       ],
       child: const TamilSetuApp(),
     ),
@@ -34,16 +38,14 @@ class TamilSetuApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 3. Consume the ThemeProvider to reactively update the UI
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
         return MaterialApp(
           title: 'Tamil Setu',
           debugShowCheckedModeBanner: false,
-          theme: ThemeProvider.lightTheme,
+          theme: ThemeProvider.lightTheme, // Ensure these getters exist in your ThemeProvider
           darkTheme: ThemeProvider.darkTheme,
           themeMode: themeProvider.themeMode,
-          // 4. DashboardScreen now has access to pre-loaded progress data
           home: const DashboardScreen(),
         );
       },
