@@ -36,7 +36,7 @@ class _LessonScreenState extends State<LessonScreen>
       final cleanPath = path.replaceFirst('assets/', '');
       await _audioPlayer.play(AssetSource(cleanPath));
     } catch (e) {
-      debugPrint("Audio Error: $e");
+      debugPrint('Audio Error: $e');
     }
   }
 
@@ -107,7 +107,7 @@ class _LessonScreenState extends State<LessonScreen>
                 const SizedBox(height: 4),
                 // Show the pronunciation bridge (e.g., "वणक्कम")
                 Text(
-                  "(${pair.pronunciation})",
+                  '(${pair.pronunciation})',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey.shade700,

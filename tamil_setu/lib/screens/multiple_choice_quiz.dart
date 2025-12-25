@@ -46,7 +46,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
       final cleanPath = path.replaceFirst('assets/', '');
       await _audioPlayer.play(AssetSource(cleanPath));
     } catch (e) {
-      debugPrint("Audio Error: $e");
+      debugPrint('Audio Error: $e');
     }
   }
 

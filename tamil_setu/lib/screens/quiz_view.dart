@@ -42,7 +42,7 @@ class _QuizViewState extends State<QuizView> {
       final cleanPath = path.replaceFirst('assets/', '');
       await _audioPlayer.play(AssetSource(cleanPath));
     } catch (e) {
-      debugPrint("Audio Error: $e");
+      debugPrint('Audio Error: $e');
     }
   }
 
@@ -82,8 +82,9 @@ class _QuizViewState extends State<QuizView> {
 
   @override
   Widget build(BuildContext context) {
-    if (shuffledWords.isEmpty)
+    if (shuffledWords.isEmpty) {
       return const Center(child: Text('No words available.'));
+    }
 
     final currentWord = shuffledWords[currentIndex];
 

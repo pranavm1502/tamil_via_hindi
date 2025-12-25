@@ -177,7 +177,7 @@ class _LessonTile extends StatelessWidget {
                   ? () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text("Complete previous levels to unlock!"),
+                          content: Text('Complete previous levels to unlock!'),
                           duration: Duration(seconds: 1),
                         ),
                       );

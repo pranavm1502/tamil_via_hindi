@@ -16,7 +16,7 @@ Future<List<Lesson>> loadCurriculumData() async {
     // 3. Convert JSON objects to Lesson objects
     return data.map((json) => Lesson.fromJson(json)).toList();
   } catch (e) {
-    print("Error loading curriculum: $e");
+    print('Error loading curriculum: $e');
     return []; // Return empty list on error to prevent crash
   }
 }

@@ -28,15 +28,15 @@ void main() {
 
     test('should parse from JSON correctly', () {
       final json = {
-        "level": 1,
-        "title": "Basics",
-        "description": "Start with Namaste",
-        "words": [
+        'level': 1,
+        'title': 'Basics',
+        'description': 'Start with Namaste',
+        'words': [
           {
-            "tamil": "வணக்கம்",
-            "hindi": "नमस्ते",
-            "pronunciation": "वणक्कम्",
-            "audio_path": "assets/audio/l1.mp3"
+            'tamil': 'வணக்கம்',
+            'hindi': 'नमस्ते',
+            'pronunciation': 'वणक्कम्',
+            'audio_path': 'assets/audio/l1.mp3'
           }
         ]
       };
@@ -44,9 +44,9 @@ void main() {
       final lesson = Lesson.fromJson(json);
 
       expect(lesson.level, 1);
-      expect(lesson.title, "Basics");
-      expect(lesson.words.first.tamil, "வணக்கம்");
-      expect(lesson.words.first.audioPath, "assets/audio/l1.mp3");
+      expect(lesson.title, 'Basics');
+      expect(lesson.words.first.tamil, 'வணக்கம்');
+      expect(lesson.words.first.audioPath, 'assets/audio/l1.mp3');
     });
   });
 }
