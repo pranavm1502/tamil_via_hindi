@@ -9,19 +9,21 @@ class ContentProvider with ChangeNotifier {
   List<Lesson> get lessons => _lessons;
   bool get isLoading => _isLoading;
 
-Future<void> loadContent() async {
-  _isLoading = true;
-  notifyListeners();
+  Future<void> loadContent() async {
+    _isLoading = true;
+    notifyListeners();
 
-  try {
     // Call the function we created in Step 3
     _lessons = await loadCurriculumData();
-  } catch (e) {
-    // Optionally, log the error or show a fallback
-    _lessons = [];
-  } finally {
+
     _isLoading = false;
     notifyListeners();
   }
-}
+
+  /// For testing: Set lessons directly without loading from assets
+  void setLessonsForTesting(List<Lesson> lessons) {
+    _lessons = lessons;
+    _isLoading = false;
+    notifyListeners();
+  }
 }
