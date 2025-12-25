@@ -59,6 +59,7 @@ class _QuizViewState extends State<QuizView> {
     });
   }
 
+  // This method was previously unused; now it's called by the "Retry" button
   void _restartQuiz() {
     setState(() {
       currentIndex = 0;
@@ -69,15 +70,79 @@ class _QuizViewState extends State<QuizView> {
   }
 
   void _showResultDialog() {
+    // 1. Calculate percentage (Fixes 'unused variable' warning)
     final percentage = (score / shuffledWords.length * 100).round();
-    // ... (Result logic logic remains the same, omitted for brevity but include it in your file)
-    // NOTE: Keep your existing _showResultDialog logic here
+    
+    String message;
+    IconData icon;
+    Color color;
 
-    // Just saving score for context:
+    if (percentage >= 80) {
+      message = 'Excellent! बहुत अच्छा!';
+      icon = Icons.star;
+      color = Colors.green;
+    } else if (percentage >= 60) {
+      message = 'Good job! अच्छा!';
+      icon = Icons.thumb_up;
+      color = Colors.orange;
+    } else {
+      message = 'Keep practicing! अभ्यास करते रहो!';
+      icon = Icons.school;
+      color = Colors.blue;
+    }
+
+    // Save progress
     Provider.of<ProgressProvider>(context, listen: false)
         .saveQuizScore(widget.lessonIndex, score, shuffledWords.length);
 
-    // (Paste your existing showDialog code here)
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        icon: Icon(icon, size: 48, color: color),
+        title: const Text('Quiz Complete!'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'You scored $score out of ${shuffledWords.length}',
+              style: const TextStyle(fontSize: 18),
+            ),
+            const SizedBox(height: 8),
+            // 2. Display percentage (Fixes 'unused variable' warning)
+            Text(
+              '$percentage%', 
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              message,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              _restartQuiz(); // 3. Fixes 'unused element' warning
+            },
+            child: const Text('Retry Quiz'),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              Navigator.pop(context); // Go back to lesson screen
+            },
+            child: const Text('Finish'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -106,7 +171,7 @@ class _QuizViewState extends State<QuizView> {
           Card(
             elevation: 8,
             child: Container(
-              height: 250, // Slightly taller to fit everything
+              height: 250, 
               alignment: Alignment.center,
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -153,7 +218,7 @@ class _QuizViewState extends State<QuizView> {
               style: FilledButton.styleFrom(padding: const EdgeInsets.all(16)),
               onPressed: () {
                 setState(() => showAnswer = true);
-                _playAudio(currentWord.audioPath); // Auto-play when revealed
+                _playAudio(currentWord.audioPath); 
               },
               icon: const Icon(Icons.visibility),
               label: const Text('Show Answer', style: TextStyle(fontSize: 18)),

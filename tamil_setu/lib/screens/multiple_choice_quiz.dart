@@ -150,7 +150,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
 
     // ... Rest of your UI code
     final currentWord = shuffledWords[currentIndex];
-    final correctAnswer = currentWord.tamil;
+    // final correctAnswer = currentWord.tamil;
 
     return Padding(
         padding: const EdgeInsets.all(24.0),
