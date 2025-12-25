@@ -72,14 +72,14 @@ class MockContentProvider extends ContentProvider {
     _testLessons = [
       Lesson(
         level: 1,
-        title: "Basics (Greet)",
-        description: "Learn to say hello",
+        title: 'Basics (Greet)',
+        description: 'Learn to say hello',
         words: [], // Empty words list is fine for Dashboard tests
       ),
       Lesson(
         level: 2,
-        title: "Pronouns",
-        description: "I, You, We",
+        title: 'Pronouns',
+        description: 'I, You, We',
         words: [],
       ),
     ];
