@@ -18,7 +18,8 @@ class LessonScreen extends StatefulWidget {
   State<LessonScreen> createState() => _LessonScreenState();
 }
 
-class _LessonScreenState extends State<LessonScreen> with SingleTickerProviderStateMixin {
+class _LessonScreenState extends State<LessonScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final AudioPlayer _audioPlayer = AudioPlayer();
 
@@ -116,7 +117,8 @@ class _LessonScreenState extends State<LessonScreen> with SingleTickerProviderSt
               ],
             ),
             trailing: IconButton(
-              icon: const Icon(Icons.volume_up_rounded, size: 32, color: Colors.blue),
+              icon: const Icon(Icons.volume_up_rounded,
+                  size: 32, color: Colors.blue),
               onPressed: () => _playAudio(pair.audioPath),
             ),
           ),

@@ -2,7 +2,7 @@ class WordPair {
   final String hindi;
   final String tamil;
   final String pronunciation; // The Hindi-script bridge
-  final String audioPath;     // e.g. "assets/audio/l1_namaste.mp3"
+  final String audioPath; // e.g. "assets/audio/l1_namaste.mp3"
 
   WordPair({
     required this.hindi,
@@ -18,7 +18,7 @@ class WordPair {
       tamil: json['tamil'] ?? '',
       pronunciation: json['pronunciation'] ?? '',
       // Default to empty if missing to prevent crashes
-      audioPath: json['audio_path'] ?? '', 
+      audioPath: json['audio_path'] ?? '',
     );
   }
 }

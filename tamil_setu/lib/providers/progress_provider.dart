@@ -3,15 +3,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ProgressProvider with ChangeNotifier {
   // --- State Variables ---
-  
+
   // Tracks how many levels are unlocked (starts at 1, so Level 1 is open)
-  int _unlockedLevel = 1; 
-  
+  int _unlockedLevel = 1;
+
   // Tracks exactly which lessons (by index) are completed
-  final Set<int> _completedLessons = {}; 
-  
+  final Set<int> _completedLessons = {};
+
   // Optionally track specific scores (useful for "Best Score" displays)
-  final Map<int, int> _lessonScores = {}; 
+  final Map<int, int> _lessonScores = {};
 
   // --- Getters ---
   int get unlockedLevel => _unlockedLevel;
@@ -22,7 +22,7 @@ class ProgressProvider with ChangeNotifier {
   /// Loads progress from the phone's storage on startup.
   Future<void> loadProgress() async {
     final prefs = await SharedPreferences.getInstance();
-    
+
     // Load the unlocked level count (Default to 1)
     _unlockedLevel = prefs.getInt('unlockedLevel') ?? 1;
 
@@ -32,7 +32,7 @@ class ProgressProvider with ChangeNotifier {
       _completedLessons.clear();
       _completedLessons.addAll(completedList.map((e) => int.parse(e)));
     }
-    
+
     notifyListeners();
   }
 
@@ -42,7 +42,7 @@ class ProgressProvider with ChangeNotifier {
   /// Logic: If unlockedLevel is 1, index 0 is Open, index 1 is Locked.
   bool isLessonLocked(int lessonIndex) {
     // If the lesson index is greater than or equal to the number of unlocked levels, it's locked.
-    return lessonIndex >= _unlockedLevel; 
+    return lessonIndex >= _unlockedLevel;
   }
 
   /// Checks if a lesson has been successfully completed previously.
@@ -62,7 +62,8 @@ class ProgressProvider with ChangeNotifier {
     final double percentage = (score / total) * 100;
 
     // 1. Save 'Best Score' logic (Optional but good for UX)
-    if (!_lessonScores.containsKey(lessonIndex) || percentage > _lessonScores[lessonIndex]!) {
+    if (!_lessonScores.containsKey(lessonIndex) ||
+        percentage > _lessonScores[lessonIndex]!) {
       _lessonScores[lessonIndex] = percentage.round();
     }
 
@@ -72,18 +73,19 @@ class ProgressProvider with ChangeNotifier {
       if (!_completedLessons.contains(lessonIndex)) {
         _completedLessons.add(lessonIndex);
         // Save list to persistent storage
-        await prefs.setStringList('completedLessons', _completedLessons.map((e) => e.toString()).toList());
+        await prefs.setStringList('completedLessons',
+            _completedLessons.map((e) => e.toString()).toList());
       }
 
       // Unlock the next level if we are at the current edge of progress
-      // Example: If I finish Lesson 1 (index 0) and unlockedLevel is 1, 
+      // Example: If I finish Lesson 1 (index 0) and unlockedLevel is 1,
       // then (0 + 1) == 1. Logic holds -> Unlock Level 2.
       if ((lessonIndex + 1) == _unlockedLevel) {
         _unlockedLevel++;
         await prefs.setInt('unlockedLevel', _unlockedLevel);
       }
     }
-    
+
     notifyListeners();
   }
 

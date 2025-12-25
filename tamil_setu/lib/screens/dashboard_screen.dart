@@ -41,16 +41,17 @@ class DashboardScreen extends StatelessWidget {
               children: [
                 // 2. Pass total lessons dynamically from the JSON
                 _ProgressHeader(totalLessons: contentProvider.lessons.length),
-                
+
                 Expanded(
                   child: GridView.builder(
                     padding: const EdgeInsets.all(16),
                     itemCount: contentProvider.lessons.length,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2, // 2 Columns for a "Roadmap" look
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
-                      childAspectRatio: 0.85, 
+                      childAspectRatio: 0.85,
                     ),
                     itemBuilder: (context, index) {
                       final lesson = contentProvider.lessons[index];
@@ -114,7 +115,8 @@ class _ProgressHeader extends StatelessWidget {
                     '$completedCount/$totalLessons levels',
                     style: TextStyle(
                       fontSize: 16,
-                      color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                      color:
+                          theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
                     ),
                   ),
                 ],
@@ -160,14 +162,15 @@ class _LessonTile extends StatelessWidget {
     return Consumer<ProgressProvider>(
       builder: (context, progress, child) {
         // 4. Using the new lock/complete logic
-        final isLocked = progress.isLessonLocked(index); 
+        final isLocked = progress.isLessonLocked(index);
         final isCompleted = progress.isLessonCompleted(index);
 
         return Opacity(
           opacity: isLocked ? 0.5 : 1.0,
           child: Card(
             elevation: isLocked ? 0 : 4,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             child: InkWell(
               borderRadius: BorderRadius.circular(16),
               onTap: isLocked

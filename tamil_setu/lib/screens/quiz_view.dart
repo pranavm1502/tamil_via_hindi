@@ -72,17 +72,18 @@ class _QuizViewState extends State<QuizView> {
     final percentage = (score / shuffledWords.length * 100).round();
     // ... (Result logic logic remains the same, omitted for brevity but include it in your file)
     // NOTE: Keep your existing _showResultDialog logic here
-    
+
     // Just saving score for context:
     Provider.of<ProgressProvider>(context, listen: false)
         .saveQuizScore(widget.lessonIndex, score, shuffledWords.length);
-        
+
     // (Paste your existing showDialog code here)
   }
 
   @override
   Widget build(BuildContext context) {
-    if (shuffledWords.isEmpty) return const Center(child: Text('No words available.'));
+    if (shuffledWords.isEmpty)
+      return const Center(child: Text('No words available.'));
 
     final currentWord = shuffledWords[currentIndex];
 
@@ -98,9 +99,9 @@ class _QuizViewState extends State<QuizView> {
             color: Colors.orange,
           ),
           const SizedBox(height: 8),
-          Text('Question ${currentIndex + 1}/${shuffledWords.length}', textAlign: TextAlign.center),
+          Text('Question ${currentIndex + 1}/${shuffledWords.length}',
+              textAlign: TextAlign.center),
           const SizedBox(height: 20),
-
           Card(
             elevation: 8,
             child: Container(
@@ -110,35 +111,42 @@ class _QuizViewState extends State<QuizView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Translate this Hindi word:', style: TextStyle(color: Colors.grey)),
+                  const Text('Translate this Hindi word:',
+                      style: TextStyle(color: Colors.grey)),
                   const SizedBox(height: 10),
                   Text(
                     currentWord.hindi,
-                    style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 32, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                   const Divider(height: 30),
                   if (showAnswer) ...[
                     Text(
                       currentWord.tamil,
-                      style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.orange),
+                      style: const TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange),
                     ),
                     Text(
                       currentWord.pronunciation,
-                      style: const TextStyle(fontSize: 20, color: Colors.blueGrey),
+                      style:
+                          const TextStyle(fontSize: 20, color: Colors.blueGrey),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.volume_up, size: 30, color: Colors.blue),
+                      icon: const Icon(Icons.volume_up,
+                          size: 30, color: Colors.blue),
                       onPressed: () => _playAudio(currentWord.audioPath),
                     ),
                   ] else
-                    const Text('?', style: TextStyle(fontSize: 40, color: Colors.orange)),
+                    const Text('?',
+                        style: TextStyle(fontSize: 40, color: Colors.orange)),
                 ],
               ),
             ),
           ),
           const SizedBox(height: 40),
-
           if (!showAnswer)
             FilledButton.icon(
               style: FilledButton.styleFrom(padding: const EdgeInsets.all(16)),
@@ -154,7 +162,9 @@ class _QuizViewState extends State<QuizView> {
               children: [
                 Expanded(
                   child: FilledButton.icon(
-                    style: FilledButton.styleFrom(backgroundColor: Colors.red, padding: const EdgeInsets.all(16)),
+                    style: FilledButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        padding: const EdgeInsets.all(16)),
                     onPressed: () => _nextCard(false),
                     icon: const Icon(Icons.close),
                     label: const Text('Wrong'),
@@ -163,7 +173,9 @@ class _QuizViewState extends State<QuizView> {
                 const SizedBox(width: 16),
                 Expanded(
                   child: FilledButton.icon(
-                    style: FilledButton.styleFrom(backgroundColor: Colors.green, padding: const EdgeInsets.all(16)),
+                    style: FilledButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        padding: const EdgeInsets.all(16)),
                     onPressed: () => _nextCard(true),
                     icon: const Icon(Icons.check),
                     label: const Text('Correct'),

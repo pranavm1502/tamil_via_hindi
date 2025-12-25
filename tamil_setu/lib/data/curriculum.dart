@@ -7,11 +7,12 @@ import '../models/lesson.dart';
 Future<List<Lesson>> loadCurriculumData() async {
   try {
     // 1. Read the file from assets
-    final String response = await rootBundle.loadString('assets/data/master_content.json');
-    
+    final String response =
+        await rootBundle.loadString('assets/data/master_content.json');
+
     // 2. Decode JSON
     final List<dynamic> data = json.decode(response);
-    
+
     // 3. Convert JSON objects to Lesson objects
     return data.map((json) => Lesson.fromJson(json)).toList();
   } catch (e) {

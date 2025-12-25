@@ -44,7 +44,7 @@ class TamilSetuApp extends StatelessWidget {
           darkTheme: ThemeProvider.darkTheme,
           themeMode: themeProvider.themeMode,
           // 4. DashboardScreen now has access to pre-loaded progress data
-          home: const DashboardScreen(), 
+          home: const DashboardScreen(),
         );
       },
     );

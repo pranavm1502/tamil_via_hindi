@@ -11,7 +11,8 @@ void main() {
   });
 
   group('ProgressProvider', () {
-    test('should initialize with default locked state (Level 1 open)', () async {
+    test('should initialize with default locked state (Level 1 open)',
+        () async {
       await progressProvider.loadProgress();
       expect(progressProvider.unlockedLevel, 1);
       expect(progressProvider.totalCompletedLessons, 0);
@@ -33,15 +34,15 @@ void main() {
 
     test('should lock future levels correctly', () async {
       await progressProvider.loadProgress();
-      // unlockedLevel is 1. 
+      // unlockedLevel is 1.
       // Index 0 (Level 1) is unlocked. Index 1 (Level 2) is locked.
-      expect(progressProvider.isLessonLocked(0), isFalse); 
+      expect(progressProvider.isLessonLocked(0), isFalse);
       expect(progressProvider.isLessonLocked(1), isTrue);
     });
 
     test('should NOT mark completed if score is below 80%', () async {
       await progressProvider.loadProgress();
-      
+
       // 7 out of 10 is 70% (Fail)
       await progressProvider.saveQuizScore(0, 7, 10);
 
@@ -49,7 +50,8 @@ void main() {
       expect(progressProvider.unlockedLevel, 1); // Still on level 1
     });
 
-    test('should mark completed AND unlock next level if score >= 80%', () async {
+    test('should mark completed AND unlock next level if score >= 80%',
+        () async {
       await progressProvider.loadProgress();
 
       // 8 out of 10 is 80% (Pass)
@@ -61,7 +63,7 @@ void main() {
 
     test('should calculate overall progress correctly', () async {
       await progressProvider.loadProgress();
-      
+
       // Pass two lessons
       await progressProvider.saveQuizScore(0, 10, 10);
       await progressProvider.saveQuizScore(1, 10, 10);
