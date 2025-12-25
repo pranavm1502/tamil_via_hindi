@@ -85,7 +85,7 @@ class _LessonScreenState extends State<LessonScreen>
           controller: _tabController,
           tabs: const [
             Tab(icon: Icon(Icons.book), text: 'Learn'),
-            Tab(icon: Icon(Icons.quiz), text: 'Flashcards'),
+            Tab(icon: Icon(Icons.quiz), text: 'Quiz'),
             Tab(icon: Icon(Icons.check_box), text: 'MCQ'),
           ],
         ),
