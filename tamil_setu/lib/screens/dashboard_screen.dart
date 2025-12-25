@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/content_provider.dart'; // New data source
+import '../models/lesson.dart'; // Import this so we don't need 'dynamic'
+import '../providers/content_provider.dart';
 import '../providers/progress_provider.dart';
 import '../providers/theme_provider.dart';
 import 'lesson_screen.dart';
@@ -38,7 +39,7 @@ class DashboardScreen extends StatelessWidget {
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
-                // Pass total lessons dynamically from the JSON
+                // 2. Pass total lessons dynamically from the JSON
                 _ProgressHeader(totalLessons: contentProvider.lessons.length),
                 
                 Expanded(
@@ -49,7 +50,7 @@ class DashboardScreen extends StatelessWidget {
                       crossAxisCount: 2, // 2 Columns for a "Roadmap" look
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
-                      childAspectRatio: 0.85, // Taller cards
+                      childAspectRatio: 0.85, 
                     ),
                     itemBuilder: (context, index) {
                       final lesson = contentProvider.lessons[index];
@@ -67,7 +68,7 @@ class DashboardScreen extends StatelessWidget {
 }
 
 class _ProgressHeader extends StatelessWidget {
-  final int totalLessons; // Now passed in dynamically
+  final int totalLessons;
 
   const _ProgressHeader({required this.totalLessons});
 
@@ -77,7 +78,7 @@ class _ProgressHeader extends StatelessWidget {
 
     return Consumer<ProgressProvider>(
       builder: (context, progress, child) {
-        // Calculate progress based on dynamic total
+        // 3. Methods now match your merged ProgressProvider
         final overallProgress = progress.getOverallProgress(totalLessons);
         final completedCount = progress.totalCompletedLessons;
 
@@ -146,7 +147,7 @@ class _ProgressHeader extends StatelessWidget {
 }
 
 class _LessonTile extends StatelessWidget {
-  final dynamic lesson; // Accepts the Lesson object
+  final Lesson lesson; // Changed from dynamic to Lesson for safety
   final int index;
 
   const _LessonTile({
@@ -158,8 +159,7 @@ class _LessonTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ProgressProvider>(
       builder: (context, progress, child) {
-        // Check if this specific level is locked
-        // (Level 2 is locked if Level 1 is not done)
+        // 4. Using the new lock/complete logic
         final isLocked = progress.isLessonLocked(index); 
         final isCompleted = progress.isLessonCompleted(index);
 

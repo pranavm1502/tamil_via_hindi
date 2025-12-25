@@ -8,6 +8,7 @@ void main() {
         hindi: 'Namaste',
         tamil: 'Vanakkam',
         pronunciation: 'वनक्कम',
+        audioPath: '', // Provide a valid audio path
       );
 
       expect(wordPair.hindi, 'Namaste');

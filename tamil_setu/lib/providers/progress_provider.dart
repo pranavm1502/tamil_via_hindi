@@ -2,104 +2,98 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProgressProvider with ChangeNotifier {
-  int _unlockedLevel = 1;
-  final Map<int, bool> _completedLessons = {};
+  // --- State Variables ---
+  
+  // Tracks how many levels are unlocked (starts at 1, so Level 1 is open)
+  int _unlockedLevel = 1; 
+  
+  // Tracks exactly which lessons (by index) are completed
+  final Set<int> _completedLessons = {}; 
+  
+  // Optionally track specific scores (useful for "Best Score" displays)
+  final Map<int, int> _lessonScores = {}; 
 
+  // --- Getters ---
   int get unlockedLevel => _unlockedLevel;
   int get totalCompletedLessons => _completedLessons.length;
 
-  // Loads progress from the phone's storage on startup
+  // --- Initialization ---
+
+  /// Loads progress from the phone's storage on startup.
   Future<void> loadProgress() async {
     final prefs = await SharedPreferences.getInstance();
+    
+    // Load the unlocked level count (Default to 1)
     _unlockedLevel = prefs.getInt('unlockedLevel') ?? 1;
+
+    // Load the list of completed lesson indices
+    final completedList = prefs.getStringList('completedLessons');
+    if (completedList != null) {
+      _completedLessons.clear();
+      _completedLessons.addAll(completedList.map((e) => int.parse(e)));
+    }
+    
     notifyListeners();
   }
 
-  bool isLevelLocked(int levelId) => levelId > _unlockedLevel;
+  // --- Core Logic ---
 
-  // 80% score unlocks the next level
-  Future<void> saveQuizScore(int lessonId, int score, int total) async {
+  /// Checks if a specific lesson index should be locked.
+  /// Logic: If unlockedLevel is 1, index 0 is Open, index 1 is Locked.
+  bool isLessonLocked(int lessonIndex) {
+    // If the lesson index is greater than or equal to the number of unlocked levels, it's locked.
+    return lessonIndex >= _unlockedLevel; 
+  }
+
+  /// Checks if a lesson has been successfully completed previously.
+  bool isLessonCompleted(int lessonIndex) {
+    return _completedLessons.contains(lessonIndex);
+  }
+
+  /// Calculates the overall progress percentage for the dashboard header.
+  double getOverallProgress(int totalLessons) {
+    if (totalLessons == 0) return 0.0;
+    return (_completedLessons.length / totalLessons) * 100;
+  }
+
+  /// Saves the quiz score and handles unlocking the next level.
+  Future<void> saveQuizScore(int lessonIndex, int score, int total) async {
     final prefs = await SharedPreferences.getInstance();
-    if (score / total >= 0.8) {
-      _completedLessons[lessonId] = true;
-      if (lessonId == _unlockedLevel) {
+    final double percentage = (score / total) * 100;
+
+    // 1. Save 'Best Score' logic (Optional but good for UX)
+    if (!_lessonScores.containsKey(lessonIndex) || percentage > _lessonScores[lessonIndex]!) {
+      _lessonScores[lessonIndex] = percentage.round();
+    }
+
+    // 2. Unlocking Logic: Requires 80% to pass
+    if (percentage >= 80) {
+      // Mark as completed in the set
+      if (!_completedLessons.contains(lessonIndex)) {
+        _completedLessons.add(lessonIndex);
+        // Save list to persistent storage
+        await prefs.setStringList('completedLessons', _completedLessons.map((e) => e.toString()).toList());
+      }
+
+      // Unlock the next level if we are at the current edge of progress
+      // Example: If I finish Lesson 1 (index 0) and unlockedLevel is 1, 
+      // then (0 + 1) == 1. Logic holds -> Unlock Level 2.
+      if ((lessonIndex + 1) == _unlockedLevel) {
         _unlockedLevel++;
         await prefs.setInt('unlockedLevel', _unlockedLevel);
       }
     }
+    
+    notifyListeners();
+  }
+
+  /// Debug utility to reset all progress.
+  Future<void> clearAllProgress() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    _unlockedLevel = 1;
+    _completedLessons.clear();
+    _lessonScores.clear();
     notifyListeners();
   }
 }
-
-// import 'package:flutter/foundation.dart';
-// import '../services/progress_service.dart';
-
-// /// Provider for managing progress state throughout the app.
-// class ProgressProvider with ChangeNotifier {
-//   final ProgressService _progressService = ProgressService();
-
-//   List<int> _completedLessons = [];
-//   Map<int, int> _lessonScores = {};
-
-//   List<int> get completedLessons => _completedLessons;
-
-//   /// Initialize the provider by loading saved progress.
-//   Future<void> initialize() async {
-//     await loadProgress();
-//   }
-
-//   /// Load all progress data from storage.
-//   Future<void> loadProgress() async {
-//     _completedLessons = await _progressService.getCompletedLessons();
-//     notifyListeners();
-//   }
-
-//   /// Check if a lesson is completed.
-//   bool isLessonCompleted(int lessonIndex) {
-//     return _completedLessons.contains(lessonIndex);
-//   }
-
-//   /// Mark a lesson as completed.
-//   Future<void> markLessonCompleted(int lessonIndex) async {
-//     await _progressService.markLessonCompleted(lessonIndex);
-//     await loadProgress();
-//   }
-
-//   /// Save quiz score and update progress.
-//   Future<void> saveQuizScore(int lessonIndex, int score, int total) async {
-//     await _progressService.saveQuizScore(lessonIndex, score, total);
-//     _lessonScores[lessonIndex] = (score / total * 100).round();
-//     await loadProgress();
-//   }
-
-//   /// Get best score percentage for a lesson.
-//   Future<int?> getBestScore(int lessonIndex) async {
-//     if (_lessonScores.containsKey(lessonIndex)) {
-//       return _lessonScores[lessonIndex];
-//     }
-
-//     final percentage =
-//         await _progressService.getBestScorePercentage(lessonIndex);
-//     if (percentage != null) {
-//       _lessonScores[lessonIndex] = percentage;
-//     }
-//     return percentage;
-//   }
-
-//   /// Get total number of completed lessons.
-//   int get totalCompletedLessons => _completedLessons.length;
-
-//   /// Get overall progress percentage for given total lessons.
-//   int getOverallProgress(int totalLessons) {
-//     if (totalLessons == 0) return 0;
-//     return (totalCompletedLessons / totalLessons * 100).round();
-//   }
-
-//   /// Clear all progress.
-//   Future<void> clearAllProgress() async {
-//     await _progressService.clearAllProgress();
-//     _completedLessons = [];
-//     _lessonScores = {};
-//     notifyListeners();
-//   }
-// }
