@@ -8,28 +8,29 @@ void main() {
         hindi: 'Namaste',
         tamil: 'Vanakkam',
         pronunciation: 'वनक्कम',
-        audioPath: '', // Provide a valid audio path
+        audioPath: 'assets/audio/l1_greet.mp3', // Now required
       );
 
       expect(wordPair.hindi, 'Namaste');
       expect(wordPair.tamil, 'Vanakkam');
       expect(wordPair.pronunciation, 'वनक्कम');
+      expect(wordPair.audioPath, 'assets/audio/l1_greet.mp3');
     });
 
-    test('should allow creating multiple WordPair instances', () {
-      final pair1 = WordPair(
-        hindi: 'Hello',
-        tamil: 'Vanakkam',
-        pronunciation: 'वनक्कम',
-      );
-      final pair2 = WordPair(
-        hindi: 'Goodbye',
-        tamil: 'Poitu varen',
-        pronunciation: 'पोइतु वरेन',
-      );
+    test('should parse from JSON correctly', () {
+      final json = {
+        "tamil": "வணக்கம்",
+        "hindi": "नमस्ते",
+        "pronunciation": "वणक्कम्",
+        "audio_path": "assets/audio/l1_namaste.mp3"
+      };
 
-      expect(pair1.hindi, isNot(equals(pair2.hindi)));
-      expect(pair1.tamil, isNot(equals(pair2.tamil)));
+      final pair = WordPair.fromJson(json);
+
+      expect(pair.tamil, "வணக்கம்");
+      expect(pair.hindi, "नमस्ते");
+      expect(pair.pronunciation, "वणक्कम्");
+      expect(pair.audioPath, "assets/audio/l1_namaste.mp3");
     });
   });
 }
