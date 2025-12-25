@@ -3,12 +3,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tamil_setu/services/progress_service.dart';
 
 void main() {
+  // Ensure the binding is initialized before using SharedPreferences mocks
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   late ProgressService progressService;
 
   setUp(() {
-    progressService = ProgressService();
     // Initialize SharedPreferences with mock values
     SharedPreferences.setMockInitialValues({});
+    progressService = ProgressService();
   });
 
   group('ProgressService', () {

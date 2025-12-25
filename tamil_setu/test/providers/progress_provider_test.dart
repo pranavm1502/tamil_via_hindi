@@ -3,6 +3,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tamil_setu/providers/progress_provider.dart';
 
 void main() {
+  // ✅ FIX: Ensure binding is initialized before using SharedPreferences mocks
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   late ProgressProvider progressProvider;
 
   setUp(() {
