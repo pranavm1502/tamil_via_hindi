@@ -1,0 +1,134 @@
+[
+    {
+        "level": 1,
+        "topic": "Basics",
+        "lessons": [
+            {
+                "tamil": "வணக்கம்",
+                "hindi_meaning": "नमस्ते",
+                "hindi_pronunciation": "வணக்கம்",
+                "audio_file": "assets/audio/l1_greet.wav"
+            },
+            {
+                "tamil": "ஆம்",
+                "hindi_meaning": "हाँ",
+                "hindi_pronunciation": "ஆம்",
+                "audio_file": "assets/audio/l1_yes.wav"
+            },
+            {
+                "tamil": "இல்லை",
+                "hindi_meaning": "नहीं",
+                "hindi_pronunciation": "இல்லை",
+                "audio_file": "assets/audio/l1_no.wav"
+            },
+            {
+                "tamil": "சரி",
+                "hindi_meaning": "ठीक है",
+                "hindi_pronunciation": "சரி",
+                "audio_file": "assets/audio/l1_ok.wav"
+            }
+        ]
+    },
+    {
+        "level": 2,
+        "topic": "Pronouns",
+        "lessons": [
+            {
+                "tamil": "நான்",
+                "hindi_meaning": "मैं",
+                "hindi_pronunciation": "நான்",
+                "audio_file": "assets/audio/l2_i.wav"
+            },
+            {
+                "tamil": "நீங்கள்",
+                "hindi_meaning": "आप (सम्मानजनक)",
+                "hindi_pronunciation": "நீங்கள்",
+                "audio_file": "assets/audio/l2_you.wav"
+            },
+            {
+                "tamil": "இது",
+                "hindi_meaning": "यह",
+                "hindi_pronunciation": "இது",
+                "audio_file": "assets/audio/l2_this.wav"
+            },
+            {
+                "tamil": "அது",
+                "hindi_meaning": "वह",
+                "hindi_pronunciation": "அது",
+                "audio_file": "assets/audio/l2_that.wav"
+            }
+        ]
+    },
+    {
+        "level": 3,
+        "topic": "Case Markers",
+        "lessons": [
+            {
+                "tamil": "ராமனுக்கு",
+                "hindi_meaning": "राम को",
+                "hindi_pronunciation": "ராமனுக்கு",
+                "audio_file": "assets/audio/l3_ko.wav"
+            },
+            {
+                "tamil": "வீட்டிலிருந்து",
+                "hindi_meaning": "घर से",
+                "hindi_pronunciation": "வீட்டிலிருந்து",
+                "audio_file": "assets/audio/l3_se.wav"
+            },
+            {
+                "tamil": "வீட்டில்",
+                "hindi_meaning": "घर में",
+                "hindi_pronunciation": "வீட்டில்",
+                "audio_file": "assets/audio/l3_mein.wav"
+            }
+        ]
+    },
+    {
+        "level": 4,
+        "topic": "Verbs (Present)",
+        "lessons": [
+            {
+                "tamil": "நான் போகிறேன்",
+                "hindi_meaning": "मैं जा रहा हूँ",
+                "hindi_pronunciation": "நான் போகிறேன்",
+                "audio_file": "assets/audio/l4_go.wav"
+            },
+            {
+                "tamil": "நான் சாப்பிடுகிறேன்",
+                "hindi_meaning": "मैं खा रहा हूँ",
+                "hindi_pronunciation": "நான் சாப்பிடுகிறேன்",
+                "audio_file": "assets/audio/l4_eat.wav"
+            },
+            {
+                "tamil": "நான் பார்க்கிறேன்",
+                "hindi_meaning": "मैं देख रहा हूँ",
+                "hindi_pronunciation": "நான் பார்க்கிறேன்",
+                "audio_file": "assets/audio/l4_see.wav"
+            }
+        ]
+    },
+    {
+        "level": 5,
+        "topic": "Needs & Questions",
+        "lessons": [
+            {
+                "tamil": "இது என்ன?",
+                "hindi_meaning": "यह क्या है?",
+                "hindi_pronunciation": "இது என்ன?",
+                "audio_file": "assets/audio/l5_what.wav"
+            },
+            {
+                "tamil": "தண்ணீர் வேண்டும்",
+                "hindi_meaning": "पानी चाहिए",
+                "hindi_pronunciation": "தண்ணீர் வேண்டும்",
+                "audio_file": "assets/audio/l5_want.wav"
+            },
+            {
+                "tamil": "உங்கள் வீடு எங்கே?",
+                "hindi_meaning": "आपका घर कहाँ है?",
+                "hindi_pronunciation": "உங்கள் வீடு எங்கே?",
+                "audio_file": "assets/audio/l5_where.wav"
+            }
+        ]
+    }
+]
