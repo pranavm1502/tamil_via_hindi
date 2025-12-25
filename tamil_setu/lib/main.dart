@@ -18,7 +18,8 @@ void main() async {
   await Future.wait([
     progressProvider.loadProgress(),
     themeProvider.initialize(),
-    contentProvider.loadContent(), // Load JSON here to prevent loading spinners later
+    contentProvider
+        .loadContent(), // Load JSON here to prevent loading spinners later
   ]);
 
   runApp(
@@ -26,7 +27,8 @@ void main() async {
       providers: [
         ChangeNotifierProvider.value(value: progressProvider),
         ChangeNotifierProvider.value(value: themeProvider),
-        ChangeNotifierProvider.value(value: contentProvider), // Register it here
+        ChangeNotifierProvider.value(
+            value: contentProvider), // Register it here
       ],
       child: const TamilSetuApp(),
     ),
@@ -43,7 +45,8 @@ class TamilSetuApp extends StatelessWidget {
         return MaterialApp(
           title: 'Tamil Setu',
           debugShowCheckedModeBanner: false,
-          theme: ThemeProvider.lightTheme, // Ensure these getters exist in your ThemeProvider
+          theme: ThemeProvider
+              .lightTheme, // Ensure these getters exist in your ThemeProvider
           darkTheme: ThemeProvider.darkTheme,
           themeMode: themeProvider.themeMode,
           home: const DashboardScreen(),

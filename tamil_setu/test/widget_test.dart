@@ -13,17 +13,20 @@ void main() {
   SharedPreferences.setMockInitialValues({});
 
   // 4. Mock Flutter TTS
-  const MethodChannel('flutter_tts').setMockMethodCallHandler((MethodCall methodCall) async {
+  const MethodChannel('flutter_tts')
+      .setMockMethodCallHandler((MethodCall methodCall) async {
     return 1;
   });
 
   // 5. Mock AudioPlayers
-  const MethodChannel('xyz.luan/audioplayers').setMockMethodCallHandler((MethodCall methodCall) async {
+  const MethodChannel('xyz.luan/audioplayers')
+      .setMockMethodCallHandler((MethodCall methodCall) async {
     return 1;
   });
 
   // 6. Mock PathProvider
-  const MethodChannel('plugins.flutter.io/path_provider').setMockMethodCallHandler((MethodCall methodCall) async {
+  const MethodChannel('plugins.flutter.io/path_provider')
+      .setMockMethodCallHandler((MethodCall methodCall) async {
     return '.';
   });
 
@@ -43,15 +46,17 @@ void main() {
 //     print("🚨 DEBUG: App seems to have loaded. Found widgets: ${find.byType(Card).evaluate().length} Cards");
 //   }
 // });
-  testWidgets('Tamil Setu app launches and loads dashboard', (WidgetTester tester) async {
+  testWidgets('Tamil Setu app launches and loads dashboard',
+      (WidgetTester tester) async {
     await tester.pumpWidget(makeTestableWidget(child: const TamilSetuApp()));
     await tester.pumpAndSettle();
-    
+
     expect(find.text('Tamil Setu (हिंदी ➡️ தமிழ்)'), findsOneWidget);
     expect(find.byType(Card), findsWidgets);
   });
 
-  testWidgets('Dashboard shows correct lesson titles and icons', (WidgetTester tester) async {
+  testWidgets('Dashboard shows correct lesson titles and icons',
+      (WidgetTester tester) async {
     await tester.pumpWidget(makeTestableWidget(child: const TamilSetuApp()));
     await tester.pumpAndSettle();
 
@@ -69,7 +74,7 @@ void main() {
 
     expect(find.text('Learn'), findsOneWidget);
     // Ensure this matches the actual text in your app (Flashcards vs Quiz)
-    expect(find.text('Flashcards'), findsOneWidget); 
+    expect(find.text('Flashcards'), findsOneWidget);
     expect(find.text('MCQ'), findsOneWidget);
   });
 }

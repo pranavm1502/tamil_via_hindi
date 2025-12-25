@@ -11,7 +11,7 @@ Widget makeTestableWidget({required Widget child}) {
       ChangeNotifierProvider(
         create: (_) => ProgressProvider()..loadProgress(),
       ),
-      
+
       // 2. Trigger initialize immediately
       ChangeNotifierProvider(
         create: (_) => ThemeProvider()..initialize(),

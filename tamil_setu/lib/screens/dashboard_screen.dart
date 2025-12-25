@@ -115,8 +115,8 @@ class _ProgressHeader extends StatelessWidget {
                     '$completedCount/$totalLessons levels',
                     style: TextStyle(
                       fontSize: 16,
-                      color:
-                          theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+                      color: theme.textTheme.bodyMedium?.color
+                          ?.withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -136,7 +136,8 @@ class _ProgressHeader extends StatelessWidget {
                 '${overallProgress.toStringAsFixed(0)}% Complete',
                 style: TextStyle(
                   fontSize: 14,
-                  color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+                  color:
+                      theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
                   fontWeight: FontWeight.w500,
                 ),
               ),

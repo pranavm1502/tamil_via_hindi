@@ -10,7 +10,8 @@ void main() {
           hindi: 'Namaste',
           tamil: 'Vanakkam',
           pronunciation: 'वनक्कम',
-          audioPath: 'assets/audio/l1.mp3', // TODO: this is currently not being checked
+          audioPath:
+              'assets/audio/l1.mp3', // TODO: this is currently not being checked
         ),
       ];
 

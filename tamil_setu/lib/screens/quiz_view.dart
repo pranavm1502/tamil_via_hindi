@@ -72,7 +72,7 @@ class _QuizViewState extends State<QuizView> {
   void _showResultDialog() {
     // 1. Calculate percentage (Fixes 'unused variable' warning)
     final percentage = (score / shuffledWords.length * 100).round();
-    
+
     String message;
     IconData icon;
     Color color;
@@ -111,7 +111,7 @@ class _QuizViewState extends State<QuizView> {
             const SizedBox(height: 8),
             // 2. Display percentage (Fixes 'unused variable' warning)
             Text(
-              '$percentage%', 
+              '$percentage%',
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
@@ -171,7 +171,7 @@ class _QuizViewState extends State<QuizView> {
           Card(
             elevation: 8,
             child: Container(
-              height: 250, 
+              height: 250,
               alignment: Alignment.center,
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -218,7 +218,7 @@ class _QuizViewState extends State<QuizView> {
               style: FilledButton.styleFrom(padding: const EdgeInsets.all(16)),
               onPressed: () {
                 setState(() => showAnswer = true);
-                _playAudio(currentWord.audioPath); 
+                _playAudio(currentWord.audioPath);
               },
               icon: const Icon(Icons.visibility),
               label: const Text('Show Answer', style: TextStyle(fontSize: 18)),
