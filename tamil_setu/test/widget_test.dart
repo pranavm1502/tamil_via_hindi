@@ -6,56 +6,32 @@ import 'package:tamil_setu/main.dart';
 import 'test_helpers.dart';
 
 void main() {
-  // 1. Initialize bindings
   TestWidgetsFlutterBinding.ensureInitialized();
-
-  // 2. Mock Shared Preferences (Critical for your app)
   SharedPreferences.setMockInitialValues({});
 
-  // 3. Mock Flutter TTS (New Syntax)
+  // Mock Platform Channels
   TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-      .setMockMethodCallHandler(
-    const MethodChannel('flutter_tts'),
-    (MethodCall methodCall) async {
-      return 1; // Return success
-    },
-  );
-
-  // 4. Mock AudioPlayers (New Syntax)
+      .setMockMethodCallHandler(const MethodChannel('flutter_tts'), (c) async => 1);
   TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-      .setMockMethodCallHandler(
-    const MethodChannel('xyz.luan/audioplayers'),
-    (MethodCall methodCall) async {
-      return 1; // Return success
-    },
-  );
-
-  // 5. Mock PathProvider (New Syntax)
+      .setMockMethodCallHandler(const MethodChannel('xyz.luan/audioplayers'), (c) async => 1);
   TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-      .setMockMethodCallHandler(
-    const MethodChannel('plugins.flutter.io/path_provider'),
-    (MethodCall methodCall) async {
-      return '.'; // Return a fake dot path
-    },
-  );
+      .setMockMethodCallHandler(const MethodChannel('plugins.flutter.io/path_provider'), (c) async => '.');
 
-  testWidgets('Tamil Setu app launches and loads dashboard',
-      (WidgetTester tester) async {
-    // Note: Ensure your makeTestableWidget in test_helpers.dart
-    // uses the "..loadContent()" fix we discussed!
+  testWidgets('Tamil Setu app launches and loads dashboard', (WidgetTester tester) async {
     await tester.pumpWidget(makeTestableWidget(child: const TamilSetuApp()));
 
-    // Wait for the JSON load and spinner to finish
-    await tester.pumpAndSettle();
+    // ✅ App Start: Wait for the Spinner to go away
+    await waitForLoader(tester);
 
     expect(find.text('Tamil Setu (हिंदी ➡️ தமிழ்)'), findsOneWidget);
     expect(find.byType(Card), findsWidgets);
   });
 
-  testWidgets('Dashboard shows correct lesson titles and icons',
-      (WidgetTester tester) async {
+  testWidgets('Dashboard shows correct lesson titles and icons', (WidgetTester tester) async {
     await tester.pumpWidget(makeTestableWidget(child: const TamilSetuApp()));
-    await tester.pumpAndSettle();
+    
+    // ✅ App Start: Wait for the Spinner to go away
+    await waitForLoader(tester);
 
     expect(find.text('Basics (Greet)'), findsOneWidget);
     expect(find.text('Pronouns'), findsOneWidget);
@@ -64,15 +40,22 @@ void main() {
 
   testWidgets('Can navigate to lesson screen', (WidgetTester tester) async {
     await tester.pumpWidget(makeTestableWidget(child: const TamilSetuApp()));
-    await tester.pumpAndSettle();
+    
+    // ✅ App Start: Wait for the Spinner to go away
+    await waitForLoader(tester);
 
+    // 👆 Now we are on the dashboard. Tap the card.
     await tester.tap(find.text('Basics (Greet)'));
-    await tester.pumpAndSettle();
 
+    // ✅ NAVIGATION FIX: Use pumpAndSettle here!
+    // Why? Because we are waiting for a "Slide Transition" animation, not a loading spinner.
+    await tester.pumpAndSettle();
+    
     expect(find.text('Learn'), findsOneWidget);
     expect(find.text('Flashcards'), findsOneWidget);
     expect(find.text('MCQ'), findsOneWidget);
   });
+}
 //   testWidgets('DEBUG: Check what is stuck on screen', (WidgetTester tester) async {
 //   // 1. Build app
 //   await tester.pumpWidget(makeTestableWidget(child: const TamilSetuApp()));
@@ -89,4 +72,4 @@ void main() {
 //     print("🚨 DEBUG: App seems to have loaded. Found widgets: ${find.byType(Card).evaluate().length} Cards");
 //   }
 // });
-}
+// }
