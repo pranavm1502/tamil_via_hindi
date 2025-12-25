@@ -16,7 +16,7 @@ class WordPair {
     return WordPair(
       hindi: json['hindi_meaning'],
       tamil: json['tamil'],
-      hindiScript: json['hindi_script'],
+      hindiScript: json['pronunciation_bridge'],
       audioPath: json['audio'],
     );
   }
