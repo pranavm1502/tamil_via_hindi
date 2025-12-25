@@ -38,7 +38,10 @@ void main() {
     test('should allow multiple words in a lesson', () {
       final words = [
         WordPair(hindi: 'Hello', tamil: 'Vanakkam', pronunciation: 'वनक्कम'),
-        WordPair(hindi: 'Goodbye', tamil: 'Poitu varen', pronunciation: 'पोइतु वरेन'),
+        WordPair(
+            hindi: 'Goodbye',
+            tamil: 'Poitu varen',
+            pronunciation: 'पोइतु वरेन'),
       ];
 
       final lesson = Lesson(

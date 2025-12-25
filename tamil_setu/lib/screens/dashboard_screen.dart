@@ -22,9 +22,7 @@ class DashboardScreen extends StatelessWidget {
             builder: (context, themeProvider, child) {
               return IconButton(
                 icon: Icon(
-                  themeProvider.isDarkMode
-                      ? Icons.light_mode
-                      : Icons.dark_mode,
+                  themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode,
                 ),
                 onPressed: () => themeProvider.toggleTheme(),
                 tooltip: themeProvider.isDarkMode
@@ -99,7 +97,8 @@ class _ProgressHeader extends StatelessWidget {
                     '$completedCount/${curriculum.length} lessons',
                     style: TextStyle(
                       fontSize: 16,
-                      color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+                      color: theme.textTheme.bodyMedium?.color
+                          ?.withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -119,7 +118,8 @@ class _ProgressHeader extends StatelessWidget {
                 '$overallProgress% Complete',
                 style: TextStyle(
                   fontSize: 14,
-                  color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+                  color:
+                      theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
                   fontWeight: FontWeight.w500,
                 ),
               ),

@@ -42,7 +42,8 @@ class ProgressService {
     final key = '$_quizScoresKey$lessonIndex';
     await prefs.setInt(key, score);
     await prefs.setInt('${key}_total', total);
-    await prefs.setInt('${key}_timestamp', DateTime.now().millisecondsSinceEpoch);
+    await prefs.setInt(
+        '${key}_timestamp', DateTime.now().millisecondsSinceEpoch);
 
     // Mark lesson as completed if score is 80% or higher
     if (score / total >= 0.8) {

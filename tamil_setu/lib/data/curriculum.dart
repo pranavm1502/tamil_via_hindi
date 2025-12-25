@@ -8,12 +8,21 @@ final List<Lesson> curriculum = [
     description: "Start with Namaste and basic questions.",
     words: [
       WordPair(hindi: "Namaste", tamil: "Vanakkam", pronunciation: "वनक्कम"),
-      WordPair(hindi: "Kaise ho?", tamil: "Eppadi irukeenga?", pronunciation: "एप्पडी इरुकींगा?"),
-      WordPair(hindi: "Main theek hoon", tamil: "Naan nalla irukken", pronunciation: "नान नल्ला इरुक्केन"),
+      WordPair(
+          hindi: "Kaise ho?",
+          tamil: "Eppadi irukeenga?",
+          pronunciation: "एप्पडी इरुकींगा?"),
+      WordPair(
+          hindi: "Main theek hoon",
+          tamil: "Naan nalla irukken",
+          pronunciation: "नान नल्ला इरुक्केन"),
       WordPair(hindi: "Kya?", tamil: "Enna?", pronunciation: "एन्ना?"),
       WordPair(hindi: "Naam", tamil: "Peyer", pronunciation: "पेयर"),
       WordPair(hindi: "Dhanyavaad", tamil: "Nandri", pronunciation: "नंद्रि"),
-      WordPair(hindi: "Maaf kijiye", tamil: "Mannikkavum", pronunciation: "मन्निक्कवुम"),
+      WordPair(
+          hindi: "Maaf kijiye",
+          tamil: "Mannikkavum",
+          pronunciation: "मन्निक्कवुम"),
       WordPair(hindi: "Haan", tamil: "Aam", pronunciation: "आम"),
       WordPair(hindi: "Nahi", tamil: "Illai", pronunciation: "इल्लै"),
     ],
@@ -28,20 +37,35 @@ final List<Lesson> curriculum = [
       WordPair(hindi: "Yeh (This person)", tamil: "Ivar", pronunciation: "इवर"),
       WordPair(hindi: "Woh (That person)", tamil: "Avar", pronunciation: "अवर"),
       WordPair(hindi: "Hum", tamil: "Naangal", pronunciation: "नांगल"),
-      WordPair(hindi: "Ye log (These people)", tamil: "Ivargal", pronunciation: "इवर्गल"),
-      WordPair(hindi: "Wo log (Those people)", tamil: "Avargal", pronunciation: "अवर्गल"),
+      WordPair(
+          hindi: "Ye log (These people)",
+          tamil: "Ivargal",
+          pronunciation: "इवर्गल"),
+      WordPair(
+          hindi: "Wo log (Those people)",
+          tamil: "Avargal",
+          pronunciation: "अवर्गल"),
     ],
   ),
   Lesson(
     title: "3. Common Verbs",
     description: "Action words for daily life.",
     words: [
-      WordPair(hindi: "Aana (Come)", tamil: "Vaa / Vaanga", pronunciation: "वा / वांगा"),
-      WordPair(hindi: "Jaana (Go)", tamil: "Po / Ponga", pronunciation: "पो / पोंगा"),
+      WordPair(
+          hindi: "Aana (Come)",
+          tamil: "Vaa / Vaanga",
+          pronunciation: "वा / वांगा"),
+      WordPair(
+          hindi: "Jaana (Go)",
+          tamil: "Po / Ponga",
+          pronunciation: "पो / पोंगा"),
       WordPair(hindi: "Khana (Eat)", tamil: "Saapidu", pronunciation: "सापिडु"),
       WordPair(hindi: "Peena (Drink)", tamil: "Kudi", pronunciation: "कुडि"),
       WordPair(hindi: "Sona (Sleep)", tamil: "Toongu", pronunciation: "तूंगु"),
-      WordPair(hindi: "Uthna (Wake up)", tamil: "Ezhundiru", pronunciation: "एझुन्दिरु"),
+      WordPair(
+          hindi: "Uthna (Wake up)",
+          tamil: "Ezhundiru",
+          pronunciation: "एझुन्दिरु"),
       WordPair(hindi: "Dekhna (See)", tamil: "Paaru", pronunciation: "पारु"),
       WordPair(hindi: "Sunna (Hear)", tamil: "Kaelu", pronunciation: "काएलु"),
       WordPair(hindi: "Bolna (Speak)", tamil: "Pesu", pronunciation: "पेसु"),
@@ -69,9 +93,18 @@ final List<Lesson> curriculum = [
     words: [
       WordPair(hindi: "Maa", tamil: "Amma", pronunciation: "अम्मा"),
       WordPair(hindi: "Papa", tamil: "Appa", pronunciation: "अप्पा"),
-      WordPair(hindi: "Bhai", tamil: "Annan (elder) / Thambi (younger)", pronunciation: "अन्नन / थम्बि"),
-      WordPair(hindi: "Behen", tamil: "Akka (elder) / Thangai (younger)", pronunciation: "अक्का / थंगै"),
-      WordPair(hindi: "Dada/Dadi", tamil: "Thatha / Paatti", pronunciation: "थथा / पाट्टि"),
+      WordPair(
+          hindi: "Bhai",
+          tamil: "Annan (elder) / Thambi (younger)",
+          pronunciation: "अन्नन / थम्बि"),
+      WordPair(
+          hindi: "Behen",
+          tamil: "Akka (elder) / Thangai (younger)",
+          pronunciation: "अक्का / थंगै"),
+      WordPair(
+          hindi: "Dada/Dadi",
+          tamil: "Thatha / Paatti",
+          pronunciation: "थथा / पाट्टि"),
       WordPair(hindi: "Beta", tamil: "Magan", pronunciation: "मगन"),
       WordPair(hindi: "Beti", tamil: "Magal", pronunciation: "मगल"),
       WordPair(hindi: "Pati", tamil: "Kanavan", pronunciation: "कनवन"),
@@ -86,10 +119,13 @@ final List<Lesson> curriculum = [
       WordPair(hindi: "Neela (Blue)", tamil: "Neelam", pronunciation: "नीलम"),
       WordPair(hindi: "Hara (Green)", tamil: "Pachai", pronunciation: "पचै"),
       WordPair(hindi: "Peela (Yellow)", tamil: "Manjal", pronunciation: "मंजल"),
-      WordPair(hindi: "Kala (Black)", tamil: "Karuppu", pronunciation: "करुप्पु"),
-      WordPair(hindi: "Safed (White)", tamil: "Vellai", pronunciation: "वेल्लै"),
+      WordPair(
+          hindi: "Kala (Black)", tamil: "Karuppu", pronunciation: "करुप्पु"),
+      WordPair(
+          hindi: "Safed (White)", tamil: "Vellai", pronunciation: "वेल्लै"),
       WordPair(hindi: "Gulabi (Pink)", tamil: "Panju", pronunciation: "पंजु"),
-      WordPair(hindi: "Narangi (Orange)", tamil: "Narangi", pronunciation: "नरंगि"),
+      WordPair(
+          hindi: "Narangi (Orange)", tamil: "Narangi", pronunciation: "नरंगि"),
     ],
   ),
   Lesson(
@@ -112,14 +148,18 @@ final List<Lesson> curriculum = [
     description: "Express time and days of the week.",
     words: [
       WordPair(hindi: "Aaj", tamil: "Indru", pronunciation: "इन्द्रु"),
-      WordPair(hindi: "Kal (Yesterday)", tamil: "Netru", pronunciation: "नेत्रु"),
+      WordPair(
+          hindi: "Kal (Yesterday)", tamil: "Netru", pronunciation: "नेत्रु"),
       WordPair(hindi: "Kal (Tomorrow)", tamil: "Naalai", pronunciation: "नालै"),
       WordPair(hindi: "Subah", tamil: "Kaalai", pronunciation: "कालै"),
       WordPair(hindi: "Shaam", tamil: "Maalai", pronunciation: "मालै"),
       WordPair(hindi: "Raat", tamil: "Raathiri", pronunciation: "राथिरि"),
-      WordPair(hindi: "Somvaar (Monday)", tamil: "Thingal", pronunciation: "थिंगल"),
-      WordPair(hindi: "Shanivar (Saturday)", tamil: "Sani", pronunciation: "सनि"),
-      WordPair(hindi: "Ravivar (Sunday)", tamil: "Gnayiru", pronunciation: "ग्नैरु"),
+      WordPair(
+          hindi: "Somvaar (Monday)", tamil: "Thingal", pronunciation: "थिंगल"),
+      WordPair(
+          hindi: "Shanivar (Saturday)", tamil: "Sani", pronunciation: "सनि"),
+      WordPair(
+          hindi: "Ravivar (Sunday)", tamil: "Gnayiru", pronunciation: "ग्नैरु"),
     ],
   ),
 ];

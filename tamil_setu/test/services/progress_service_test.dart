@@ -65,14 +65,16 @@ void main() {
       expect(percentage, 90);
     });
 
-    test('should mark lesson as completed when score is 80% or higher', () async {
+    test('should mark lesson as completed when score is 80% or higher',
+        () async {
       await progressService.saveQuizScore(0, 8, 10);
       final isCompleted = await progressService.isLessonCompleted(0);
 
       expect(isCompleted, isTrue);
     });
 
-    test('should not mark lesson as completed when score is below 80%', () async {
+    test('should not mark lesson as completed when score is below 80%',
+        () async {
       await progressService.saveQuizScore(0, 7, 10);
       final isCompleted = await progressService.isLessonCompleted(0);
 

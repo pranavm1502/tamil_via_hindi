@@ -3,7 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tamil_setu/main.dart';
 
 void main() {
-  testWidgets('Tamil Setu app launches successfully', (WidgetTester tester) async {
+  testWidgets('Tamil Setu app launches successfully',
+      (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const TamilSetuApp());
 
@@ -14,7 +15,8 @@ void main() {
     expect(find.byType(Card), findsWidgets);
   });
 
-  testWidgets('Dashboard shows curriculum lessons', (WidgetTester tester) async {
+  testWidgets('Dashboard shows curriculum lessons',
+      (WidgetTester tester) async {
     await tester.pumpWidget(const TamilSetuApp());
 
     // Verify that lesson titles are present

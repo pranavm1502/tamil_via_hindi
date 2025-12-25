@@ -45,7 +45,8 @@ class ProgressProvider with ChangeNotifier {
       return _lessonScores[lessonIndex];
     }
 
-    final percentage = await _progressService.getBestScorePercentage(lessonIndex);
+    final percentage =
+        await _progressService.getBestScorePercentage(lessonIndex);
     if (percentage != null) {
       _lessonScores[lessonIndex] = percentage;
     }

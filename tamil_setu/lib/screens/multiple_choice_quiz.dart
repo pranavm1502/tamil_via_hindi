@@ -47,10 +47,8 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
       otherWords.addAll(widget.words.take(3));
     }
 
-    final wrongAnswers = (otherWords.toList()..shuffle())
-        .take(3)
-        .map((w) => w.tamil)
-        .toList();
+    final wrongAnswers =
+        (otherWords.toList()..shuffle()).take(3).map((w) => w.tamil).toList();
 
     // Combine and shuffle options
     currentOptions = [correctAnswer, ...wrongAnswers]..shuffle(random);
@@ -103,8 +101,10 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
     }
 
     // Save progress
-    final progressProvider = Provider.of<ProgressProvider>(context, listen: false);
-    progressProvider.saveQuizScore(widget.lessonIndex, score, shuffledWords.length);
+    final progressProvider =
+        Provider.of<ProgressProvider>(context, listen: false);
+    progressProvider.saveQuizScore(
+        widget.lessonIndex, score, shuffledWords.length);
 
     showDialog(
       context: context,

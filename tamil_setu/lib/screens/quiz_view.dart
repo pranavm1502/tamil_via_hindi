@@ -74,8 +74,10 @@ class _QuizViewState extends State<QuizView> {
     }
 
     // Save quiz score to progress
-    final progressProvider = Provider.of<ProgressProvider>(context, listen: false);
-    progressProvider.saveQuizScore(widget.lessonIndex, score, shuffledWords.length);
+    final progressProvider =
+        Provider.of<ProgressProvider>(context, listen: false);
+    progressProvider.saveQuizScore(
+        widget.lessonIndex, score, shuffledWords.length);
 
     showDialog(
       context: context,
