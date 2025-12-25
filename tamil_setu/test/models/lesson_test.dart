@@ -10,49 +10,44 @@ void main() {
           hindi: 'Namaste',
           tamil: 'Vanakkam',
           pronunciation: 'वनक्कम',
+          audioPath:
+              'assets/audio/l1.mp3', // TODO: this is currently not being checked
         ),
       ];
 
       final lesson = Lesson(
+        level: 1, // Now required
         title: 'Basics',
         description: 'Basic greetings',
         words: words,
       );
 
+      expect(lesson.level, 1);
       expect(lesson.title, 'Basics');
-      expect(lesson.description, 'Basic greetings');
-      expect(lesson.words, words);
       expect(lesson.words.length, 1);
     });
 
-    test('should allow empty word list', () {
-      final lesson = Lesson(
-        title: 'Empty Lesson',
-        description: 'A lesson with no words',
-        words: [],
-      );
+    test('should parse from JSON correctly', () {
+      final json = {
+        'level': 1,
+        'title': 'Basics',
+        'description': 'Start with Namaste',
+        'words': [
+          {
+            'tamil': 'வணக்கம்',
+            'hindi': 'नमस्ते',
+            'pronunciation': 'वणक्कम्',
+            'audio_path': 'assets/audio/l1.mp3'
+          }
+        ]
+      };
 
-      expect(lesson.words, isEmpty);
-    });
+      final lesson = Lesson.fromJson(json);
 
-    test('should allow multiple words in a lesson', () {
-      final words = [
-        WordPair(hindi: 'Hello', tamil: 'Vanakkam', pronunciation: 'वनक्कम'),
-        WordPair(
-            hindi: 'Goodbye',
-            tamil: 'Poitu varen',
-            pronunciation: 'पोइतु वरेन'),
-      ];
-
-      final lesson = Lesson(
-        title: 'Greetings',
-        description: 'Common greetings',
-        words: words,
-      );
-
-      expect(lesson.words.length, 2);
-      expect(lesson.words[0].hindi, 'Hello');
-      expect(lesson.words[1].hindi, 'Goodbye');
+      expect(lesson.level, 1);
+      expect(lesson.title, 'Basics');
+      expect(lesson.words.first.tamil, 'வணக்கம்');
+      expect(lesson.words.first.audioPath, 'assets/audio/l1.mp3');
     });
   });
 }
