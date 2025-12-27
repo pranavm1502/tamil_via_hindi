@@ -59,7 +59,6 @@ class _QuizViewState extends State<QuizView> {
     });
   }
 
-  // This method was previously unused; now it's called by the "Retry" button
   void _restartQuiz() {
     setState(() {
       currentIndex = 0;
@@ -70,7 +69,6 @@ class _QuizViewState extends State<QuizView> {
   }
 
   void _showResultDialog() {
-    // 1. Calculate percentage (Fixes 'unused variable' warning)
     final percentage = (score / shuffledWords.length * 100).round();
 
     String message;
@@ -91,7 +89,6 @@ class _QuizViewState extends State<QuizView> {
       color = Colors.blue;
     }
 
-    // Save progress
     Provider.of<ProgressProvider>(context, listen: false)
         .saveQuizScore(widget.lessonIndex, score, shuffledWords.length);
 
@@ -109,7 +106,6 @@ class _QuizViewState extends State<QuizView> {
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 8),
-            // 2. Display percentage (Fixes 'unused variable' warning)
             Text(
               '$percentage%',
               style: TextStyle(
@@ -129,14 +125,14 @@ class _QuizViewState extends State<QuizView> {
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
-              _restartQuiz(); // 3. Fixes 'unused element' warning
+              _restartQuiz(); 
             },
             child: const Text('Retry Quiz'),
           ),
           FilledButton(
             onPressed: () {
               Navigator.pop(ctx);
-              Navigator.pop(context); // Go back to lesson screen
+              Navigator.pop(context); 
             },
             child: const Text('Finish'),
           ),
@@ -159,77 +155,93 @@ class _QuizViewState extends State<QuizView> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          LinearProgressIndicator(
-            value: (currentIndex + 1) / shuffledWords.length,
-            backgroundColor: Colors.grey[300],
-            color: Colors.orange,
+          // Progress Bar
+          ClipRRect(
+            borderRadius: BorderRadius.circular(5),
+            child: LinearProgressIndicator(
+              value: (currentIndex + 1) / shuffledWords.length,
+              backgroundColor: Colors.grey[300],
+              minHeight: 10,
+              color: Colors.green.shade600,
+            ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
           Text('Question ${currentIndex + 1}/${shuffledWords.length}',
-              textAlign: TextAlign.center),
+              textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.w500)),
           const SizedBox(height: 20),
+          
+          // Flashcard View
           Card(
-            elevation: 8,
+            elevation: 10,
+            shadowColor: Colors.grey.shade400,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             child: Container(
-              height: 250,
+              height: 280,
               alignment: Alignment.center,
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(30),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text('Translate this Hindi word:',
-                      style: TextStyle(color: Colors.grey)),
-                  const SizedBox(height: 10),
+                      style: TextStyle(color: Colors.grey, fontSize: 16)),
+                  const SizedBox(height: 15),
                   Text(
                     currentWord.hindi,
                     style: const TextStyle(
-                        fontSize: 32, fontWeight: FontWeight.bold),
+                        fontSize: 36, fontWeight: FontWeight.w900, color: Colors.blue),
                     textAlign: TextAlign.center,
                   ),
-                  const Divider(height: 30),
+                  const Divider(height: 30, color: Colors.grey),
+                  
+                  // ANSWER / QUESTION MARK
                   if (showAnswer) ...[
-                    // START CHANGE: Combine Tamil script and Pronunciation
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           currentWord.tamil,
                           style: const TextStyle(
-                              fontSize: 32,
+                              fontSize: 36,
                               fontWeight: FontWeight.bold,
-                              color: Colors.orange),
+                              color: Colors.deepOrange),
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          '(${currentWord.pronunciation})', // Show pronunciation right after
+                          '(${currentWord.pronunciation})', 
                           style:
-                              const TextStyle(fontSize: 28, color: Colors.blueGrey),
+                              const TextStyle(fontSize: 30, color: Colors.blueGrey),
+                        ),
+                        // Audio Button
+                        IconButton(
+                          icon: const Icon(Icons.volume_up,
+                              size: 35, color: Colors.blue),
+                          onPressed: () => _playAudio(currentWord.audioPath),
                         ),
                       ],
                     ),
-                    // END CHANGE
-                    IconButton(
-                      icon: const Icon(Icons.volume_up,
-                          size: 30, color: Colors.blue),
-                      onPressed: () => _playAudio(currentWord.audioPath),
-                    ),
                   ] else
                     const Text('?',
-                        style: TextStyle(fontSize: 40, color: Colors.orange)),
+                        style: TextStyle(fontSize: 50, color: Colors.grey)),
                 ],
               ),
             ),
           ),
           const SizedBox(height: 40),
+          
+          // ACTION BUTTONS
           if (!showAnswer)
             FilledButton.icon(
-              style: FilledButton.styleFrom(padding: const EdgeInsets.all(16)),
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.all(18),
+                backgroundColor: Colors.orange.shade700,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
               onPressed: () {
                 setState(() => showAnswer = true);
                 _playAudio(currentWord.audioPath);
               },
               icon: const Icon(Icons.visibility),
-              label: const Text('Show Answer', style: TextStyle(fontSize: 18)),
+              label: const Text('Show Answer', style: TextStyle(fontSize: 20)),
             )
           else
             Row(
@@ -237,22 +249,24 @@ class _QuizViewState extends State<QuizView> {
                 Expanded(
                   child: FilledButton.icon(
                     style: FilledButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        padding: const EdgeInsets.all(16)),
+                        backgroundColor: Colors.red.shade600,
+                        padding: const EdgeInsets.all(16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
                     onPressed: () => _nextCard(false),
                     icon: const Icon(Icons.close),
-                    label: const Text('Wrong'),
+                    label: const Text('I need more practice', style: TextStyle(fontSize: 16)),
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: FilledButton.icon(
                     style: FilledButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        padding: const EdgeInsets.all(16)),
+                        backgroundColor: Colors.green.shade600,
+                        padding: const EdgeInsets.all(16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
                     onPressed: () => _nextCard(true),
                     icon: const Icon(Icons.check),
-                    label: const Text('Correct'),
+                    label: const Text('I knew it!', style: TextStyle(fontSize: 16)),
                   ),
                 ),
               ],

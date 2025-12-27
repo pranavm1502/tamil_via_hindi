@@ -54,12 +54,10 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
     final random = Random();
     final correctAnswer = shuffledWords[currentIndex].tamil;
 
-    // Get 3 wrong answers
     final otherWords = List<WordPair>.from(widget.words)
       ..removeWhere((w) => w.tamil == correctAnswer);
 
     if (otherWords.length < 3) {
-      // Fallback for small lessons
       otherWords.addAll(widget.words.take(3)); 
     }
 
@@ -79,7 +77,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
       final currentWord = shuffledWords[currentIndex];
       if (answer == currentWord.tamil) {
         score++;
-        _playAudio(currentWord.audioPath); // Play audio if correct!
+        _playAudio(currentWord.audioPath); 
       }
     });
   }
@@ -98,7 +96,6 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
   }
 
   void _showFinalResults() {
-    // Save progress
     final progressProvider =
         Provider.of<ProgressProvider>(context, listen: false);
     progressProvider.saveQuizScore(
@@ -136,15 +133,14 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
     );
   }
 
-  // START CHANGE: Helper to get WordPair from the option string
   WordPair? _getWordPairForOption(String tamilOption) {
     try {
+      // Find the WordPair object for the option string
       return widget.words.firstWhere((w) => w.tamil == tamilOption);
     } catch (_) {
       return null;
     }
   }
-  // END CHANGE
 
   @override
   Widget build(BuildContext context) {
@@ -153,12 +149,21 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
     final currentWord = shuffledWords[currentIndex];
     
     // Helper to determine the color of the option
-    Color? getOptionColor(String option) {
-      if (!showResult) return null;
-      if (option == currentWord.tamil) return Colors.green[100];
-      if (option == selectedAnswer) return Colors.red[100];
-      return null;
+    Color getOptionColor(String option) {
+      if (!showResult) return Colors.white;
+      if (option == currentWord.tamil) return Colors.green.shade100;
+      if (option == selectedAnswer) return Colors.red.shade100;
+      return Colors.white;
     }
+    
+    // Helper to determine the border color
+    Color getBorderColor(String option) {
+      if (!showResult) return Colors.grey.shade300;
+      if (option == currentWord.tamil) return Colors.green.shade600;
+      if (option == selectedAnswer && option != currentWord.tamil) return Colors.red.shade600;
+      return Colors.grey.shade300;
+    }
+
 
     return Padding(
         padding: const EdgeInsets.all(24.0),
@@ -168,76 +173,103 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
             children: [
               Column(
                 children: [
-                  LinearProgressIndicator(
-                      value: (currentIndex + 1) / shuffledWords.length),
-                  const SizedBox(height: 16),
+                  // Progress Bar
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: LinearProgressIndicator(
+                      value: (currentIndex + 1) / shuffledWords.length,
+                      backgroundColor: Colors.grey[300],
+                      minHeight: 10,
+                      color: Colors.green.shade600,
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  // Question Card
                   Card(
-                      elevation: 4,
+                      elevation: 6,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                       child: Padding(
                         padding: const EdgeInsets.all(20.0),
-                        child: Text(
-                          currentWord.hindi,
-                          style: const TextStyle(
-                              fontSize: 28, fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center,
+                        child: Column(
+                          children: [
+                            const Text("Choose the correct Tamil translation:", style: TextStyle(color: Colors.grey, fontSize: 16)),
+                            const SizedBox(height: 10),
+                            Text(
+                              currentWord.hindi,
+                              style: const TextStyle(
+                                  fontSize: 32, fontWeight: FontWeight.w900, color: Colors.blue),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
                         ),
                       )),
                   const SizedBox(height: 20),
                 ],
               ),
               
-              // START CHANGE: Options mapping
+              // Options
               Column(
                 children: currentOptions.asMap().entries.map((entry) {
                 final option = entry.value;
-                final pair = _getWordPairForOption(option); // Look up the pair
+                final pair = _getWordPairForOption(option);
 
-                // Fallback for safety, though should not happen with correct data
                 if (pair == null) return const SizedBox.shrink(); 
 
                 return Padding(
                     padding: const EdgeInsets.only(bottom: 12.0),
                     child: InkWell(
                         onTap: () => _selectAnswer(option),
-                        child: Container(
+                        borderRadius: BorderRadius.circular(15),
+                        child: AnimatedContainer( // Use AnimatedContainer for smooth transitions
+                          duration: const Duration(milliseconds: 200),
                           width: double.infinity,
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: getOptionColor(option) ?? Theme.of(context).cardColor,
-                            borderRadius: BorderRadius.circular(8),
+                            color: getOptionColor(option),
+                            borderRadius: BorderRadius.circular(15),
                             border: Border.all(
-                              color: showResult && option == currentWord.tamil 
-                                ? Colors.green 
-                                : (showResult && option == selectedAnswer && option != currentWord.tamil
-                                    ? Colors.red 
-                                    : Colors.grey.shade300),
+                              color: getBorderColor(option),
                               width: 2,
                             ),
+                            boxShadow: [
+                                BoxShadow(
+                                  color: getBorderColor(option).withOpacity(0.3),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
                           ),
-                          child: Row( // Use a Row to combine the scripts
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
                                 pair.tamil, // Tamil Script
-                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                style: TextStyle(
+                                  fontSize: 20, 
+                                  fontWeight: FontWeight.w800,
+                                  color: showResult && option != currentWord.tamil ? Colors.grey.shade600 : Colors.black87
+                                ),
                               ),
-                              const SizedBox(width: 6),
+                              const SizedBox(width: 8),
                               Text(
                                 '(${pair.pronunciation})', // Hindi Transliteration
-                                style: const TextStyle(fontSize: 14, color: Colors.blueGrey),
+                                style: const TextStyle(fontSize: 16, color: Colors.blueGrey),
                               ),
                             ],
                           ),
                         )));
               }).toList(),
               ),
-              // END CHANGE
-
+              
               if (showResult)
                 FilledButton(
                     onPressed: _nextQuestion, 
-                    style: FilledButton.styleFrom(padding: const EdgeInsets.all(16)),
-                    child: const Text('Next Question', style: TextStyle(fontSize: 18)))
+                    style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.all(18),
+                        backgroundColor: Colors.blue.shade700,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text('Continue', style: TextStyle(fontSize: 20)))
             ]));
   }
 }
