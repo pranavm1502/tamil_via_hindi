@@ -188,18 +188,26 @@ class _QuizViewState extends State<QuizView> {
                   ),
                   const Divider(height: 30),
                   if (showAnswer) ...[
-                    Text(
-                      currentWord.tamil,
-                      style: const TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.orange),
+                    // START CHANGE: Combine Tamil script and Pronunciation
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          currentWord.tamil,
+                          style: const TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.orange),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '(${currentWord.pronunciation})', // Show pronunciation right after
+                          style:
+                              const TextStyle(fontSize: 28, color: Colors.blueGrey),
+                        ),
+                      ],
                     ),
-                    Text(
-                      currentWord.pronunciation,
-                      style:
-                          const TextStyle(fontSize: 20, color: Colors.blueGrey),
-                    ),
+                    // END CHANGE
                     IconButton(
                       icon: const Icon(Icons.volume_up,
                           size: 30, color: Colors.blue),

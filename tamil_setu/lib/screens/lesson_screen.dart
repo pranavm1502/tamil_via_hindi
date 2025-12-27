@@ -88,14 +88,30 @@ class _LessonScreenState extends State<LessonScreen>
           margin: const EdgeInsets.only(bottom: 12),
           child: ListTile(
             contentPadding: const EdgeInsets.all(16),
-            title: Text(
-              pair.tamil,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.deepOrange,
-              ),
+            // START CHANGE: Combine Tamil script and Pronunciation in the title
+            title: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  pair.tamil,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepOrange,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '(${pair.pronunciation})', // Hindi Transliteration
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.grey.shade700,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ],
             ),
+            // END CHANGE
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -104,16 +120,7 @@ class _LessonScreenState extends State<LessonScreen>
                   pair.hindi,
                   style: const TextStyle(fontSize: 18, color: Colors.black87),
                 ),
-                const SizedBox(height: 4),
-                // Show the pronunciation bridge (e.g., "वणक्कम")
-                Text(
-                  '(${pair.pronunciation})',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey.shade700,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
+                // REMOVED: Redundant display of pronunciation, now in title
               ],
             ),
             trailing: IconButton(

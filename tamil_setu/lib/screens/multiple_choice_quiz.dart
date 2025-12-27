@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:audioplayers/audioplayers.dart'; // Add this
+import 'package:audioplayers/audioplayers.dart'; 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/word_pair.dart';
@@ -26,7 +26,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
   late List<String> currentOptions;
   String? selectedAnswer;
   bool showResult = false;
-  final AudioPlayer _audioPlayer = AudioPlayer(); // Add player
+  final AudioPlayer _audioPlayer = AudioPlayer(); 
 
   @override
   void initState() {
@@ -59,7 +59,8 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
       ..removeWhere((w) => w.tamil == correctAnswer);
 
     if (otherWords.length < 3) {
-      otherWords.addAll(widget.words.take(3));
+      // Fallback for small lessons
+      otherWords.addAll(widget.words.take(3)); 
     }
 
     final wrongAnswers =
@@ -83,9 +84,6 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
     });
   }
 
-  // ... (The rest of your logic: _nextQuestion, _showFinalResults, build method)
-  // ... (Copy from your uploaded file, no changes needed below this point)
-
   void _nextQuestion() {
     if (currentIndex < shuffledWords.length - 1) {
       setState(() {
@@ -99,22 +97,18 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
     }
   }
 
-  // Note: Ensure _showFinalResults uses the passed lessonIndex correctly as you did before.
   void _showFinalResults() {
-    // (Your existing code here)
     // Save progress
     final progressProvider =
         Provider.of<ProgressProvider>(context, listen: false);
     progressProvider.saveQuizScore(
         widget.lessonIndex, score, shuffledWords.length);
 
-    // (Your existing dialog code here)
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
           title: const Text('Quiz Complete!'),
-          // ... rest of your UI code
           content: Text('You scored $score out of ${shuffledWords.length}'),
           actions: [
             TextButton(
@@ -142,46 +136,108 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
     );
   }
 
+  // START CHANGE: Helper to get WordPair from the option string
+  WordPair? _getWordPairForOption(String tamilOption) {
+    try {
+      return widget.words.firstWhere((w) => w.tamil == tamilOption);
+    } catch (_) {
+      return null;
+    }
+  }
+  // END CHANGE
+
   @override
   Widget build(BuildContext context) {
-    // (Your existing build method code is perfectly fine)
-    // Just ensure you import the AudioPlayer package at the top.
     if (shuffledWords.isEmpty) return const Center(child: Text('No words.'));
 
-    // ... Rest of your UI code
     final currentWord = shuffledWords[currentIndex];
-    // final correctAnswer = currentWord.tamil;
+    
+    // Helper to determine the color of the option
+    Color? getOptionColor(String option) {
+      if (!showResult) return null;
+      if (option == currentWord.tamil) return Colors.green[100];
+      if (option == selectedAnswer) return Colors.red[100];
+      return null;
+    }
 
     return Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
-            // ... Your existing layout code
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              LinearProgressIndicator(
-                  value: (currentIndex + 1) / shuffledWords.length),
-              // ...
-              Card(
-                  child: Column(children: [
-                Text(currentWord.hindi, style: const TextStyle(fontSize: 28)),
-              ])),
-              // ... Options mapping
-              ...currentOptions.asMap().entries.map((entry) {
+              Column(
+                children: [
+                  LinearProgressIndicator(
+                      value: (currentIndex + 1) / shuffledWords.length),
+                  const SizedBox(height: 16),
+                  Card(
+                      elevation: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Text(
+                          currentWord.hindi,
+                          style: const TextStyle(
+                              fontSize: 28, fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                      )),
+                  const SizedBox(height: 20),
+                ],
+              ),
+              
+              // START CHANGE: Options mapping
+              Column(
+                children: currentOptions.asMap().entries.map((entry) {
                 final option = entry.value;
+                final pair = _getWordPairForOption(option); // Look up the pair
+
+                // Fallback for safety, though should not happen with correct data
+                if (pair == null) return const SizedBox.shrink(); 
+
                 return Padding(
                     padding: const EdgeInsets.only(bottom: 12.0),
                     child: InkWell(
                         onTap: () => _selectAnswer(option),
-                        // ... rest of styling
                         child: Container(
+                          width: double.infinity,
                           padding: const EdgeInsets.all(16),
-                          // ... decoration
-                          child: Text(option),
+                          decoration: BoxDecoration(
+                            color: getOptionColor(option) ?? Theme.of(context).cardColor,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: showResult && option == currentWord.tamil 
+                                ? Colors.green 
+                                : (showResult && option == selectedAnswer && option != currentWord.tamil
+                                    ? Colors.red 
+                                    : Colors.grey.shade300),
+                              width: 2,
+                            ),
+                          ),
+                          child: Row( // Use a Row to combine the scripts
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                pair.tamil, // Tamil Script
+                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                '(${pair.pronunciation})', // Hindi Transliteration
+                                style: const TextStyle(fontSize: 14, color: Colors.blueGrey),
+                              ),
+                            ],
+                          ),
                         )));
-              }),
-              // ... Next button
+              }).toList(),
+              ),
+              // END CHANGE
+
               if (showResult)
                 FilledButton(
-                    onPressed: _nextQuestion, child: const Text('Next'))
+                    onPressed: _nextQuestion, 
+                    style: FilledButton.styleFrom(padding: const EdgeInsets.all(16)),
+                    child: const Text('Next Question', style: TextStyle(fontSize: 18)))
             ]));
   }
 }
