@@ -58,7 +58,9 @@ class DashboardScreen extends StatelessWidget {
 
   Widget _buildProgressHeader(BuildContext context, int totalLessons) {
     final progressProvider = context.watch<ProgressProvider>();
-    final completedCount = progressProvider.getCompletedLessonCount(totalLessons);
+    
+    // FIX 1: Using the correct getter from your ProgressProvider
+    final completedCount = progressProvider.totalCompletedLessons;
     final completionPercentage =
         totalLessons > 0 ? (completedCount / totalLessons) : 0.0;
 
@@ -68,7 +70,8 @@ class DashboardScreen extends StatelessWidget {
         color: Theme.of(context).cardColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            // FIX 2: Resolving deprecated 'withOpacity' / 'withValues'
+            color: Colors.black.withAlpha(13), // ~5% opacity
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),
@@ -109,14 +112,17 @@ class DashboardScreen extends StatelessWidget {
         crossAxisCount: 3,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
-        childAspectRatio: 0.85, // Taller cards
+        childAspectRatio: 0.85, 
       ),
       itemCount: lessons.length,
       itemBuilder: (context, index) {
         final lesson = lessons[index];
-        final lessonIndex = index + 1;
-        final isCompleted = progressProvider.getLessonStatus(lessonIndex)['isCompleted'] ?? false;
-        final isLocked = index > 0 && !progressProvider.getLessonStatus(index)['isCompleted'];
+        // Note: The lesson index passed to the provider should be the 0-based index
+        // matching the list, which the provider uses internally (as per your code).
+        
+        // FIX 3 & 4: Using your ProgressProvider's methods
+        final isLocked = progressProvider.isLessonLocked(index);
+        final isCompleted = progressProvider.isLessonCompleted(index); 
 
         Color tileColor = Colors.white;
         Color iconColor = Colors.blueGrey;
@@ -130,12 +136,19 @@ class DashboardScreen extends StatelessWidget {
 
         return GestureDetector(
           onTap: isLocked
-              ? null
+              ? () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Complete previous levels to unlock!'),
+                      duration: Duration(seconds: 1),
+                    ),
+                  );
+                }
               : () {
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => LessonScreen(
                       lesson: lesson,
-                      lessonIndex: lessonIndex,
+                      lessonIndex: index, // Pass the 0-based index
                     ),
                   ));
                 },
@@ -143,8 +156,9 @@ class DashboardScreen extends StatelessWidget {
             elevation: isLocked ? 1 : 4,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
+              // FIX 2: Resolving deprecated 'withOpacity' / 'withValues'
               side: BorderSide(
-                color: isLocked ? Colors.grey.shade300 : iconColor.withOpacity(0.5),
+                color: isLocked ? Colors.grey.shade300 : iconColor.withAlpha(128), // ~50% opacity
                 width: 2,
               ),
             ),
@@ -156,7 +170,8 @@ class DashboardScreen extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 25,
-                    backgroundColor: iconColor.withOpacity(0.15),
+                    // FIX 2: Resolving deprecated 'withOpacity' / 'withValues'
+                    backgroundColor: iconColor.withAlpha(38), // ~15% opacity
                     child: Icon(
                       iconData,
                       color: iconColor,
@@ -165,10 +180,11 @@ class DashboardScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'Level $lessonIndex',
+                    'Level ${index + 1}',
                     style: TextStyle(
                       fontSize: 12,
-                      color: iconColor.withOpacity(0.8),
+                      // FIX 2: Resolving deprecated 'withOpacity' / 'withValues'
+                      color: iconColor.withAlpha(204), // ~80% opacity
                       fontWeight: FontWeight.bold,
                     ),
                   ),

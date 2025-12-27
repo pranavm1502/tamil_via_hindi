@@ -135,7 +135,6 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
 
   WordPair? _getWordPairForOption(String tamilOption) {
     try {
-      // Find the WordPair object for the option string
       return widget.words.firstWhere((w) => w.tamil == tamilOption);
     } catch (_) {
       return null;
@@ -148,7 +147,6 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
 
     final currentWord = shuffledWords[currentIndex];
     
-    // Helper to determine the color of the option
     Color getOptionColor(String option) {
       if (!showResult) return Colors.white;
       if (option == currentWord.tamil) return Colors.green.shade100;
@@ -156,7 +154,6 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
       return Colors.white;
     }
     
-    // Helper to determine the border color
     Color getBorderColor(String option) {
       if (!showResult) return Colors.grey.shade300;
       if (option == currentWord.tamil) return Colors.green.shade600;
@@ -192,7 +189,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
                         padding: const EdgeInsets.all(20.0),
                         child: Column(
                           children: [
-                            const Text("Choose the correct Tamil translation:", style: TextStyle(color: Colors.grey, fontSize: 16)),
+                            const Text('Choose the correct Tamil translation:', style: TextStyle(color: Colors.grey, fontSize: 16)),
                             const SizedBox(height: 10),
                             Text(
                               currentWord.hindi,
@@ -220,7 +217,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
                     child: InkWell(
                         onTap: () => _selectAnswer(option),
                         borderRadius: BorderRadius.circular(15),
-                        child: AnimatedContainer( // Use AnimatedContainer for smooth transitions
+                        child: AnimatedContainer( 
                           duration: const Duration(milliseconds: 200),
                           width: double.infinity,
                           padding: const EdgeInsets.all(16),
@@ -233,7 +230,9 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
                             ),
                             boxShadow: [
                                 BoxShadow(
-                                  color: getBorderColor(option).withOpacity(0.3),
+                                  // FIX: Resolving deprecated 'withOpacity' / 'withValues'
+                                  // 0.3 * 255 = 76
+                                  color: getBorderColor(option).withAlpha(76), 
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 ),
