@@ -1,48 +1,89 @@
-name: Build Signed App Bundle
+name: Build and Test Signed Release
 
 on:
   push:
-    branches: [ main ]
-  workflow_dispatch: # Allows manual trigger from the Actions tab
+    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
-  build:
+  test:
+    name: Run Tests and Analysis
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tamil_setu
+
     steps:
-      - name: Checkout code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Java
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: 'zulu'
           java-version: '17'
 
-      - name: Set up Flutter
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          cache: true
 
-      - name: Install Dependencies
+      - name: Get Dependencies
+        run: flutter pub get
+
+      - name: Analyze Code
+        run: flutter analyze
+
+      - name: Run Unit Tests
+        run: flutter test --coverage
+
+  build:
+    name: Build Signed Bundle & APK
+    needs: test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tamil_setu
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Get Dependencies
         run: flutter pub get
 
       - name: Decode Keystore
-        run: |
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
+        run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
 
-      - name: Build App Bundle
-        run: |
-          # The --build-number uses the unique GitHub Action run count
-          flutter build appbundle --release --build-number=${{ github.run_number }}
+      - name: Build App Bundle (.aab)
+        run: flutter build appbundle --release --build-number=${{ github.run_number }}
         env:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
 
-      - name: Upload Artifact
+      - name: Build Universal APK (.apk)
+        run: flutter build apk --release --build-number=${{ github.run_number }}
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: tamil-via-hindi-release
-          path: build/app/outputs/bundle/release/app-release.aab
-          if-no-files-found: error
+          name: tamil-setu-builds
+          path: |
+            tamil_setu/build/app/outputs/bundle/release/app-release.aab
+            tamil_setu/build/app/outputs/flutter-apk/app-release.apk
