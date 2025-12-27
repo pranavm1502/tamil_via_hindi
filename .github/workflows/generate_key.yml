@@ -1,0 +1,25 @@
+name: One-Time Key Generator
+
+on: workflow_dispatch # Allows you to trigger it manually
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate Keystore
+        run: |
+          # 1. Generate the actual .jks file
+          keytool -genkey -v -keystore release.jks -keyalg RSA -keysize 2048 -validity 10000 \
+            -alias upload -storepass "${{ github.run_id }}" -keypass "${{ github.run_id }}" \
+            -dname "CN=Pranav, OU=Dev, O=TamilSetu, L=City, S=State, C=US"
+          
+          echo "------------------------------------------------------------"
+          echo "YOUR KEYSTORE BASE64 STRING IS BELOW:"
+          echo "------------------------------------------------------------"
+          
+          # 2. Convert to Base64 and print to log
+          base64 -w 0 release.jks
+          
+          echo -e "\n------------------------------------------------------------"
+          echo "YOUR PASSWORD FOR THIS KEY IS: ${{ github.run_id }}"
+          echo "------------------------------------------------------------"
