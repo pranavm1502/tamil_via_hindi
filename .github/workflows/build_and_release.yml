@@ -3,6 +3,8 @@ name: Build and Test Signed Release
 on:
   push:
     branches: [ "main" ]
+  pull_request:            # Add this line
+    branches: [ "main" ]   # And this line
   workflow_dispatch:
 
 jobs:
