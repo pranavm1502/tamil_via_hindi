@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../models/lesson.dart'; 
 import '../providers/content_provider.dart';
 import '../providers/progress_provider.dart';
 import '../providers/theme_provider.dart';
@@ -22,7 +23,9 @@ class DashboardScreen extends StatelessWidget {
           Consumer<ThemeProvider>(
             builder: (context, themeProvider, child) {
               return IconButton(
-                icon: Icon(themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode),
+                icon: Icon(
+                  themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode,
+                ),
                 onPressed: () => themeProvider.toggleTheme(),
               );
             },
@@ -31,27 +34,22 @@ class DashboardScreen extends StatelessWidget {
       ),
       body: contentProvider.isLoading
           ? const Center(child: CircularProgressIndicator())
-          : CustomScrollView( // FIX: Replaced Column with CustomScrollView
+          : CustomScrollView(
               slivers: [
-                // 1. Animated Mascot
-                SliverToBoxAdapter(
+                const SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+                    padding: EdgeInsets.fromLTRB(16, 20, 16, 0),
                     child: PeacockMascot(message: 'नमस्ते! आज तमिल सीखते हैं?'),
                   ),
                 ),
-                
-                // 2. Progress Header
                 SliverToBoxAdapter(
                   child: _ProgressHeader(totalLessons: contentProvider.lessons.length),
                 ),
-                
-                // 3. Lesson Grid
                 SliverPadding(
                   padding: const EdgeInsets.all(16),
                   sliver: SliverGrid(
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
+                      crossAxisCount: 2, 
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
                       childAspectRatio: 0.85,
@@ -85,7 +83,7 @@ class _ProgressHeader extends StatelessWidget {
 
         return Container(
           padding: const EdgeInsets.all(16),
-          margin: const EdgeInsets.all(16),
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
             color: theme.cardColor,
             borderRadius: BorderRadius.circular(12),
@@ -132,7 +130,9 @@ class _LessonTile extends StatelessWidget {
       builder: (context, progress, child) {
         final isLocked = progress.isLessonLocked(index);
         final isCompleted = progress.isLessonCompleted(index);
-        final Color cardColor = isLocked ? Theme.of(context).cardColor.withAlpha(179) : isCompleted ? Colors.green.shade50 : Colors.orange.shade50;
+        final Color cardColor = isLocked 
+            ? Theme.of(context).cardColor.withAlpha(179) 
+            : isCompleted ? Colors.green.shade50 : Colors.orange.shade50;
 
         return Card(
             elevation: isLocked ? 0 : 4,

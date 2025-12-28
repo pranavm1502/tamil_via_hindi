@@ -2,9 +2,10 @@ import 'dart:math';
 import 'package:audioplayers/audioplayers.dart'; 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:confetti/confetti.dart'; // Added
 import '../models/word_pair.dart';
 import '../providers/progress_provider.dart';
-import '../widgets/peacock_mascot.dart'; // Added Mascot import
+import '../widgets/peacock_mascot.dart';
 
 class MultipleChoiceQuiz extends StatefulWidget {
   final List<WordPair> words;
@@ -28,10 +29,12 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
   String? selectedAnswer;
   bool showResult = false;
   final AudioPlayer _audioPlayer = AudioPlayer(); 
+  late ConfettiController _confettiController; // Added
 
   @override
   void initState() {
     super.initState();
+    _confettiController = ConfettiController(duration: const Duration(seconds: 2));
     shuffledWords = List.from(widget.words)..shuffle();
     _generateOptions();
   }
@@ -39,6 +42,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
   @override
   void dispose() {
     _audioPlayer.dispose();
+    _confettiController.dispose();
     super.dispose();
   }
 
@@ -98,50 +102,67 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
 
   void _showFinalResults() {
     final percentage = (score / shuffledWords.length * 100).round();
-    final progressProvider =
-        Provider.of<ProgressProvider>(context, listen: false);
-    progressProvider.saveQuizScore(
-        widget.lessonIndex, score, shuffledWords.length);
+    
+    if (percentage >= 80) {
+      _confettiController.play();
+    }
+
+    Provider.of<ProgressProvider>(context, listen: false)
+        .saveQuizScore(widget.lessonIndex, score, shuffledWords.length);
 
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              PeacockMascot(
-                message: percentage >= 80 ? 'Quiz Complete! शानदार!' : 'Good attempt! और अभ्यास करें!',
-                state: percentage >= 80 ? MascotState.celebrate : MascotState.confused,
+      builder: (ctx) => Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  PeacockMascot(
+                    message: percentage >= 80 ? 'Quiz Complete! शानदार!' : 'Good attempt! और अभ्यास करें!',
+                    state: percentage >= 80 ? MascotState.celebrate : MascotState.confused,
+                  ),
+                  const SizedBox(height: 20),
+                  Text('You scored $score out of ${shuffledWords.length}', style: const TextStyle(fontSize: 18)),
+                  Text('$percentage%', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: percentage >= 80 ? Colors.green : Colors.orange)),
+                ],
               ),
-              const SizedBox(height: 20),
-              Text('You scored $score out of ${shuffledWords.length}', style: const TextStyle(fontSize: 18)),
-              Text('$percentage%', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: percentage >= 80 ? Colors.green : Colors.orange)),
-            ],
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    _confettiController.stop();
+                    Navigator.pop(ctx);
+                    setState(() {
+                      currentIndex = 0;
+                      score = 0;
+                      selectedAnswer = null;
+                      showResult = false;
+                      shuffledWords.shuffle();
+                      _generateOptions();
+                    });
+                  },
+                  child: const Text('Retry'),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    _confettiController.stop();
+                    Navigator.pop(ctx);
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Finish'),
+                ),
+              ]),
+          ConfettiWidget(
+            confettiController: _confettiController,
+            blastDirectionality: BlastDirectionality.explosive,
+            shouldLoop: false,
+            colors: const [Colors.green, Colors.blue, Colors.pink, Colors.orange],
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-                setState(() {
-                  currentIndex = 0;
-                  score = 0;
-                  selectedAnswer = null;
-                  showResult = false;
-                  shuffledWords.shuffle();
-                  _generateOptions();
-                });
-              },
-              child: const Text('Retry'),
-            ),
-            FilledButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-                Navigator.pop(context);
-              },
-              child: const Text('Finish'),
-            ),
-          ]),
+        ],
+      ),
     );
   }
 
@@ -156,7 +177,6 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
   @override
   Widget build(BuildContext context) {
     if (shuffledWords.isEmpty) return const Center(child: Text('No words.'));
-
     final currentWord = shuffledWords[currentIndex];
     
     return Padding(
@@ -194,7 +214,6 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
                 ],
               ),
               
-              // Options Section
               Column(
                 children: currentOptions.map((option) {
                 final pair = _getWordPairForOption(option);
@@ -220,7 +239,6 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
                           ),
                           child: Row(
                             children: [
-                              // FIX: Expanded ensures the Tamil text doesn't push others off screen
                               Expanded(
                                 child: Text(
                                   pair.tamil,
@@ -232,7 +250,6 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              // FIX: Flexible allows the pronunciation to wrap if necessary
                               Flexible(
                                 child: Text(
                                   '(${pair.pronunciation})',
@@ -252,7 +269,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
                     style: FilledButton.styleFrom(padding: const EdgeInsets.all(18)),
                     child: const Text('Continue', style: TextStyle(fontSize: 20)))
               else
-                const SizedBox(height: 50), // Spacer to maintain layout
+                const SizedBox(height: 50), 
             ]));
   }
 }
