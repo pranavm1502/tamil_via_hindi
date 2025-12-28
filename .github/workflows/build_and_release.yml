@@ -42,8 +42,6 @@ jobs:
   build:
     name: Build Signed Bundle & APK
     needs: test
-    # Only build signed releases on push to main, not on PRs
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -57,7 +55,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: '21'
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
