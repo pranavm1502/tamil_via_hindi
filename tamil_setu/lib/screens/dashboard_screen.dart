@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/lesson.dart'; 
 import '../providers/content_provider.dart';
 import '../providers/progress_provider.dart';
 import '../providers/theme_provider.dart';
@@ -23,9 +22,7 @@ class DashboardScreen extends StatelessWidget {
           Consumer<ThemeProvider>(
             builder: (context, themeProvider, child) {
               return IconButton(
-                icon: Icon(
-                  themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode,
-                ),
+                icon: Icon(themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode),
                 onPressed: () => themeProvider.toggleTheme(),
               );
             },
@@ -34,27 +31,38 @@ class DashboardScreen extends StatelessWidget {
       ),
       body: contentProvider.isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(16, 20, 16, 0),
-                  child: PeacockMascot(message: 'नमस्ते! आज तमिल सीखते हैं?'),
+          : CustomScrollView( // FIX: Replaced Column with CustomScrollView
+              slivers: [
+                // 1. Animated Mascot
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+                    child: PeacockMascot(message: 'नमस्ते! आज तमिल सीखते हैं?'),
+                  ),
                 ),
-                _ProgressHeader(totalLessons: contentProvider.lessons.length),
-                Expanded(
-                  child: GridView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: contentProvider.lessons.length,
+                
+                // 2. Progress Header
+                SliverToBoxAdapter(
+                  child: _ProgressHeader(totalLessons: contentProvider.lessons.length),
+                ),
+                
+                // 3. Lesson Grid
+                SliverPadding(
+                  padding: const EdgeInsets.all(16),
+                  sliver: SliverGrid(
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2, 
+                      crossAxisCount: 2,
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
                       childAspectRatio: 0.85,
                     ),
-                    itemBuilder: (context, index) {
-                      final lesson = contentProvider.lessons[index];
-                      return _LessonTile(lesson: lesson, index: index);
-                    },
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final lesson = contentProvider.lessons[index];
+                        return _LessonTile(lesson: lesson, index: index);
+                      },
+                      childCount: contentProvider.lessons.length,
+                    ),
                   ),
                 ),
               ],

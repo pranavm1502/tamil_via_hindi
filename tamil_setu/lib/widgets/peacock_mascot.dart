@@ -33,9 +33,10 @@ class PeacockMascot extends StatelessWidget {
       curve: Curves.easeOutBack, // Gives it a little "bounce"
       builder: (context, value, child) {
         return Opacity(
-          opacity: value,
+          // FIX: Clamp the value so it never goes above 1.0 or below 0.0
+          opacity: value.clamp(0.0, 1.0), 
           child: Transform.translate(
-            offset: Offset(0, 20 * (1 - value)), // Slides up by 20 pixels
+            offset: Offset(0, 20 * (1 - value)),
             child: child,
           ),
         );
