@@ -5,8 +5,8 @@ class PeacockTheme {
   static const Color peacockBlue = Color(0xFF005DAA);
   static const Color peacockGreen = Color(0xFF00A896);
   static const Color deepTeal = Color(0xFF028090);
-  static const Color vibrantOrange = Color(0xFFF4A261); // For progress & highlights
-  static const Color softCream = Color(0xFFFDFCF0); // For light mode background
+  static const Color vibrantOrange = Color(0xFFF4A261); 
+  static const Color softCream = Color(0xFFFDFCF0); 
 
   static ThemeData get lightTheme {
     return ThemeData(
@@ -23,8 +23,8 @@ class PeacockTheme {
         centerTitle: true,
         elevation: 0,
       ),
-      // FIX: Using 'const' and ensuring standard Material 3 parameters
-      cardTheme: CardTheme(
+      // CHANGE: CardTheme replaced with CardThemeData
+      cardTheme: CardThemeData(
         color: Colors.white,
         elevation: 2,
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
