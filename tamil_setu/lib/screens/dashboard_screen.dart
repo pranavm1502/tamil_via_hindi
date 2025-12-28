@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/lesson.dart'; // Import this so we don't need 'dynamic'
+import '../models/lesson.dart'; 
 import '../providers/content_provider.dart';
 import '../providers/progress_provider.dart';
 import '../providers/theme_provider.dart';
@@ -11,7 +11,6 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Listen to ContentProvider to get the data loaded from JSON
     final contentProvider = context.watch<ContentProvider>();
 
     return Scaffold(
@@ -39,7 +38,6 @@ class DashboardScreen extends StatelessWidget {
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
-                // 2. Pass total lessons dynamically from the JSON
                 _ProgressHeader(totalLessons: contentProvider.lessons.length),
 
                 Expanded(
@@ -48,7 +46,7 @@ class DashboardScreen extends StatelessWidget {
                     itemCount: contentProvider.lessons.length,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2, // 2 Columns for a "Roadmap" look
+                      crossAxisCount: 2, 
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
                       childAspectRatio: 0.85,
@@ -79,7 +77,6 @@ class _ProgressHeader extends StatelessWidget {
 
     return Consumer<ProgressProvider>(
       builder: (context, progress, child) {
-        // 3. Methods now match your merged ProgressProvider
         final overallProgress = progress.getOverallProgress(totalLessons);
         final completedCount = progress.totalCompletedLessons;
 
@@ -91,7 +88,8 @@ class _ProgressHeader extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
+                // FIX: Ensures no runtime error from 'withValues'/'withOpacity' on the BoxShadow
+                color: Colors.black.withAlpha(25), 
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -116,7 +114,7 @@ class _ProgressHeader extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 16,
                       color: theme.textTheme.bodyMedium?.color
-                          ?.withValues(alpha: 0.7),
+                          ?.withAlpha(179),
                     ),
                   ),
                 ],
@@ -137,7 +135,7 @@ class _ProgressHeader extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14,
                   color:
-                      theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+                      theme.textTheme.bodyMedium?.color?.withAlpha(179),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -150,7 +148,7 @@ class _ProgressHeader extends StatelessWidget {
 }
 
 class _LessonTile extends StatelessWidget {
-  final Lesson lesson; // Changed from dynamic to Lesson for safety
+  final Lesson lesson; 
   final int index;
 
   const _LessonTile({
@@ -162,14 +160,34 @@ class _LessonTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ProgressProvider>(
       builder: (context, progress, child) {
-        // 4. Using the new lock/complete logic
+        // Logic remains correct for 0-based index check
         final isLocked = progress.isLessonLocked(index);
         final isCompleted = progress.isLessonCompleted(index);
 
-        return Opacity(
-          opacity: isLocked ? 0.5 : 1.0,
-          child: Card(
+        // Define visual properties based on state
+        final Color cardColor = isLocked
+            ? Theme.of(context).cardColor.withAlpha(179)
+            : isCompleted
+                ? Colors.green.shade50
+                : Colors.orange.shade50;
+                
+        final Color iconBgColor = isLocked
+            ? Colors.grey.shade400
+            : isCompleted
+                ? Colors.green
+                : Colors.orange;
+                
+        final IconData tileIcon = isLocked
+            ? Icons.lock
+            : isCompleted
+                ? Icons.check
+                : Icons.play_arrow;
+
+
+        return Card(
             elevation: isLocked ? 0 : 4,
+            // Card color is now based on state, no Opacity wrapper needed
+            color: cardColor, 
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             child: InkWell(
@@ -201,13 +219,10 @@ class _LessonTile extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 28,
-                      backgroundColor: isLocked
-                          ? Colors.grey
-                          : (isCompleted ? Colors.green : Colors.orange),
+                      backgroundColor: iconBgColor,
+                      // The Icon is now directly rendered with the correct IconData
                       child: Icon(
-                        isLocked
-                            ? Icons.lock
-                            : (isCompleted ? Icons.check : Icons.play_arrow),
+                        tileIcon,
                         color: Colors.white,
                         size: 30,
                       ),
@@ -238,8 +253,7 @@ class _LessonTile extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-        );
+          );
       },
     );
   }

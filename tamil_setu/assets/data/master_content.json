@@ -1,521 +1,571 @@
 [
     {
         "level": 1,
-        "title": "Basics (Greet)",
-        "description": "Start with Namaste and basic questions.",
+        "title": "Survival Basics",
+        "description": "Instant words you need immediately.",
         "words": [
             {
+                "hindi": "नमस्ते / हेलो",
                 "tamil": "வணக்கம்",
-                "hindi": "नमस्ते",
                 "pronunciation": "वणक्कम्",
-                "audio_path": "assets/audio/l1_namaste.mp3"
+                "audio_path": "assets/audio/l1_hello.mp3"
             },
             {
-                "tamil": "எப்படி இருக்கிறீர்கள்?",
-                "hindi": "कैसे हो?",
-                "pronunciation": "ऎप्पटि इरुक्किऱीर्कळ्?",
-                "audio_path": "assets/audio/l1_kaise_ho.mp3"
-            },
-            {
-                "tamil": "நான் நன்றாக இருக்கிறேன்",
-                "hindi": "मैं ठीक हूँ",
-                "pronunciation": "नाऩ् नऩ्ऱाक इरुक्किऱेऩ्",
-                "audio_path": "assets/audio/l1_main_theek.mp3"
-            },
-            {
-                "tamil": "என்ன?",
-                "hindi": "क्या?",
-                "pronunciation": "ऎऩ्ऩ?",
-                "audio_path": "assets/audio/l1_kya.mp3"
-            },
-            {
-                "tamil": "பெயர்",
-                "hindi": "नाम",
-                "pronunciation": "पॆयर्",
-                "audio_path": "assets/audio/l1_naam.mp3"
-            },
-            {
-                "tamil": "நன்றி",
-                "hindi": "धन्यवाद",
-                "pronunciation": "नऩ्ऱि",
-                "audio_path": "assets/audio/l1_dhanyavaad.mp3"
-            },
-            {
-                "tamil": "மன்னிக்கவும்",
-                "hindi": "माफ़ कीजिये",
-                "pronunciation": "मऩ्ऩिक्कवुम्",
-                "audio_path": "assets/audio/l1_sorry.mp3"
-            },
-            {
-                "tamil": "ஆம்",
                 "hindi": "हाँ",
-                "pronunciation": "आम्",
-                "audio_path": "assets/audio/l1_haan.mp3"
+                "tamil": "ஆமா",
+                "pronunciation": "आमा",
+                "audio_path": "assets/audio/l1_yes.mp3"
             },
             {
-                "tamil": "இல்லை",
                 "hindi": "नहीं",
-                "pronunciation": "इल्लै",
-                "audio_path": "assets/audio/l1_nahi.mp3"
+                "tamil": "இல்ல",
+                "pronunciation": "इल्ल",
+                "audio_path": "assets/audio/l1_no.mp3"
+            },
+            {
+                "hindi": "ठीक है (Okay)",
+                "tamil": "சரி",
+                "pronunciation": "चरि",
+                "audio_path": "assets/audio/l1_okay.mp3"
+            },
+            {
+                "hindi": "मुझे नहीं पता",
+                "tamil": "எனக்குத் தெரியாது",
+                "pronunciation": "ऎऩक्कुत् तॆरियातु",
+                "audio_path": "assets/audio/l1_dont_know.mp3"
+            },
+            {
+                "hindi": "कोई बात नहीं",
+                "tamil": "பரவாயில்ல",
+                "pronunciation": "परवायिल्ल",
+                "audio_path": "assets/audio/l1_no_problem.mp3"
+            },
+            {
+                "hindi": "जल्दी",
+                "tamil": "சீக்கிரம்",
+                "pronunciation": "चीक्किरम्",
+                "audio_path": "assets/audio/l1_fast.mp3"
+            },
+            {
+                "hindi": "धीरे",
+                "tamil": "மெதுவா",
+                "pronunciation": "मॆतुवा",
+                "audio_path": "assets/audio/l1_slow.mp3"
+            },
+            {
+                "hindi": "रुको",
+                "tamil": "நில்லுங்க",
+                "pronunciation": "निल्लुङ्क",
+                "audio_path": "assets/audio/l1_stop.mp3"
+            },
+            {
+                "hindi": "चलो / चलें",
+                "tamil": "போலாம்",
+                "pronunciation": "पोलाम्",
+                "audio_path": "assets/audio/l1_lets_go.mp3"
             }
         ]
     },
     {
         "level": 2,
-        "title": "Pronouns",
-        "description": "Me, You, This, That",
+        "title": "Pronouns (Street Style)",
+        "description": "Note: In spoken Tamil, 'Hum' has two words (Namma vs Naanga).",
         "words": [
             {
-                "tamil": "நான்",
                 "hindi": "मैं",
-                "pronunciation": "नाऩ्",
-                "audio_path": "assets/audio/l2_main.mp3"
+                "tamil": "நான் (Naan)",
+                "pronunciation": "नाऩ् (Naan)",
+                "audio_path": "assets/audio/l2_i.mp3"
             },
             {
-                "tamil": "நீ",
-                "hindi": "तुम",
-                "pronunciation": "नी",
-                "audio_path": "assets/audio/l2_tum.mp3"
+                "hindi": "तुम (Casual)",
+                "tamil": "நீ (Nee)",
+                "pronunciation": "नी (Nee)",
+                "audio_path": "assets/audio/l2_you_casual.mp3"
             },
             {
-                "tamil": "நீங்கள்",
-                "hindi": "आप",
-                "pronunciation": "नीङ्कळ्",
-                "audio_path": "assets/audio/l2_aap.mp3"
+                "hindi": "आप (Respect)",
+                "tamil": "நீங்க (Neenga)",
+                "pronunciation": "नीङ्क (Neenga)",
+                "audio_path": "assets/audio/l2_you_respect.mp3"
             },
             {
-                "tamil": "இவர்",
-                "hindi": "यह (व्यक्ति)",
-                "pronunciation": "इवर्",
-                "audio_path": "assets/audio/l2_yeh_person.mp3"
+                "hindi": "हम (सब साथ में)",
+                "tamil": "நம்ம (Namma)",
+                "pronunciation": "नम्म (Namma)",
+                "audio_path": "assets/audio/l2_we_inclusive.mp3"
             },
             {
-                "tamil": "அவர்",
-                "hindi": "वह (व्यक्ति)",
-                "pronunciation": "अवर्",
-                "audio_path": "assets/audio/l2_woh_person.mp3"
+                "hindi": "हम (सामने वाले को छोड़कर)",
+                "tamil": "நாங்க (Naanga)",
+                "pronunciation": "नाङ्क (Naanga)",
+                "audio_path": "assets/audio/l2_we_exclusive.mp3"
             },
             {
-                "tamil": "நாங்கள்",
-                "hindi": "हम",
-                "pronunciation": "नाङ्कळ्",
-                "audio_path": "assets/audio/l2_hum.mp3"
+                "hindi": "यह (This person/thing)",
+                "tamil": "இவன்/இது",
+                "pronunciation": "इवऩ्/इतु",
+                "audio_path": "assets/audio/l2_this.mp3"
             },
             {
-                "tamil": "இவர்கள்",
-                "hindi": "ये लोग",
-                "pronunciation": "इवर्कळ्",
-                "audio_path": "assets/audio/l2_ye_log.mp3"
-            },
-            {
-                "tamil": "அவர்கள்",
-                "hindi": "वे लोग",
-                "pronunciation": "अवर्कळ्",
-                "audio_path": "assets/audio/l2_wo_log.mp3"
+                "hindi": "वह (That person/thing)",
+                "tamil": "அவன்/அது",
+                "pronunciation": "अवऩ्/अतु",
+                "audio_path": "assets/audio/l2_that.mp3"
             }
         ]
     },
     {
         "level": 3,
-        "title": "Common Verbs",
-        "description": "Action words for daily life.",
+        "title": "Important Verbs (Command)",
+        "description": "Short commands are the most common spoken form.",
         "words": [
             {
-                "tamil": "வா",
-                "hindi": "आना",
-                "pronunciation": "वा",
-                "audio_path": "assets/audio/l3_aana.mp3"
+                "hindi": "आओ (Come)",
+                "tamil": "வாங்க",
+                "pronunciation": "वाङ्क",
+                "audio_path": "assets/audio/l3_come.mp3"
             },
             {
-                "tamil": "போ",
-                "hindi": "जाना",
-                "pronunciation": "पो",
-                "audio_path": "assets/audio/l3_jaana.mp3"
+                "hindi": "जाओ (Go)",
+                "tamil": "போங்க",
+                "pronunciation": "पोङ्क",
+                "audio_path": "assets/audio/l3_go.mp3"
             },
             {
-                "tamil": "சாப்பிடு",
-                "hindi": "खाना",
-                "pronunciation": "चाप्पिटु",
-                "audio_path": "assets/audio/l3_khana.mp3"
+                "hindi": "खाओ (Eat)",
+                "tamil": "சாப்பிடுங்க",
+                "pronunciation": "चाप्पिटुङ्क",
+                "audio_path": "assets/audio/l3_eat.mp3"
             },
             {
-                "tamil": "குடி",
-                "hindi": "पीना",
-                "pronunciation": "कुटि",
-                "audio_path": "assets/audio/l3_peena.mp3"
+                "hindi": "पीओ (Drink)",
+                "tamil": "குடிங்க",
+                "pronunciation": "कुटिङ्क",
+                "audio_path": "assets/audio/l3_drink.mp3"
             },
             {
-                "tamil": "தூங்கு",
-                "hindi": "सोना",
-                "pronunciation": "तूङ्कु",
-                "audio_path": "assets/audio/l3_sona.mp3"
+                "hindi": "देखो (Look)",
+                "tamil": "பாருங்க",
+                "pronunciation": "पारुङ्क",
+                "audio_path": "assets/audio/l3_look.mp3"
             },
             {
-                "tamil": "எழுந்திரு",
-                "hindi": "उठना",
-                "pronunciation": "ऎऴुन्तिरु",
-                "audio_path": "assets/audio/l3_uthna.mp3"
+                "hindi": "बैठो (Sit)",
+                "tamil": "உக்காருங்க",
+                "pronunciation": "उक्कारुङ्क",
+                "audio_path": "assets/audio/l3_sit.mp3"
             },
             {
-                "tamil": "பார்",
-                "hindi": "देखना",
-                "pronunciation": "पार्",
-                "audio_path": "assets/audio/l3_dekhna.mp3"
+                "hindi": "सो जाओ (Sleep)",
+                "tamil": "தூங்குங்க",
+                "pronunciation": "तूङ्कुङ्क",
+                "audio_path": "assets/audio/l3_sleep.mp3"
             },
             {
-                "tamil": "கேள்",
-                "hindi": "सुनना",
-                "pronunciation": "केळ्",
-                "audio_path": "assets/audio/l3_sunna.mp3"
-            },
-            {
-                "tamil": "பேசு",
-                "hindi": "बोलना",
-                "pronunciation": "पेचु",
-                "audio_path": "assets/audio/l3_bolna.mp3"
+                "hindi": "दो (Give)",
+                "tamil": "குடுங்க",
+                "pronunciation": "कुटुङ्क",
+                "audio_path": "assets/audio/l3_give.mp3"
             }
         ]
     },
     {
         "level": 4,
-        "title": "Numbers (1-10)",
-        "description": "Counting in Tamil",
+        "title": "Common Questions",
+        "description": "Adding 'aa' at the end of a word often makes it a question.",
         "words": [
             {
-                "tamil": "ஒன்று",
-                "hindi": "एक",
-                "pronunciation": "ऒऩ्ऱु",
-                "audio_path": "assets/audio/l4_one.mp3"
+                "hindi": "क्या?",
+                "tamil": "என்ன?",
+                "pronunciation": "ऎऩ्ऩ?",
+                "audio_path": "assets/audio/l4_what.mp3"
             },
             {
-                "tamil": "இரண்டு",
-                "hindi": "दो",
-                "pronunciation": "इरण्टु",
-                "audio_path": "assets/audio/l4_two.mp3"
+                "hindi": "कहाँ?",
+                "tamil": "எங்க?",
+                "pronunciation": "ऎङ्क?",
+                "audio_path": "assets/audio/l4_where.mp3"
             },
             {
-                "tamil": "மூன்று",
-                "hindi": "तीन",
-                "pronunciation": "मूऩ्ऱु",
-                "audio_path": "assets/audio/l4_three.mp3"
+                "hindi": "कब?",
+                "tamil": "எப்போ?",
+                "pronunciation": "ऎप्पो?",
+                "audio_path": "assets/audio/l4_when.mp3"
             },
             {
-                "tamil": "நான்கு",
-                "hindi": "चार",
-                "pronunciation": "नाऩ्कु",
-                "audio_path": "assets/audio/l4_four.mp3"
+                "hindi": "क्यों?",
+                "tamil": "ஏன்?",
+                "pronunciation": "एऩ्?",
+                "audio_path": "assets/audio/l4_why.mp3"
             },
             {
-                "tamil": "ஐந்து",
-                "hindi": "पाँच",
-                "pronunciation": "ऐन्तु",
-                "audio_path": "assets/audio/l4_five.mp3"
+                "hindi": "कौन?",
+                "tamil": "யாரு?",
+                "pronunciation": "यारु?",
+                "audio_path": "assets/audio/l4_who.mp3"
             },
             {
-                "tamil": "ஆறு",
-                "hindi": "छह",
-                "pronunciation": "आऱु",
-                "audio_path": "assets/audio/l4_six.mp3"
+                "hindi": "कितना? (Money)",
+                "tamil": "எவ்ளோ?",
+                "pronunciation": "ऎव्ळो?",
+                "audio_path": "assets/audio/l4_how_much.mp3"
             },
             {
-                "tamil": "ஏழு",
-                "hindi": "सात",
-                "pronunciation": "एऴु",
-                "audio_path": "assets/audio/l4_seven.mp3"
+                "hindi": "कैसे?",
+                "tamil": "எப்டி?",
+                "pronunciation": "ऎप्टि?",
+                "audio_path": "assets/audio/l4_how.mp3"
             },
             {
-                "tamil": "எட்டு",
-                "hindi": "आठ",
-                "pronunciation": "ऎट्टु",
-                "audio_path": "assets/audio/l4_eight.mp3"
-            },
-            {
-                "tamil": "ஒன்பது",
-                "hindi": "नौ",
-                "pronunciation": "ऒऩ्पतु",
-                "audio_path": "assets/audio/l4_nine.mp3"
-            },
-            {
-                "tamil": "பத்து",
-                "hindi": "दस",
-                "pronunciation": "पत्तु",
-                "audio_path": "assets/audio/l4_ten.mp3"
+                "hindi": "खाना खाया? (Ate?)",
+                "tamil": "சாப்டாச்சா?",
+                "pronunciation": "चाप्टाच्चा?",
+                "audio_path": "assets/audio/l4_ate.mp3"
             }
         ]
     },
     {
         "level": 5,
-        "title": "Family",
-        "description": "Relationships",
+        "title": "Connecting Words",
+        "description": "These glue sentences together.",
         "words": [
             {
-                "tamil": "அம்மா",
-                "hindi": "माँ",
-                "pronunciation": "अम्मा",
-                "audio_path": "assets/audio/l5_maa.mp3"
+                "hindi": "यहाँ",
+                "tamil": "இங்க",
+                "pronunciation": "इङ्क",
+                "audio_path": "assets/audio/l5_here.mp3"
             },
             {
-                "tamil": "அப்பா",
-                "hindi": "पिता",
-                "pronunciation": "अप्पा",
-                "audio_path": "assets/audio/l5_papa.mp3"
+                "hindi": "वहाँ",
+                "tamil": "அங்க",
+                "pronunciation": "अङ्क",
+                "audio_path": "assets/audio/l5_there.mp3"
             },
             {
-                "tamil": "சகோதரன்",
-                "hindi": "भाई",
-                "pronunciation": "चकोतरऩ्",
-                "audio_path": "assets/audio/l5_bhai.mp3"
+                "hindi": "अभी",
+                "tamil": "இப்போ",
+                "pronunciation": "इप्पो",
+                "audio_path": "assets/audio/l5_now.mp3"
             },
             {
-                "tamil": "சகோதரி",
-                "hindi": "बहन",
-                "pronunciation": "चकोतरि",
-                "audio_path": "assets/audio/l5_behen.mp3"
+                "hindi": "बाद में",
+                "tamil": "அப்புறம்",
+                "pronunciation": "अप्पुऱम्",
+                "audio_path": "assets/audio/l5_later.mp3"
             },
             {
-                "tamil": "தாத்தா பாட்டி",
-                "hindi": "दादा/दादी",
-                "pronunciation": "तात्ता पाट्टि",
-                "audio_path": "assets/audio/l5_grandparents.mp3"
+                "hindi": "लेकिन",
+                "tamil": "ஆனா",
+                "pronunciation": "आऩा",
+                "audio_path": "assets/audio/l5_but.mp3"
             },
             {
-                "tamil": "மகன்",
-                "hindi": "बेटा",
-                "pronunciation": "मकऩ्",
-                "audio_path": "assets/audio/l5_son.mp3"
-            },
-            {
-                "tamil": "மகள்",
-                "hindi": "बेटी",
-                "pronunciation": "मकळ्",
-                "audio_path": "assets/audio/l5_daughter.mp3"
-            },
-            {
-                "tamil": "கணவன்",
-                "hindi": "पति",
-                "pronunciation": "कणवऩ्",
-                "audio_path": "assets/audio/l5_husband.mp3"
-            },
-            {
-                "tamil": "மனைவி",
-                "hindi": "पत्नी",
-                "pronunciation": "मऩैवि",
-                "audio_path": "assets/audio/l5_wife.mp3"
+                "hindi": "और",
+                "tamil": "அப்புறம் / இன்னும்",
+                "pronunciation": "अप्पुऱम् / इऩ्ऩुम्",
+                "audio_path": "assets/audio/l5_and.mp3"
             }
         ]
     },
     {
         "level": 6,
-        "title": "Colors",
-        "description": "Colors of the world",
+        "title": "The Magic '-ku' (To/For)",
+        "description": "Add '-ku' to any place or person to mean 'To' or 'For'.",
         "words": [
             {
-                "tamil": "சிவப்பு",
-                "hindi": "लाल",
-                "pronunciation": "चिवप्पु",
-                "audio_path": "assets/audio/l6_red.mp3"
+                "hindi": "मुझे (To me)",
+                "tamil": "எனக்கு (Enakku)",
+                "pronunciation": "ऎऩक्कु (Enakku)",
+                "audio_path": "assets/audio/l6_to_me.mp3"
             },
             {
-                "tamil": "நீலம்",
-                "hindi": "नीला",
-                "pronunciation": "नीलम्",
-                "audio_path": "assets/audio/l6_blue.mp3"
+                "hindi": "तुम्हें (To you)",
+                "tamil": "உனக்கு (Unakku)",
+                "pronunciation": "उऩक्कु (Unakku)",
+                "audio_path": "assets/audio/l6_to_you_casual.mp3"
             },
             {
-                "tamil": "பச்சை",
-                "hindi": "हरा",
-                "pronunciation": "पच्चै",
-                "audio_path": "assets/audio/l6_green.mp3"
+                "hindi": "आपको (To you - Respect)",
+                "tamil": "உங்களுக்கு (Ungalukku)",
+                "pronunciation": "उङ्कळुक्कु (Ungalukku)",
+                "audio_path": "assets/audio/l6_to_you_respect.mp3"
             },
             {
-                "tamil": "மஞ்சள்",
-                "hindi": "पीला",
-                "pronunciation": "मञ्चळ्",
-                "audio_path": "assets/audio/l6_yellow.mp3"
+                "hindi": "घर को / घर जाना है",
+                "tamil": "வீட்டுக்கு (Veettukku)",
+                "pronunciation": "वीट्टुक्कु (Veettukku)",
+                "audio_path": "assets/audio/l6_to_house.mp3"
             },
             {
-                "tamil": "கருப்பு",
-                "hindi": "काला",
-                "pronunciation": "करुप्पु",
-                "audio_path": "assets/audio/l6_black.mp3"
+                "hindi": "ऑफिस को",
+                "tamil": "ஆபீஸூக்கு (Office-ku)",
+                "pronunciation": "आपीसूक्कु (Office-ku)",
+                "audio_path": "assets/audio/l6_to_office.mp3"
             },
             {
-                "tamil": "வெள்ளை",
-                "hindi": "सफेद",
-                "pronunciation": "वॆळ्ळै",
-                "audio_path": "assets/audio/l6_white.mp3"
+                "hindi": "दुकान को",
+                "tamil": "கடைக்கு (Kadaiku)",
+                "pronunciation": "कटैक्कु (Kadaiku)",
+                "audio_path": "assets/audio/l6_to_shop.mp3"
             },
             {
-                "tamil": "இளஞ்சிவப்பு",
-                "hindi": "गुलाबी",
-                "pronunciation": "इळञ्चिवप्पु",
-                "audio_path": "assets/audio/l6_pink.mp3"
-            },
-            {
-                "tamil": "ஆரஞ்சு",
-                "hindi": "नारंगी",
-                "pronunciation": "आरञ्चु",
-                "audio_path": "assets/audio/l6_orange.mp3"
+                "hindi": "बैंगलोर को",
+                "tamil": "பெங்களூருக்கு (Bangalore-ku)",
+                "pronunciation": "पॆङ्कळूरुक्कु (Bangalore-ku)",
+                "audio_path": "assets/audio/l6_to_bangalore.mp3"
             }
         ]
     },
     {
         "level": 7,
-        "title": "Food & Drinks",
-        "description": "Common food items",
+        "title": "The Magic '-la' (In/At/By)",
+        "description": "Add '-la' to say something is INSIDE or AT a place.",
         "words": [
             {
-                "tamil": "தண்ணீர்",
-                "hindi": "पानी",
-                "pronunciation": "तण्णीर्",
-                "audio_path": "assets/audio/l7_water.mp3"
+                "hindi": "घर में (In the house)",
+                "tamil": "வீட்ல (Veetla)",
+                "pronunciation": "वीट्ल (Veetla)",
+                "audio_path": "assets/audio/l7_in_house.mp3"
             },
             {
-                "tamil": "சாதம்",
-                "hindi": "चावल",
-                "pronunciation": "चातम्",
-                "audio_path": "assets/audio/l7_rice.mp3"
+                "hindi": "रास्ते में (On the way)",
+                "tamil": "வழியில (Vazhiyila)",
+                "pronunciation": "वऴियिल (Vazhiyila)",
+                "audio_path": "assets/audio/l7_on_way.mp3"
             },
             {
-                "tamil": "சப்பாத்தி",
-                "hindi": "रोटी",
-                "pronunciation": "चप्पात्ति",
-                "audio_path": "assets/audio/l7_roti.mp3"
+                "hindi": "हाथ में",
+                "tamil": "கைல (Kaila)",
+                "pronunciation": "कैल (Kaila)",
+                "audio_path": "assets/audio/l7_in_hand.mp3"
             },
             {
-                "tamil": "பால்",
-                "hindi": "दूध",
-                "pronunciation": "पाल्",
-                "audio_path": "assets/audio/l7_milk.mp3"
+                "hindi": "गाड़ी में (In the car/bike)",
+                "tamil": "வंडில (Vandila)",
+                "pronunciation": "वंडिल (Vandila)",
+                "audio_path": "assets/audio/l7_in_vehicle.mp3"
             },
             {
-                "tamil": "தேநீர்",
-                "hindi": "चाय",
-                "pronunciation": "तेनीर्",
-                "audio_path": "assets/audio/l7_tea.mp3"
+                "hindi": "बैंगलोर में",
+                "tamil": "பெங்களூர்ல (Bangalore-la)",
+                "pronunciation": "पॆङ्कळूर्ल (Bangalore-la)",
+                "audio_path": "assets/audio/l7_in_bangalore.mp3"
             },
             {
-                "tamil": "பழம்",
-                "hindi": "फल",
-                "pronunciation": "पऴम्",
-                "audio_path": "assets/audio/l7_fruit.mp3"
+                "hindi": "हिंदी में",
+                "tamil": "ஹிந்தில (Hindi-la)",
+                "pronunciation": "हिन्तिल (Hindi-la)",
+                "audio_path": "assets/audio/l7_in_hindi.mp3"
             }
         ]
     },
     {
         "level": 8,
-        "title": "Time & Days",
-        "description": "Expressing time",
+        "title": "Past Tense (Finished Action)",
+        "description": "Used for 80% of daily updates.",
         "words": [
             {
-                "tamil": "இன்று",
-                "hindi": "आज",
-                "pronunciation": "इऩ्ऱु",
-                "audio_path": "assets/audio/l8_today.mp3"
+                "hindi": "मैं गया (I went)",
+                "tamil": "நான் போனேன் (Naan Ponen)",
+                "pronunciation": "नाऩ् पोऩेऩ् (Naan Ponen)",
+                "audio_path": "assets/audio/l8_i_went.mp3"
             },
             {
-                "tamil": "நேற்று",
-                "hindi": "कल (बीता)",
-                "pronunciation": "नेऱ्‌ऱु",
-                "audio_path": "assets/audio/l8_yesterday.mp3"
+                "hindi": "मैं आया (I came)",
+                "tamil": "நான் வந்தேன் (Naan Vandhen)",
+                "pronunciation": "नाऩ् वन्तेऩ् (Naan Vandhen)",
+                "audio_path": "assets/audio/l8_i_came.mp3"
             },
             {
-                "tamil": "நாளை",
-                "hindi": "कल (आने वाला)",
-                "pronunciation": "नाळै",
-                "audio_path": "assets/audio/l8_tomorrow.mp3"
+                "hindi": "मैंने देखा (I saw)",
+                "tamil": "நான் பாத்தேன் (Naan Paathen)",
+                "pronunciation": "नाऩ् पात्तेऩ् (Naan Paathen)",
+                "audio_path": "assets/audio/l8_i_saw.mp3"
             },
             {
-                "tamil": "காலை",
-                "hindi": "सुबह",
-                "pronunciation": "कालै",
-                "audio_path": "assets/audio/l8_morning.mp3"
+                "hindi": "मैंने ख़रीदा (I bought)",
+                "tamil": "நான் வாங்கினேன் (Naan Vaanginen)",
+                "pronunciation": "नाऩ् वाङ्किऩेऩ् (Naan Vaanginen)",
+                "audio_path": "assets/audio/l8_i_bought.mp3"
             },
             {
-                "tamil": "மாலை",
-                "hindi": "शाम",
-                "pronunciation": "मालै",
-                "audio_path": "assets/audio/l8_evening.mp3"
+                "hindi": "उसने दिया (He/She gave)",
+                "tamil": "அவரு குடுத்தாரு (Avaru Kudutharu)",
+                "pronunciation": "अवरु कुटुत्तारु (Avaru Kudutharu)",
+                "audio_path": "assets/audio/l8_he_gave.mp3"
             },
             {
-                "tamil": "இரவு",
-                "hindi": "रात",
-                "pronunciation": "इरवु",
-                "audio_path": "assets/audio/l8_night.mp3"
+                "hindi": "खत्म हो गया (Finished)",
+                "tamil": "முடிஞ்சுது (Mudinjudhu)",
+                "pronunciation": "मुटिञ्चुतु (Mudinjudhu)",
+                "audio_path": "assets/audio/l8_finished.mp3"
             }
         ]
     },
     {
         "level": 9,
-        "title": "Grammar (Cases)",
-        "description": "Connecting words (Ko, Se, Mein)",
+        "title": "Present Continuous (Right Now)",
+        "description": "What are you doing currently?",
         "words": [
             {
-                "tamil": "ராமனுக்கு",
-                "hindi": "राम को",
-                "pronunciation": "रामऩुक्कु",
-                "audio_path": "assets/audio/l9_ko.mp3"
+                "hindi": "मैं जा रहा हूँ",
+                "tamil": "நான் போறேன் (Naan Poren)",
+                "pronunciation": "नाऩ् पोऱेऩ् (Naan Poren)",
+                "audio_path": "assets/audio/l9_im_going.mp3"
             },
             {
-                "tamil": "வீட்டிலிருந்து",
-                "hindi": "घर से",
-                "pronunciation": "वीट्टिलिरुन्तु",
-                "audio_path": "assets/audio/l9_se.mp3"
+                "hindi": "मैं आ रहा हूँ",
+                "tamil": "நான் வர்றேன் (Naan Varren)",
+                "pronunciation": "नाऩ् वर्ऱेऩ् (Naan Varren)",
+                "audio_path": "assets/audio/l9_im_coming.mp3"
             },
             {
-                "tamil": "வீட்டில்",
-                "hindi": "घर में",
-                "pronunciation": "वीट्टिल्",
-                "audio_path": "assets/audio/l9_mein.mp3"
+                "hindi": "बारिश हो रही है",
+                "tamil": "மழை பெய்யுது (Mazhai Peyyudhu)",
+                "pronunciation": "मऴै पॆय्युतु (Mazhai Peyyudhu)",
+                "audio_path": "assets/audio/l9_raining.mp3"
             },
             {
-                "tamil": "எனக்காக",
-                "hindi": "मेरे लिए",
-                "pronunciation": "ऎऩक्काक",
-                "audio_path": "assets/audio/l9_for_me.mp3"
+                "hindi": "समझ आ रहा है?",
+                "tamil": "புரியுதா? (Puriyudha)",
+                "pronunciation": "पुरियुता? (Puriyudha)",
+                "audio_path": "assets/audio/l9_understanding.mp3"
+            },
+            {
+                "hindi": "भूख लग रही है",
+                "tamil": "பசிக்குது (Pasikkudhu)",
+                "pronunciation": "पचिक्कुतु (Pasikkudhu)",
+                "audio_path": "assets/audio/l9_hungry.mp3"
+            },
+            {
+                "hindi": "क्या कर रहे हो?",
+                "tamil": "என்ன பண்றீங்க? (Enna Panreenga)",
+                "pronunciation": "ऎऩ्ऩ पण्ऱीङ्क? (Enna Panreenga)",
+                "audio_path": "assets/audio/l9_what_doing.mp3"
             }
         ]
     },
     {
         "level": 10,
-        "title": "Full Sentences",
-        "description": "Real Conversation Phrases",
+        "title": "Negation (Don't / Not)",
+        "description": "Refusing or denying something.",
         "words": [
             {
-                "tamil": "என் பெயர் பிரணவ்",
-                "hindi": "मेरा नाम प्रणव है",
-                "pronunciation": "ऎऩ् पॆयर् पिरणव्",
-                "audio_path": "assets/audio/l10_my_name.mp3"
+                "hindi": "नहीं चाहिए (Don't want)",
+                "tamil": "வேணாம் (Venaam)",
+                "pronunciation": "वेणाम् (Venaam)",
+                "audio_path": "assets/audio/l10_dont_want.mp3"
             },
             {
-                "tamil": "சாப்பிட்டீர்களா?",
-                "hindi": "खाना खाया?",
-                "pronunciation": "चाप्पिट्टीर्कळा?",
-                "audio_path": "assets/audio/l10_ate.mp3"
+                "hindi": "पसंद नहीं है (Don't like)",
+                "tamil": "பிடிக்கல (Pidikkala)",
+                "pronunciation": "पिटिक्कल (Pidikkala)",
+                "audio_path": "assets/audio/l10_dont_like.mp3"
             },
             {
-                "tamil": "எனக்குத் தாகமாக இருக்கிறது",
-                "hindi": "मुझे प्यास लगी है",
-                "pronunciation": "ऎऩक्कुत् ताकमाक इरुक्किऱतु",
-                "audio_path": "assets/audio/l10_thirsty.mp3"
+                "hindi": "नहीं है (Not here/have)",
+                "tamil": "இல்ல (Illa)",
+                "pronunciation": "इल्ल (Illa)",
+                "audio_path": "assets/audio/l10_not_here.mp3"
             },
             {
-                "tamil": "தண்ணீர் வேண்டும்",
-                "hindi": "पानी चाहिए",
-                "pronunciation": "तण्णीर् वेण्टुम्",
-                "audio_path": "assets/audio/l10_want_water.mp3"
+                "hindi": "मालूम नहीं (Don't know)",
+                "tamil": "தெரியாது (Teriyadhu)",
+                "pronunciation": "तॆरियातु (Teriyadhu)",
+                "audio_path": "assets/audio/l10_dont_know.mp3"
             },
             {
-                "tamil": "இது என்ன?",
-                "hindi": "यह क्या है?",
-                "pronunciation": "इतु ऎऩ्ऩ?",
-                "audio_path": "assets/audio/l10_what_is_this.mp3"
+                "hindi": "कुछ नहीं (Nothing)",
+                "tamil": "ஒன்னும் இல்ல (Onnum Illa)",
+                "pronunciation": "ऒऩ्ऩुम् इल्ल (Onnum Illa)",
+                "audio_path": "assets/audio/l10_nothing.mp3"
             },
             {
-                "tamil": "உங்கள் வீடு எங்கே?",
-                "hindi": "आपका घर कहाँ है?",
-                "pronunciation": "उङ्कळ् वीटु ऎङ्के?",
-                "audio_path": "assets/audio/l10_where_is_house.mp3"
+                "hindi": "मैं नहीं गया (I didn't go)",
+                "tamil": "நான் போகல (Naan Pogala)",
+                "pronunciation": "नाऩ् पोकल (Naan Pogala)",
+                "audio_path": "assets/audio/l10_didnt_go.mp3"
+            }
+        ]
+    },
+    {
+        "level": 11,
+        "title": "Real World: Auto/Cab",
+        "description": "Crucial phrases for transport.",
+        "words": [
+            {
+                "hindi": "सीधा जाओ",
+                "tamil": "நேரா போங்க (Nera Ponga)",
+                "pronunciation": "नेरा पोङ्क (Nera Ponga)",
+                "audio_path": "assets/audio/l11_go_straight.mp3"
+            },
+            {
+                "hindi": "दाएं मुड़ो (Right)",
+                "tamil": "ரைட்ல திரும்புங்க (Right-la Thirumbunga)",
+                "pronunciation": "रैट्ल तिरुम्पुङ्क (Right-la Thirumbunga)",
+                "audio_path": "assets/audio/l11_turn_right.mp3"
+            },
+            {
+                "hindi": "बाएं मुड़ो (Left)",
+                "tamil": "லெப்ட்ல திரும்புங்க (Left-la Thirumbunga)",
+                "pronunciation": "लॆप्ट्ल तिरुम्पुङ्क (Left-la Thirumbunga)",
+                "audio_path": "assets/audio/l11_turn_left.mp3"
+            },
+            {
+                "hindi": "खुल्ले पैसे हैं क्या? (Change?)",
+                "tamil": "சில்லற இருக்கா? (Change Irukka?)",
+                "pronunciation": "चिल्लऱ इरुक्का? (Change Irukka?)",
+                "audio_path": "assets/audio/l11_have_change.mp3"
+            },
+            {
+                "hindi": "मीटर डालो",
+                "tamil": "மீட்டர் போடுங்க (Meter Podunga)",
+                "pronunciation": "मीट्टर् पोटुङ्क (Meter Podunga)",
+                "audio_path": "assets/audio/l11_put_meter.mp3"
+            },
+            {
+                "hindi": "कितना हुआ?",
+                "tamil": "எவ்ளோ ஆச்சு? (Evlo Aachu?)",
+                "pronunciation": "ऎव्ळो आच्चु? (Evlo Aachu?)",
+                "audio_path": "assets/audio/l11_how_much_total.mp3"
+            }
+        ]
+    },
+    {
+        "level": 12,
+        "title": "Complex Sentences",
+        "description": "Combining two ideas (If/But/When).",
+        "words": [
+            {
+                "hindi": "अगर तुम आओगे तो (If you come)",
+                "tamil": "நீங்க வந்தா (Neenga Vandhaa)",
+                "pronunciation": "नीङ्क वन्ता (Neenga Vandhaa)",
+                "audio_path": "assets/audio/l12_if_you_come.mp3"
+            },
+            {
+                "hindi": "जाने के बाद (After going)",
+                "tamil": "போன அப்புறம் (Pona Appuram)",
+                "pronunciation": "पोऩ अप्पुऱम् (Pona Appuram)",
+                "audio_path": "assets/audio/l12_after_going.mp3"
+            },
+            {
+                "hindi": "मुझे लगा कि... (I thought that...)",
+                "tamil": "நான் நெனச்சேன்... (Naan Nenachen...)",
+                "pronunciation": "नाऩ् नॆऩच्चेऩ्॥। (Naan Nenachen॥।)",
+                "audio_path": "assets/audio/l12_i_thought.mp3"
+            },
+            {
+                "hindi": "क्योंकि (Because)",
+                "tamil": "ஏன்னா (Yenna)",
+                "pronunciation": "एऩ्ऩा (Yenna)",
+                "audio_path": "assets/audio/l12_because.mp3"
+            },
+            {
+                "hindi": "इसलिए (So/Therefore)",
+                "tamil": "அதனால (Adhanaala)",
+                "pronunciation": "अतऩाल (Adhanaala)",
+                "audio_path": "assets/audio/l12_therefore.mp3"
             }
         ]
     }

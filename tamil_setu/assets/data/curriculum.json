@@ -1,0 +1,167 @@
+[
+    {
+      "level": 1,
+      "topic": "Survival Basics",
+      "description": "Instant words you need immediately.",
+      "items": [
+        { "hindi": "नमस्ते / हेलो", "formal": "வணக்கம்", "spoken": "வணக்கம்", "id": "l1_hello" },
+        { "hindi": "हाँ", "formal": "ஆம்", "spoken": "ஆமா", "id": "l1_yes" },
+        { "hindi": "नहीं", "formal": "இல்லை", "spoken": "இல்ல", "id": "l1_no" },
+        { "hindi": "ठीक है (Okay)", "formal": "சரி", "spoken": "சரி", "id": "l1_okay" },
+        { "hindi": "मुझे नहीं पता", "formal": "எனக்குத் தெரியாது", "spoken": "எனக்குத் தெரியாது", "id": "l1_dont_know" },
+        { "hindi": "कोई बात नहीं", "formal": "பரவாயில்லை", "spoken": "பரவாயில்ல", "id": "l1_no_problem" },
+        { "hindi": "जल्दी", "formal": "சீக்கிரம்", "spoken": "சீக்கிரம்", "id": "l1_fast" },
+        { "hindi": "धीरे", "formal": "மெதுவாக", "spoken": "மெதுவா", "id": "l1_slow" },
+        { "hindi": "रुको", "formal": "நில்லுங்கள்", "spoken": "நில்லுங்க", "id": "l1_stop" },
+        { "hindi": "चलो / चलें", "formal": "போகலாம்", "spoken": "போலாம்", "id": "l1_lets_go" }
+      ]
+    },
+    {
+      "level": 2,
+      "topic": "Pronouns (Street Style)",
+      "description": "Note: In spoken Tamil, 'Hum' has two words (Namma vs Naanga).",
+      "items": [
+        { "hindi": "मैं", "formal": "நான்", "spoken": "நான் (Naan)", "id": "l2_i" },
+        { "hindi": "तुम (Casual)", "formal": "நீ", "spoken": "நீ (Nee)", "id": "l2_you_casual" },
+        { "hindi": "आप (Respect)", "formal": "நீங்கள்", "spoken": "நீங்க (Neenga)", "id": "l2_you_respect" },
+        { "hindi": "हम (सब साथ में)", "formal": "நாம்", "spoken": "நம்ம (Namma)", "id": "l2_we_inclusive" },
+        { "hindi": "हम (सामने वाले को छोड़कर)", "formal": "நாங்கள்", "spoken": "நாங்க (Naanga)", "id": "l2_we_exclusive" },
+        { "hindi": "यह (This person/thing)", "formal": "இவன்/இது", "spoken": "இவன்/இது", "id": "l2_this" },
+        { "hindi": "वह (That person/thing)", "formal": "அவன்/அது", "spoken": "அவன்/அது", "id": "l2_that" }
+      ]
+    },
+    {
+      "level": 3,
+      "topic": "Important Verbs (Command)",
+      "description": "Short commands are the most common spoken form.",
+      "items": [
+        { "hindi": "आओ (Come)", "formal": "வாருங்கள்", "spoken": "வாங்க", "id": "l3_come" },
+        { "hindi": "जाओ (Go)", "formal": "போங்கள்", "spoken": "போங்க", "id": "l3_go" },
+        { "hindi": "खाओ (Eat)", "formal": "சாப்பிடுங்கள்", "spoken": "சாப்பிடுங்க", "id": "l3_eat" },
+        { "hindi": "पीओ (Drink)", "formal": "குடியுங்கள்", "spoken": "குடிங்க", "id": "l3_drink" },
+        { "hindi": "देखो (Look)", "formal": "பாருங்கள்", "spoken": "பாருங்க", "id": "l3_look" },
+        { "hindi": "बैठो (Sit)", "formal": "உட்காருங்கள்", "spoken": "உக்காருங்க", "id": "l3_sit" },
+        { "hindi": "सो जाओ (Sleep)", "formal": "தூங்குங்கள்", "spoken": "தூங்குங்க", "id": "l3_sleep" },
+        { "hindi": "दो (Give)", "formal": "கொடுங்கள்", "spoken": "குடுங்க", "id": "l3_give" }
+      ]
+    },
+    {
+      "level": 4,
+      "topic": "Common Questions",
+      "description": "Adding 'aa' at the end of a word often makes it a question.",
+      "items": [
+        { "hindi": "क्या?", "formal": "என்ன?", "spoken": "என்ன?", "id": "l4_what" },
+        { "hindi": "कहाँ?", "formal": "எங்கே?", "spoken": "எங்க?", "id": "l4_where" },
+        { "hindi": "कब?", "formal": "எప్పుడు?", "spoken": "எப்போ?", "id": "l4_when" },
+        { "hindi": "क्यों?", "formal": "ஏன்?", "spoken": "ஏன்?", "id": "l4_why" },
+        { "hindi": "कौन?", "formal": "யார்?", "spoken": "யாரு?", "id": "l4_who" },
+        { "hindi": "कितना? (Money)", "formal": "எவ்வளவு?", "spoken": "எவ்ளோ?", "id": "l4_how_much" },
+        { "hindi": "कैसे?", "formal": "எப்படி?", "spoken": "எப்டி?", "id": "l4_how" },
+        { "hindi": "खाना खाया? (Ate?)", "formal": "சாப்பிட்டீர்களா?", "spoken": "சாப்டாச்சா?", "id": "l4_ate" }
+      ]
+    },
+    {
+      "level": 5,
+      "topic": "Connecting Words",
+      "description": "These glue sentences together.",
+      "items": [
+        { "hindi": "यहाँ", "formal": "இங்கே", "spoken": "இங்க", "id": "l5_here" },
+        { "hindi": "वहाँ", "formal": "அங்கே", "spoken": "அங்க", "id": "l5_there" },
+        { "hindi": "अभी", "formal": "இப்போது", "spoken": "இப்போ", "id": "l5_now" },
+        { "hindi": "बाद में", "formal": "பிறகு", "spoken": "அப்புறம்", "id": "l5_later" },
+        { "hindi": "लेकिन", "formal": "ஆனால்", "spoken": "ஆனா", "id": "l5_but" },
+        { "hindi": "और", "formal": "மற்றும்", "spoken": "அப்புறம் / இன்னும்", "id": "l5_and" }
+      ]
+    },
+    {
+        "level": 6,
+        "topic": "The Magic '-ku' (To/For)",
+        "description": "Add '-ku' to any place or person to mean 'To' or 'For'.",
+        "items": [
+          { "hindi": "मुझे (To me)", "formal": "எனக்கு", "spoken": "எனக்கு (Enakku)", "id": "l6_to_me" },
+          { "hindi": "तुम्हें (To you)", "formal": "உனக்கு", "spoken": "உனக்கு (Unakku)", "id": "l6_to_you_casual" },
+          { "hindi": "आपको (To you - Respect)", "formal": "உங்களுக்கு", "spoken": "உங்களுக்கு (Ungalukku)", "id": "l6_to_you_respect" },
+          { "hindi": "घर को / घर जाना है", "formal": "வீட்டிற்கு", "spoken": "வீட்டுக்கு (Veettukku)", "id": "l6_to_house" },
+          { "hindi": "ऑफिस को", "formal": "அலுவலகத்திற்கு", "spoken": "ஆபீஸூக்கு (Office-ku)", "id": "l6_to_office" },
+          { "hindi": "दुकान को", "formal": "கடைக்கு", "spoken": "கடைக்கு (Kadaiku)", "id": "l6_to_shop" },
+          { "hindi": "बैंगलोर को", "formal": "பெங்களூருக்கு", "spoken": "பெங்களூருக்கு (Bangalore-ku)", "id": "l6_to_bangalore" }
+        ]
+      },
+      {
+        "level": 7,
+        "topic": "The Magic '-la' (In/At/By)",
+        "description": "Add '-la' to say something is INSIDE or AT a place.",
+        "items": [
+          { "hindi": "घर में (In the house)", "formal": "வீட்டில்", "spoken": "வீட்ல (Veetla)", "id": "l7_in_house" },
+          { "hindi": "रास्ते में (On the way)", "formal": "வழியில்", "spoken": "வழியில (Vazhiyila)", "id": "l7_on_way" },
+          { "hindi": "हाथ में", "formal": "கையில்", "spoken": "கைல (Kaila)", "id": "l7_in_hand" },
+          { "hindi": "गाड़ी में (In the car/bike)", "formal": "வண்டியில்", "spoken": "வंडில (Vandila)", "id": "l7_in_vehicle" },
+          { "hindi": "बैंगलोर में", "formal": "பெங்களூரில்", "spoken": "பெங்களூர்ல (Bangalore-la)", "id": "l7_in_bangalore" },
+          { "hindi": "हिंदी में", "formal": "இந்தியில்", "spoken": "ஹிந்தில (Hindi-la)", "id": "l7_in_hindi" }
+        ]
+      },
+      {
+        "level": 8,
+        "topic": "Past Tense (Finished Action)",
+        "description": "Used for 80% of daily updates.",
+        "items": [
+          { "hindi": "मैं गया (I went)", "formal": "நான் சென்றேன்", "spoken": "நான் போனேன் (Naan Ponen)", "id": "l8_i_went" },
+          { "hindi": "मैं आया (I came)", "formal": "நான் வந்தேன்", "spoken": "நான் வந்தேன் (Naan Vandhen)", "id": "l8_i_came" },
+          { "hindi": "मैंने देखा (I saw)", "formal": "நான் பார்த்தேன்", "spoken": "நான் பாத்தேன் (Naan Paathen)", "id": "l8_i_saw" },
+          { "hindi": "मैंने ख़रीदा (I bought)", "formal": "நான் வாங்கினேன்", "spoken": "நான் வாங்கினேன் (Naan Vaanginen)", "id": "l8_i_bought" },
+          { "hindi": "उसने दिया (He/She gave)", "formal": "அவர் கொடுத்தார்", "spoken": "அவரு குடுத்தாரு (Avaru Kudutharu)", "id": "l8_he_gave" },
+          { "hindi": "खत्म हो गया (Finished)", "formal": "முடிந்தது", "spoken": "முடிஞ்சுது (Mudinjudhu)", "id": "l8_finished" }
+        ]
+      },
+      {
+        "level": 9,
+        "topic": "Present Continuous (Right Now)",
+        "description": "What are you doing currently?",
+        "items": [
+          { "hindi": "मैं जा रहा हूँ", "formal": "நான் செல்கிறேன்", "spoken": "நான் போறேன் (Naan Poren)", "id": "l9_im_going" },
+          { "hindi": "मैं आ रहा हूँ", "formal": "நான் வருகிறேன்", "spoken": "நான் வர்றேன் (Naan Varren)", "id": "l9_im_coming" },
+          { "hindi": "बारिश हो रही है", "formal": "மழை பெய்கிறது", "spoken": "மழை பெய்யுது (Mazhai Peyyudhu)", "id": "l9_raining" },
+          { "hindi": "समझ आ रहा है?", "formal": "புரிகிறதா?", "spoken": "புரியுதா? (Puriyudha)", "id": "l9_understanding" },
+          { "hindi": "भूख लग रही है", "formal": "பசிக்கிறது", "spoken": "பசிக்குது (Pasikkudhu)", "id": "l9_hungry" },
+          { "hindi": "क्या कर रहे हो?", "formal": "என்ன செய்கிறீர்கள்?", "spoken": "என்ன பண்றீங்க? (Enna Panreenga)", "id": "l9_what_doing" }
+        ]
+      },
+      {
+        "level": 10,
+        "topic": "Negation (Don't / Not)",
+        "description": "Refusing or denying something.",
+        "items": [
+          { "hindi": "नहीं चाहिए (Don't want)", "formal": "வேண்டாம்", "spoken": "வேணாம் (Venaam)", "id": "l10_dont_want" },
+          { "hindi": "पसंद नहीं है (Don't like)", "formal": "பிடிக்கவில்லை", "spoken": "பிடிக்கல (Pidikkala)", "id": "l10_dont_like" },
+          { "hindi": "नहीं है (Not here/have)", "formal": "இல்லை", "spoken": "இல்ல (Illa)", "id": "l10_not_here" },
+          { "hindi": "मालूम नहीं (Don't know)", "formal": "தெரியாது", "spoken": "தெரியாது (Teriyadhu)", "id": "l10_dont_know" },
+          { "hindi": "कुछ नहीं (Nothing)", "formal": "ஒன்றும் இல்லை", "spoken": "ஒன்னும் இல்ல (Onnum Illa)", "id": "l10_nothing" },
+          { "hindi": "मैं नहीं गया (I didn't go)", "formal": "நான் போகவில்லை", "spoken": "நான் போகல (Naan Pogala)", "id": "l10_didnt_go" }
+        ]
+      },
+      {
+        "level": 11,
+        "topic": "Real World: Auto/Cab",
+        "description": "Crucial phrases for transport.",
+        "items": [
+          { "hindi": "सीधा जाओ", "formal": "நேராக செல்லுங்கள்", "spoken": "நேரா போங்க (Nera Ponga)", "id": "l11_go_straight" },
+          { "hindi": "दाएं मुड़ो (Right)", "formal": "வலது பக்கம்", "spoken": "ரைட்ல திரும்புங்க (Right-la Thirumbunga)", "id": "l11_turn_right" },
+          { "hindi": "बाएं मुड़ो (Left)", "formal": "இடது பக்கம்", "spoken": "லெப்ட்ல திரும்புங்க (Left-la Thirumbunga)", "id": "l11_turn_left" },
+          { "hindi": "खुल्ले पैसे हैं क्या? (Change?)", "formal": "சில்லறை உள்ளதா?", "spoken": "சில்லற இருக்கா? (Change Irukka?)", "id": "l11_have_change" },
+          { "hindi": "मीटर डालो", "formal": "மீட்டர் போடுங்கள்", "spoken": "மீட்டர் போடுங்க (Meter Podunga)", "id": "l11_put_meter" },
+          { "hindi": "कितना हुआ?", "formal": "எவ்வளவு ஆயிற்று?", "spoken": "எவ்ளோ ஆச்சு? (Evlo Aachu?)", "id": "l11_how_much_total" }
+        ]
+      },
+      {
+        "level": 12,
+        "topic": "Complex Sentences",
+        "description": "Combining two ideas (If/But/When).",
+        "items": [
+          { "hindi": "अगर तुम आओगे तो (If you come)", "formal": "நீங்கள் வந்தால்", "spoken": "நீங்க வந்தா (Neenga Vandhaa)", "id": "l12_if_you_come" },
+          { "hindi": "जाने के बाद (After going)", "formal": "சென்ற பிறகு", "spoken": "போன அப்புறம் (Pona Appuram)", "id": "l12_after_going" },
+          { "hindi": "मुझे लगा कि... (I thought that...)", "formal": "நான் நினைத்தேன்", "spoken": "நான் நெனச்சேன்... (Naan Nenachen...)", "id": "l12_i_thought" },
+          { "hindi": "क्योंकि (Because)", "formal": "ஏனென்றால்", "spoken": "ஏன்னா (Yenna)", "id": "l12_because" },
+          { "hindi": "इसलिए (So/Therefore)", "formal": "அதனால்", "spoken": "அதனால (Adhanaala)", "id": "l12_therefore" }
+        ]
+      }
+  ]

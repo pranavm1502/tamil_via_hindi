@@ -31,8 +31,6 @@ class _LessonScreenState extends State<LessonScreen>
 
   Future<void> _playAudio(String path) async {
     try {
-      // AssetSource automatically adds 'assets/', so we remove it from your stored path
-      // stored path: "assets/audio/file.mp3" -> needed: "audio/file.mp3"
       final cleanPath = path.replaceFirst('assets/', '');
       await _audioPlayer.play(AssetSource(cleanPath));
     } catch (e) {
@@ -52,8 +50,14 @@ class _LessonScreenState extends State<LessonScreen>
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.lesson.title),
+        elevation: 0,
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Colors.white,
         bottom: TabBar(
           controller: _tabController,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white70,
+          indicatorColor: Colors.white,
           tabs: const [
             Tab(icon: Icon(Icons.menu_book), text: 'Learn'),
             Tab(icon: Icon(Icons.flash_on), text: 'Flashcards'),
@@ -85,42 +89,80 @@ class _LessonScreenState extends State<LessonScreen>
       itemBuilder: (context, index) {
         final pair = widget.lesson.words[index];
         return Card(
-          margin: const EdgeInsets.only(bottom: 12),
-          child: ListTile(
-            contentPadding: const EdgeInsets.all(16),
-            title: Text(
-              pair.tamil,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.deepOrange,
-              ),
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 8),
-                Text(
-                  pair.hindi,
-                  style: const TextStyle(fontSize: 18, color: Colors.black87),
+          elevation: 4,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          margin: const EdgeInsets.only(bottom: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // TOP HALF: HINDI (The Question)
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
                 ),
-                const SizedBox(height: 4),
-                // Show the pronunciation bridge (e.g., "वणक्कम")
-                Text(
-                  '(${pair.pronunciation})',
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  pair.hindi,
                   style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey.shade700,
-                    fontStyle: FontStyle.italic,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.blue.shade800,
                   ),
                 ),
-              ],
-            ),
-            trailing: IconButton(
-              icon: const Icon(Icons.volume_up_rounded,
-                  size: 32, color: Colors.blue),
-              onPressed: () => _playAudio(pair.audioPath),
-            ),
+              ),
+              
+              // BOTTOM HALF: TAMIL + PRONUNCIATION (The Answer)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Tamil Script and Hindi Transliteration combined
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: [
+                        Text(
+                          pair.tamil,
+                          style: const TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.deepOrange,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            '(${pair.pronunciation})',
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.grey.shade600,
+                              fontStyle: FontStyle.italic,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                ),
+              ),
+              
+              // AUDIO BUTTON
+              Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 12, bottom: 8),
+                  child: IconButton(
+                    icon: const Icon(Icons.volume_up_rounded,
+                        size: 36, color: Colors.blue),
+                    onPressed: () => _playAudio(pair.audioPath),
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },
