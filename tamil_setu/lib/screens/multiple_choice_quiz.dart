@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/word_pair.dart';
 import '../providers/progress_provider.dart';
+import '../widgets/peacock_mascot.dart'; // Added Mascot import
 
 class MultipleChoiceQuiz extends StatefulWidget {
   final List<WordPair> words;
@@ -96,6 +97,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
   }
 
   void _showFinalResults() {
+    final percentage = (score / shuffledWords.length * 100).round();
     final progressProvider =
         Provider.of<ProgressProvider>(context, listen: false);
     progressProvider.saveQuizScore(
@@ -105,8 +107,18 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-          title: const Text('Quiz Complete!'),
-          content: Text('You scored $score out of ${shuffledWords.length}'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              PeacockMascot(
+                message: percentage >= 80 ? "Quiz Complete! शानदार!" : "Good attempt! और अभ्यास करें!",
+                state: percentage >= 80 ? MascotState.celebrate : MascotState.confused,
+              ),
+              const SizedBox(height: 20),
+              Text('You scored $score out of ${shuffledWords.length}', style: const TextStyle(fontSize: 18)),
+              Text('$percentage%', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: percentage >= 80 ? Colors.green : Colors.orange)),
+            ],
+          ),
           actions: [
             TextButton(
               onPressed: () {
@@ -147,21 +159,6 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
 
     final currentWord = shuffledWords[currentIndex];
     
-    Color getOptionColor(String option) {
-      if (!showResult) return Colors.white;
-      if (option == currentWord.tamil) return Colors.green.shade100;
-      if (option == selectedAnswer) return Colors.red.shade100;
-      return Colors.white;
-    }
-    
-    Color getBorderColor(String option) {
-      if (!showResult) return Colors.grey.shade300;
-      if (option == currentWord.tamil) return Colors.green.shade600;
-      if (option == selectedAnswer && option != currentWord.tamil) return Colors.red.shade600;
-      return Colors.grey.shade300;
-    }
-
-
     return Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
@@ -170,18 +167,13 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
             children: [
               Column(
                 children: [
-                  // Progress Bar
-                  ClipRRect(
+                  LinearProgressIndicator(
+                    value: (currentIndex + 1) / shuffledWords.length,
+                    minHeight: 10,
                     borderRadius: BorderRadius.circular(5),
-                    child: LinearProgressIndicator(
-                      value: (currentIndex + 1) / shuffledWords.length,
-                      backgroundColor: Colors.grey[300],
-                      minHeight: 10,
-                      color: Colors.green.shade600,
-                    ),
+                    color: Colors.green.shade600,
                   ),
                   const SizedBox(height: 30),
-                  // Question Card
                   Card(
                       elevation: 6,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -189,70 +181,64 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
                         padding: const EdgeInsets.all(20.0),
                         child: Column(
                           children: [
-                            const Text('Choose the correct Tamil translation:', style: TextStyle(color: Colors.grey, fontSize: 16)),
+                            const Text('Choose the correct Tamil translation:', style: TextStyle(color: Colors.grey)),
                             const SizedBox(height: 10),
                             Text(
                               currentWord.hindi,
-                              style: const TextStyle(
-                                  fontSize: 32, fontWeight: FontWeight.w900, color: Colors.blue),
+                              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.blue),
                               textAlign: TextAlign.center,
                             ),
                           ],
                         ),
                       )),
-                  const SizedBox(height: 20),
                 ],
               ),
               
-              // Options
+              // Options Section
               Column(
-                children: currentOptions.asMap().entries.map((entry) {
-                final option = entry.value;
+                children: currentOptions.map((option) {
                 final pair = _getWordPairForOption(option);
+                if (pair == null) return const SizedBox.shrink();
 
-                if (pair == null) return const SizedBox.shrink(); 
+                bool isCorrect = option == currentWord.tamil;
+                bool isSelected = option == selectedAnswer;
 
                 return Padding(
                     padding: const EdgeInsets.only(bottom: 12.0),
                     child: InkWell(
                         onTap: () => _selectAnswer(option),
                         borderRadius: BorderRadius.circular(15),
-                        child: AnimatedContainer( 
-                          duration: const Duration(milliseconds: 200),
-                          width: double.infinity,
+                        child: Container( 
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: getOptionColor(option),
+                            color: !showResult ? Colors.white : (isCorrect ? Colors.green.shade50 : (isSelected ? Colors.red.shade50 : Colors.white)),
                             borderRadius: BorderRadius.circular(15),
                             border: Border.all(
-                              color: getBorderColor(option),
+                              color: !showResult ? Colors.grey.shade300 : (isCorrect ? Colors.green : (isSelected ? Colors.red : Colors.grey.shade300)),
                               width: 2,
                             ),
-                            boxShadow: [
-                                BoxShadow(
-                                  // FIX: Resolving deprecated 'withOpacity' / 'withValues'
-                                  // 0.3 * 255 = 76
-                                  color: getBorderColor(option).withAlpha(76), 
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
                           ),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
-                                pair.tamil, // Tamil Script
-                                style: TextStyle(
-                                  fontSize: 20, 
-                                  fontWeight: FontWeight.w800,
-                                  color: showResult && option != currentWord.tamil ? Colors.grey.shade600 : Colors.black87
+                              // FIX: Expanded ensures the Tamil text doesn't push others off screen
+                              Expanded(
+                                child: Text(
+                                  pair.tamil,
+                                  style: TextStyle(
+                                    fontSize: 20, 
+                                    fontWeight: FontWeight.w800,
+                                    color: showResult && !isCorrect ? Colors.grey : Colors.black87
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              Text(
-                                '(${pair.pronunciation})', // Hindi Transliteration
-                                style: const TextStyle(fontSize: 16, color: Colors.blueGrey),
+                              // FIX: Flexible allows the pronunciation to wrap if necessary
+                              Flexible(
+                                child: Text(
+                                  '(${pair.pronunciation})',
+                                  style: const TextStyle(fontSize: 14, color: Colors.blueGrey),
+                                  textAlign: TextAlign.right,
+                                ),
                               ),
                             ],
                           ),
@@ -263,12 +249,10 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
               if (showResult)
                 FilledButton(
                     onPressed: _nextQuestion, 
-                    style: FilledButton.styleFrom(
-                        padding: const EdgeInsets.all(18),
-                        backgroundColor: Colors.blue.shade700,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
+                    style: FilledButton.styleFrom(padding: const EdgeInsets.all(18)),
                     child: const Text('Continue', style: TextStyle(fontSize: 20)))
+              else
+                const SizedBox(height: 50), // Spacer to maintain layout
             ]));
   }
 }
