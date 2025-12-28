@@ -111,7 +111,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
             mainAxisSize: MainAxisSize.min,
             children: [
               PeacockMascot(
-                message: percentage >= 80 ? "Quiz Complete! शानदार!" : "Good attempt! और अभ्यास करें!",
+                message: percentage >= 80 ? 'Quiz Complete! शानदार!' : 'Good attempt! और अभ्यास करें!',
                 state: percentage >= 80 ? MascotState.celebrate : MascotState.confused,
               ),
               const SizedBox(height: 20),

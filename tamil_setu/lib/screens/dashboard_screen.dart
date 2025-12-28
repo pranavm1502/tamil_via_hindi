@@ -38,7 +38,7 @@ class DashboardScreen extends StatelessWidget {
               children: [
                 const Padding(
                   padding: EdgeInsets.fromLTRB(16, 20, 16, 0),
-                  child: PeacockMascot(message: "नमस्ते! आज तमिल सीखते हैं?"),
+                  child: PeacockMascot(message: 'नमस्ते! आज तमिल सीखते हैं?'),
                 ),
                 _ProgressHeader(totalLessons: contentProvider.lessons.length),
                 Expanded(
