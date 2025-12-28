@@ -8,18 +8,13 @@ class LessonScreen extends StatefulWidget {
   final Lesson lesson;
   final int lessonIndex;
 
-  const LessonScreen({
-    super.key,
-    required this.lesson,
-    required this.lessonIndex,
-  });
+  const LessonScreen({super.key, required this.lesson, required this.lessonIndex});
 
   @override
   State<LessonScreen> createState() => _LessonScreenState();
 }
 
-class _LessonScreenState extends State<LessonScreen>
-    with SingleTickerProviderStateMixin {
+class _LessonScreenState extends State<LessonScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final AudioPlayer _audioPlayer = AudioPlayer();
 
@@ -50,7 +45,6 @@ class _LessonScreenState extends State<LessonScreen>
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.lesson.title),
-        elevation: 0,
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
         bottom: TabBar(
@@ -69,14 +63,8 @@ class _LessonScreenState extends State<LessonScreen>
         controller: _tabController,
         children: [
           _buildLearnTab(),
-          QuizView(
-            words: widget.lesson.words,
-            lessonIndex: widget.lessonIndex,
-          ),
-          MultipleChoiceQuiz(
-            words: widget.lesson.words,
-            lessonIndex: widget.lessonIndex,
-          ),
+          QuizView(words: widget.lesson.words, lessonIndex: widget.lessonIndex),
+          MultipleChoiceQuiz(words: widget.lesson.words, lessonIndex: widget.lessonIndex),
         ],
       ),
     );
@@ -95,7 +83,6 @@ class _LessonScreenState extends State<LessonScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // TOP HALF: HINDI (The Question)
               Container(
                 decoration: BoxDecoration(
                   color: Colors.blue.shade50,
@@ -104,62 +91,41 @@ class _LessonScreenState extends State<LessonScreen>
                 padding: const EdgeInsets.all(16),
                 child: Text(
                   pair.hindi,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.blue.shade800,
-                  ),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.blue.shade800),
                 ),
               ),
-              
-              // BOTTOM HALF: TAMIL + PRONUNCIATION (The Answer)
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                padding: const EdgeInsets.all(16),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Tamil Script and Hindi Transliteration combined
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                      textBaseline: TextBaseline.alphabetic,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          pair.tamil,
-                          style: const TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.deepOrange,
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            pair.tamil,
+                            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.deepOrange),
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Flexible(
+                        Expanded(
+                          flex: 3,
                           child: Text(
                             '(${pair.pronunciation})',
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.grey.shade600,
-                              fontStyle: FontStyle.italic,
-                            ),
-                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontSize: 18, color: Colors.grey.shade600, fontStyle: FontStyle.italic),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: IconButton(
+                        icon: const Icon(Icons.volume_up_rounded, size: 36, color: Colors.blue),
+                        onPressed: () => _playAudio(pair.audioPath),
+                      ),
+                    ),
                   ],
-                ),
-              ),
-              
-              // AUDIO BUTTON
-              Align(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 12, bottom: 8),
-                  child: IconButton(
-                    icon: const Icon(Icons.volume_up_rounded,
-                        size: 36, color: Colors.blue),
-                    onPressed: () => _playAudio(pair.audioPath),
-                  ),
                 ),
               ),
             ],

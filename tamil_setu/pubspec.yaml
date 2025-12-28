@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  confetti: ^0.7.0
   cupertino_icons: ^1.0.2
   flutter_tts: ^4.2.3
   provider: ^6.1.5+1
@@ -19,9 +20,18 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: "^0.13.1"
 
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/app_icon.png"
+  adaptive_icon_background: "#005DAA" # Your Peacock Blue
+  adaptive_icon_foreground: "assets/images/app_icon_foreground.png"
+  
 flutter:
   uses-material-design: true
   assets:
     - assets/audio/
     - assets/data/master_content.json
+    - assets/images/
