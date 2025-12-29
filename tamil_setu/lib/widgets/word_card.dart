@@ -34,21 +34,25 @@ class WordCard extends StatelessWidget {
           // Tamil Section (Answer)
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Wrap( // Wrap is the secret to fixing overflow
-              crossAxisAlignment: WrapCrossAlignment.center,
-              spacing: 10,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
                   tamil,
                   style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Colors.deepOrange),
                 ),
+                const SizedBox(height: 4),
                 Text(
                   '($pronunciation)',
                   style: TextStyle(fontSize: 18, color: Colors.grey.shade700, fontStyle: FontStyle.italic),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.volume_up, color: Colors.blue, size: 30),
-                  onPressed: onPlayAudio,
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                    icon: const Icon(Icons.volume_up, color: Colors.blue, size: 30),
+                    onPressed: onPlayAudio,
+                  ),
                 ),
               ],
             ),
