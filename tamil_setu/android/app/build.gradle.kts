@@ -19,11 +19,21 @@ android {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
+    // 1. Add this signingConfigs block BEFORE the buildTypes block
+    signingConfigs {
+        create("release") {
+            // This refers to the file created in your GitHub Action step
+            storeFile = file("upload-keystore.jks")
+            
+            // These read the secrets from GitHub Environment Variables
+            storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+            keyAlias = System.getenv("ANDROID_KEY_ALIAS")
+            keyPassword = System.getenv("ANDROID_KEY_PASSWORD")
+        }
+    }
+
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.tamil_setu"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        applicationId = "com.boldesi.tamil_via_hindi"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -32,9 +42,14 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // 2. Change this to use the "release" config we just created
+            signingConfig = signingConfigs.getByName("release")
+            
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 }

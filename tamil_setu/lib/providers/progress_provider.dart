@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../models/checkpoint.dart';
 
 class ProgressProvider with ChangeNotifier {
   // --- State Variables ---
@@ -10,12 +11,16 @@ class ProgressProvider with ChangeNotifier {
   // Tracks exactly which lessons (by index) are completed
   final Set<int> _completedLessons = {};
 
+  // Tracks completed checkpoint numbers (0, 1, 2...)
+  final Set<int> _completedCheckpoints = {};
+
   // Optionally track specific scores (useful for "Best Score" displays)
   final Map<int, int> _lessonScores = {};
 
   // --- Getters ---
   int get unlockedLevel => _unlockedLevel;
   int get totalCompletedLessons => _completedLessons.length;
+  Set<int> get completedCheckpoints => Set.from(_completedCheckpoints);
 
   // --- Initialization ---
 
@@ -33,16 +38,56 @@ class ProgressProvider with ChangeNotifier {
       _completedLessons.addAll(completedList.map((e) => int.parse(e)));
     }
 
+    // Load the list of completed checkpoint indices
+    final completedCheckpointsList = prefs.getStringList('completedCheckpoints');
+    if (completedCheckpointsList != null) {
+      _completedCheckpoints.clear();
+      _completedCheckpoints.addAll(completedCheckpointsList.map((e) => int.parse(e)));
+    }
+
     notifyListeners();
   }
 
   // --- Core Logic ---
 
   /// Checks if a specific lesson index should be locked.
-  /// Logic: If unlockedLevel is 1, index 0 is Open, index 1 is Locked.
+  /// Logic: Lessons are locked if:
+  /// 1. They are beyond the unlocked level, OR
+  /// 2. They require a checkpoint that hasn't been completed
   bool isLessonLocked(int lessonIndex) {
-    // If the lesson index is greater than or equal to the number of unlocked levels, it's locked.
-    return lessonIndex >= _unlockedLevel;
+    // Basic level check
+    if (lessonIndex >= _unlockedLevel) {
+      return true;
+    }
+
+    // Check if this lesson requires a checkpoint to be completed
+    final requiredCheckpoint = (lessonIndex) ~/ CheckpointService.lessonsPerSection - 1;
+    if (requiredCheckpoint >= 0 && !_completedCheckpoints.contains(requiredCheckpoint)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /// Checks if a checkpoint is locked (requires previous lessons to be completed)
+  bool isCheckpointLocked(int checkpointNumber) {
+    // Checkpoint N requires lessons (N*5) through (N*5+4) to be completed
+    final startLesson = checkpointNumber * CheckpointService.lessonsPerSection;
+    final endLesson = startLesson + CheckpointService.lessonsPerSection - 1;
+
+    // Check if all lessons in this section are completed
+    for (int i = startLesson; i <= endLesson; i++) {
+      if (!_completedLessons.contains(i)) {
+        return true; // Still locked
+      }
+    }
+
+    return false; // All lessons completed, checkpoint unlocked
+  }
+
+  /// Checks if a checkpoint has been completed
+  bool isCheckpointCompleted(int checkpointNumber) {
+    return _completedCheckpoints.contains(checkpointNumber);
   }
 
   /// Checks if a lesson has been successfully completed previously.
@@ -89,13 +134,32 @@ class ProgressProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  /// Save checkpoint quiz score and unlock next section if passed
+  Future<void> saveCheckpointScore(int checkpointNumber, int score, int total) async {
+    final prefs = await SharedPreferences.getInstance();
+    final double percentage = (score / total) * 100;
+
+    // Checkpoint requires 80% to pass
+    if (percentage >= 80) {
+      if (!_completedCheckpoints.contains(checkpointNumber)) {
+        _completedCheckpoints.add(checkpointNumber);
+        await prefs.setStringList('completedCheckpoints',
+            _completedCheckpoints.map((e) => e.toString()).toList());
+      }
+    }
+
+    notifyListeners();
+  }
+
   /// Debug utility to reset all progress.
   Future<void> clearAllProgress() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
     _unlockedLevel = 1;
     _completedLessons.clear();
+    _completedCheckpoints.clear();
     _lessonScores.clear();
     notifyListeners();
   }
 }
+

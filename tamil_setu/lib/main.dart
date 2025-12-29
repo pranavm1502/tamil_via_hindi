@@ -2,24 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/progress_provider.dart';
 import 'providers/theme_provider.dart';
-import 'providers/content_provider.dart'; // 1. Add this import
+import 'providers/content_provider.dart';
+import 'providers/review_provider.dart';
 import 'screens/dashboard_screen.dart';
+import 'theme.dart'; // 1. Import your newly created theme file
 
 void main() async {
-  // 1. Ensure Flutter bindings are initialized
+  // Ensure Flutter bindings are initialized for async data loading
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 2. Initialize ALL providers
+  // Initialize providers
   final progressProvider = ProgressProvider();
   final themeProvider = ThemeProvider();
-  final contentProvider = ContentProvider(); // New instance
+  final contentProvider = ContentProvider();
+  final reviewProvider = ReviewProvider();
 
-  // 3. Load ALL persistent data before the app starts
+  // Load persistent data (Progress, Themes, Lesson Content, and Review Cards) before the app starts
   await Future.wait([
     progressProvider.loadProgress(),
     themeProvider.initialize(),
-    contentProvider
-        .loadContent(), // Load JSON here to prevent loading spinners later
+    contentProvider.loadContent(),
+    reviewProvider.loadReviewCards(),
   ]);
 
   runApp(
@@ -27,8 +30,8 @@ void main() async {
       providers: [
         ChangeNotifierProvider.value(value: progressProvider),
         ChangeNotifierProvider.value(value: themeProvider),
-        ChangeNotifierProvider.value(
-            value: contentProvider), // Register it here
+        ChangeNotifierProvider.value(value: contentProvider),
+        ChangeNotifierProvider.value(value: reviewProvider),
       ],
       child: const TamilSetuApp(),
     ),
@@ -40,15 +43,22 @@ class TamilSetuApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // We use a Consumer here to rebuild the app when the user toggles Light/Dark mode
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
         return MaterialApp(
           title: 'Tamil Setu',
           debugShowCheckedModeBanner: false,
-          theme: ThemeProvider
-              .lightTheme, // Ensure these getters exist in your ThemeProvider
-          darkTheme: ThemeProvider.darkTheme,
-          themeMode: themeProvider.themeMode,
+          
+          // 2. Apply your custom Peacock-inspired light theme
+          theme: PeacockTheme.lightTheme, 
+          
+          // 3. Apply your custom Peacock-inspired dark theme
+          darkTheme: PeacockTheme.darkTheme,
+          
+          // 4. Use the state from your ThemeProvider to decide which theme to show
+          themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          
           home: const DashboardScreen(),
         );
       },

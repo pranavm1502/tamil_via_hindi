@@ -1,9 +1,14 @@
+import 'dart:io';
 import 'dart:math';
-import 'package:audioplayers/audioplayers.dart'; // Add this
+import 'package:flutter/foundation.dart'; // Required for kIsWeb
+import 'package:audioplayers/audioplayers.dart'; 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:confetti/confetti.dart'; 
 import '../models/word_pair.dart';
 import '../providers/progress_provider.dart';
+import '../providers/review_provider.dart';
+import '../widgets/peacock_mascot.dart';
 
 class MultipleChoiceQuiz extends StatefulWidget {
   final List<WordPair> words;
@@ -26,13 +31,47 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
   late List<String> currentOptions;
   String? selectedAnswer;
   bool showResult = false;
-  final AudioPlayer _audioPlayer = AudioPlayer(); // Add player
+  
+  // 1. Changed to nullable to support safe testing
+  AudioPlayer? _audioPlayer; 
+  late ConfettiController _confettiController;
 
   @override
   void initState() {
     super.initState();
+    _confettiController = ConfettiController(duration: const Duration(seconds: 2));
     shuffledWords = List.from(widget.words)..shuffle();
     _generateOptions();
+
+    // 2. Initialize AudioPlayer ONLY if NOT in a test environment
+    if (!_isTestEnvironment()) {
+      _audioPlayer = AudioPlayer();
+    }
+  }
+
+  // Helper to identify the automated screenshot test environment
+  bool _isTestEnvironment() {
+    return !kIsWeb && Platform.environment.containsKey('FLUTTER_TEST');
+  }
+
+  @override
+  void dispose() {
+    // 3. Null-safe disposal
+    _audioPlayer?.dispose();
+    _confettiController.dispose();
+    super.dispose();
+  }
+
+  void _playAudio(String path) async {
+    // 4. Return early if player is null (during tests)
+    if (_audioPlayer == null) return;
+
+    try {
+      final cleanPath = path.replaceFirst('assets/', '');
+      await _audioPlayer!.play(AssetSource(cleanPath));
+    } catch (e) {
+      debugPrint('Audio Error: $e');
+    }
   }
 
   @override
@@ -54,12 +93,11 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
     final random = Random();
     final correctAnswer = shuffledWords[currentIndex].tamil;
 
-    // Get 3 wrong answers
     final otherWords = List<WordPair>.from(widget.words)
       ..removeWhere((w) => w.tamil == correctAnswer);
 
     if (otherWords.length < 3) {
-      otherWords.addAll(widget.words.take(3));
+      otherWords.addAll(widget.words.take(3)); 
     }
 
     final wrongAnswers =
@@ -78,7 +116,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
       final currentWord = shuffledWords[currentIndex];
       if (answer == currentWord.tamil) {
         score++;
-        _playAudio(currentWord.audioPath); // Play audio if correct!
+        _playAudio(currentWord.audioPath); 
       }
     });
   }
@@ -101,87 +139,188 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
 
   // Note: Ensure _showFinalResults uses the passed lessonIndex correctly as you did before.
   void _showFinalResults() {
-    // (Your existing code here)
-    // Save progress
-    final progressProvider =
-        Provider.of<ProgressProvider>(context, listen: false);
-    progressProvider.saveQuizScore(
-        widget.lessonIndex, score, shuffledWords.length);
+    final percentage = (score / shuffledWords.length * 100).round();
+
+    if (percentage >= 80) {
+      _confettiController.play();
+    }
+
+    Provider.of<ProgressProvider>(context, listen: false)
+        .saveQuizScore(widget.lessonIndex, score, shuffledWords.length);
+
+    // Create review cards for this lesson (if not already created)
+    Provider.of<ReviewProvider>(context, listen: false)
+        .createCardsForLesson(widget.lessonIndex, widget.words.length);
 
     // (Your existing dialog code here)
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
-          title: const Text('Quiz Complete!'),
-          // ... rest of your UI code
-          content: Text('You scored $score out of ${shuffledWords.length}'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-                setState(() {
-                  currentIndex = 0;
-                  score = 0;
-                  selectedAnswer = null;
-                  showResult = false;
-                  shuffledWords.shuffle();
-                  _generateOptions();
-                });
-              },
-              child: const Text('Retry'),
-            ),
-            FilledButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-                Navigator.pop(context);
-              },
-              child: const Text('Finish'),
-            ),
-          ]),
+      builder: (ctx) => Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  PeacockMascot(
+                    message: percentage >= 80 ? 'Quiz Complete! शानदार!' : 'Good attempt! और अभ्यास करें!',
+                    state: percentage >= 80 ? MascotState.celebrate : MascotState.confused,
+                  ),
+                  const SizedBox(height: 20),
+                  Text('You scored $score out of ${shuffledWords.length}', style: const TextStyle(fontSize: 18)),
+                  Text('$percentage%', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: percentage >= 80 ? Colors.green : Colors.orange)),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    _confettiController.stop();
+                    Navigator.pop(ctx);
+                    setState(() {
+                      currentIndex = 0;
+                      score = 0;
+                      selectedAnswer = null;
+                      showResult = false;
+                      shuffledWords.shuffle();
+                      _generateOptions();
+                    });
+                  },
+                  child: const Text('Retry'),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    _confettiController.stop();
+                    Navigator.pop(ctx);
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Finish'),
+                ),
+              ]),
+          ConfettiWidget(
+            confettiController: _confettiController,
+            blastDirectionality: BlastDirectionality.explosive,
+            shouldLoop: false,
+            colors: const [Colors.green, Colors.blue, Colors.pink, Colors.orange],
+          ),
+        ],
+      ),
     );
+  }
+
+  WordPair? _getWordPairForOption(String tamilOption) {
+    try {
+      return widget.words.firstWhere((w) => w.tamil == tamilOption);
+    } catch (_) {
+      return null;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // (Your existing build method code is perfectly fine)
-    // Just ensure you import the AudioPlayer package at the top.
-    if (shuffledWords.isEmpty) return const Center(child: Text('No words.'));
-
-    // ... Rest of your UI code
+    if (shuffledWords.isEmpty) {
+      return const Center(child: Text('No words.'));
+    }
     final currentWord = shuffledWords[currentIndex];
-    // final correctAnswer = currentWord.tamil;
-
+    
     return Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
-            // ... Your existing layout code
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              LinearProgressIndicator(
-                  value: (currentIndex + 1) / shuffledWords.length),
-              // ...
-              Card(
-                  child: Column(children: [
-                Text(currentWord.hindi, style: const TextStyle(fontSize: 28)),
-              ])),
-              // ... Options mapping
-              ...currentOptions.asMap().entries.map((entry) {
-                final option = entry.value;
+              Column(
+                children: [
+                  LinearProgressIndicator(
+                    value: (currentIndex + 1) / shuffledWords.length,
+                    minHeight: 10,
+                    borderRadius: BorderRadius.circular(5),
+                    color: Colors.green.shade600,
+                  ),
+                  const SizedBox(height: 30),
+                  Card(
+                      elevation: 6,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Column(
+                          children: [
+                            const Text('Choose the correct Tamil translation:', style: TextStyle(color: Colors.grey)),
+                            const SizedBox(height: 10),
+                            Text(
+                              currentWord.hindi,
+                              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.blue),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      )),
+                ],
+              ),
+              
+              Column(
+                children: currentOptions.map((option) {
+                final pair = _getWordPairForOption(option);
+                if (pair == null) return const SizedBox.shrink();
+
+                bool isCorrect = option == currentWord.tamil;
+                bool isSelected = option == selectedAnswer;
+
                 return Padding(
                     padding: const EdgeInsets.only(bottom: 12.0),
-                    child: InkWell(
+                    child: SizedBox(
+                      height: 80, // Fixed height for all options
+                      width: double.infinity, // Fixed width - full width of parent
+                      child: InkWell(
                         onTap: () => _selectAnswer(option),
-                        // ... rest of styling
+                        borderRadius: BorderRadius.circular(15),
                         child: Container(
                           padding: const EdgeInsets.all(16),
-                          // ... decoration
-                          child: Text(option),
-                        )));
-              }),
-              // ... Next button
+                          decoration: BoxDecoration(
+                            color: !showResult ? Colors.white : (isCorrect ? Colors.green.shade50 : (isSelected ? Colors.red.shade50 : Colors.white)),
+                            borderRadius: BorderRadius.circular(15),
+                            border: Border.all(
+                              color: !showResult ? Colors.grey.shade300 : (isCorrect ? Colors.green : (isSelected ? Colors.red : Colors.grey.shade300)),
+                              width: 2,
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                pair.tamil,
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w800,
+                                  color: showResult && !isCorrect ? Colors.grey : Colors.black87
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '(${pair.pronunciation})',
+                                style: const TextStyle(fontSize: 14, color: Colors.blueGrey),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ));
+              }).toList(),
+              ),
+              
               if (showResult)
                 FilledButton(
-                    onPressed: _nextQuestion, child: const Text('Next'))
+                    onPressed: _nextQuestion, 
+                    style: FilledButton.styleFrom(padding: const EdgeInsets.all(18)),
+                    child: const Text('Continue', style: TextStyle(fontSize: 20)))
+              else
+                const SizedBox(height: 50), 
             ]));
   }
 }
