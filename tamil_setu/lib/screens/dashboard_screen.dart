@@ -299,37 +299,61 @@ class _LessonsAndCheckpointsBuilder extends StatelessWidget {
     final checkpoints = CheckpointService.generateCheckpoints(lessons.length);
     final List<Widget> items = [];
 
-    for (int i = 0; i < lessons.length; i++) {
-      // Add lesson tile in 2-column grid
-      if (i % 2 == 0) {
-        items.add(
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16, left: 16, right: 8),
+    int i = 0;
+    while (i < lessons.length) {
+      // Create a row with up to 2 lesson tiles
+      final List<Widget> rowChildren = [];
+
+      // First tile in row
+      rowChildren.add(
+        Expanded(
+          child: SizedBox(
+            height: 180,
+            child: _LessonTile(lesson: lessons[i], index: i),
+          ),
+        ),
+      );
+
+      // Check if we should add checkpoint after this section
+      final bool shouldAddCheckpoint = (i + 1) % CheckpointService.lessonsPerSection == 0;
+
+      // Second tile in row (if available and not at checkpoint boundary)
+      if (i + 1 < lessons.length && !shouldAddCheckpoint) {
+        rowChildren.add(const SizedBox(width: 16));
+        rowChildren.add(
+          Expanded(
             child: SizedBox(
               height: 180,
-              child: _LessonTile(lesson: lessons[i], index: i),
+              child: _LessonTile(lesson: lessons[i + 1], index: i + 1),
             ),
           ),
         );
+        i += 2;
       } else {
-        items.add(
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16, left: 8, right: 16),
-            child: SizedBox(
-              height: 180,
-              child: _LessonTile(lesson: lessons[i], index: i),
-            ),
-          ),
-        );
+        // Add empty space to maintain grid alignment
+        rowChildren.add(const SizedBox(width: 16));
+        rowChildren.add(const Expanded(child: SizedBox.shrink()));
+        i += 1;
       }
 
+      // Add the row
+      items.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: rowChildren,
+          ),
+        ),
+      );
+
       // Add checkpoint after every 5 lessons
-      if ((i + 1) % CheckpointService.lessonsPerSection == 0) {
-        final checkpointIndex = (i + 1) ~/ CheckpointService.lessonsPerSection - 1;
+      if (shouldAddCheckpoint) {
+        final checkpointIndex = i ~/ CheckpointService.lessonsPerSection - 1;
         if (checkpointIndex < checkpoints.length) {
           items.add(
             Padding(
-              padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: _CheckpointTile(checkpoint: checkpoints[checkpointIndex]),
             ),
           );
