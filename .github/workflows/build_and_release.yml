@@ -1,6 +1,6 @@
 permissions:
   contents: write # This is required for softprops/action-gh-release
-  
+
 name: Build and Test
 
 on:
@@ -95,7 +95,7 @@ jobs:
         run: flutter pub get
 
       - name: Decode Keystore
-        run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > tamil_setu/android/app/upload-keystore.jks
+        run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
 
       - name: Build App Bundle (.aab)
         run: flutter build appbundle --release --build-number=${{ github.run_number }}
