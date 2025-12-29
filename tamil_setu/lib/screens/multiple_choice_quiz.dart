@@ -74,21 +74,6 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
     }
   }
 
-  @override
-  void dispose() {
-    _audioPlayer.dispose();
-    super.dispose();
-  }
-
-  void _playAudio(String path) async {
-    try {
-      final cleanPath = path.replaceFirst('assets/', '');
-      await _audioPlayer.play(AssetSource(cleanPath));
-    } catch (e) {
-      debugPrint('Audio Error: $e');
-    }
-  }
-
   void _generateOptions() {
     final random = Random();
     final correctAnswer = shuffledWords[currentIndex].tamil;
