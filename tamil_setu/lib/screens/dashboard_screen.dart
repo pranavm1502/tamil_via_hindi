@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/lesson.dart';
+import '../models/checkpoint.dart';
 import '../providers/content_provider.dart';
 import '../providers/progress_provider.dart';
 import '../providers/theme_provider.dart';
@@ -8,6 +9,7 @@ import '../providers/review_provider.dart';
 import '../widgets/peacock_mascot.dart';
 import 'lesson_screen.dart';
 import 'review_screen.dart';
+import 'checkpoint_quiz_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -53,23 +55,8 @@ class DashboardScreen extends StatelessWidget {
                 SliverToBoxAdapter(
                   child: _ProgressHeader(totalLessons: contentProvider.lessons.length),
                 ),
-                SliverPadding(
-                  padding: const EdgeInsets.all(16),
-                  sliver: SliverGrid(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2, 
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      childAspectRatio: 0.85,
-                    ),
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final lesson = contentProvider.lessons[index];
-                        return _LessonTile(lesson: lesson, index: index);
-                      },
-                      childCount: contentProvider.lessons.length,
-                    ),
-                  ),
+                _LessonsAndCheckpointsBuilder(
+                  lessons: contentProvider.lessons,
                 ),
               ],
             ),
@@ -284,6 +271,167 @@ class _ReviewButton extends StatelessWidget {
                     const SizedBox(width: 8),
                     const Icon(Icons.arrow_forward_ios, size: 16),
                   ],
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}}
+
+class _LessonsAndCheckpointsBuilder extends StatelessWidget {
+  final List<Lesson> lessons;
+  const _LessonsAndCheckpointsBuilder({required this.lessons});
+
+  @override
+  Widget build(BuildContext context) {
+    final checkpoints = CheckpointService.generateCheckpoints(lessons.length);
+    final List<Widget> items = [];
+
+    for (int i = 0; i < lessons.length; i++) {
+      // Add lesson tile in 2-column grid
+      if (i % 2 == 0) {
+        items.add(
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16, left: 16, right: 8),
+            child: SizedBox(
+              height: 180,
+              child: _LessonTile(lesson: lessons[i], index: i),
+            ),
+          ),
+        );
+      } else {
+        items.add(
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16, left: 8, right: 16),
+            child: SizedBox(
+              height: 180,
+              child: _LessonTile(lesson: lessons[i], index: i),
+            ),
+          ),
+        );
+      }
+
+      // Add checkpoint after every 5 lessons
+      if ((i + 1) % CheckpointService.lessonsPerSection == 0) {
+        final checkpointIndex = (i + 1) ~/ CheckpointService.lessonsPerSection - 1;
+        if (checkpointIndex < checkpoints.length) {
+          items.add(
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
+              child: _CheckpointTile(checkpoint: checkpoints[checkpointIndex]),
+            ),
+          );
+        }
+      }
+    }
+
+    return SliverList(
+      delegate: SliverChildListDelegate(items),
+    );
+  }
+}
+
+class _CheckpointTile extends StatelessWidget {
+  final Checkpoint checkpoint;
+  const _CheckpointTile({required this.checkpoint});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<ProgressProvider>(
+      builder: (context, progress, child) {
+        final isLocked = progress.isCheckpointLocked(checkpoint.checkpointNumber);
+        final isCompleted = progress.isCheckpointCompleted(checkpoint.checkpointNumber);
+
+        return Card(
+          elevation: isLocked ? 0 : 6,
+          color: isCompleted
+              ? Colors.purple.shade50
+              : (isLocked ? Colors.grey.shade200 : Colors.purple.shade100),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(
+              color: isCompleted ? Colors.purple : (isLocked ? Colors.grey : Colors.purple.shade300),
+              width: 2,
+            ),
+          ),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: isLocked
+                ? () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Complete all lessons in this section first!'),
+                      ),
+                    );
+                  }
+                : () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CheckpointQuizScreen(checkpoint: checkpoint),
+                      ),
+                    );
+                  },
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Icon(
+                    isLocked
+                        ? Icons.lock
+                        : (isCompleted ? Icons.check_circle : Icons.flag),
+                    size: 48,
+                    color: isLocked ? Colors.grey : Colors.purple,
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              checkpoint.title,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            if (isCompleted) ...[
+                              const SizedBox(width: 8),
+                              const Icon(Icons.verified, color: Colors.purple, size: 20),
+                            ],
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          checkpoint.description,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          checkpoint.lessonRange,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.shade600,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    color: isLocked ? Colors.grey : Colors.purple,
+                    size: 20,
+                  ),
                 ],
               ),
             ),
