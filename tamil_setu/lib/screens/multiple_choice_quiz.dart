@@ -1,10 +1,11 @@
 import 'dart:math';
-import 'package:audioplayers/audioplayers.dart'; 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:confetti/confetti.dart'; // Added
 import '../models/word_pair.dart';
 import '../providers/progress_provider.dart';
+import '../providers/review_provider.dart';
 import '../widgets/peacock_mascot.dart';
 
 class MultipleChoiceQuiz extends StatefulWidget {
@@ -102,13 +103,17 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
 
   void _showFinalResults() {
     final percentage = (score / shuffledWords.length * 100).round();
-    
+
     if (percentage >= 80) {
       _confettiController.play();
     }
 
     Provider.of<ProgressProvider>(context, listen: false)
         .saveQuizScore(widget.lessonIndex, score, shuffledWords.length);
+
+    // Create review cards for this lesson (if not already created)
+    Provider.of<ReviewProvider>(context, listen: false)
+        .createCardsForLesson(widget.lessonIndex, widget.words.length);
 
     showDialog(
       context: context,

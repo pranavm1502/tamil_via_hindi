@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/lesson.dart'; 
+import '../models/lesson.dart';
 import '../providers/content_provider.dart';
 import '../providers/progress_provider.dart';
 import '../providers/theme_provider.dart';
+import '../providers/review_provider.dart';
 import '../widgets/peacock_mascot.dart';
 import 'lesson_screen.dart';
+import 'review_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -40,6 +42,12 @@ class DashboardScreen extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(16, 20, 16, 0),
                     child: PeacockMascot(message: 'नमस्ते! आज तमिल सीखते हैं?'),
+                  ),
+                ),
+                const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: _ReviewButton(),
                   ),
                 ),
                 SliverToBoxAdapter(
@@ -166,6 +174,120 @@ class _LessonTile extends StatelessWidget {
               ),
             ),
           );
+      },
+    );
+  }
+}
+
+class _ReviewButton extends StatelessWidget {
+  const _ReviewButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<ReviewProvider>(
+      builder: (context, reviewProvider, child) {
+        final dueCount = reviewProvider.dueCardCount;
+        final streak = reviewProvider.currentStreak;
+
+        if (dueCount == 0 && reviewProvider.allCards.isEmpty) {
+          // No cards created yet - don't show anything
+          return const SizedBox.shrink();
+        }
+
+        return Card(
+          elevation: 4,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          color: dueCount > 0
+              ? (Theme.of(context).brightness == Brightness.dark
+                  ? Colors.purple.shade900
+                  : Colors.purple.shade50)
+              : Theme.of(context).cardColor,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: dueCount > 0
+                ? () {
+                    reviewProvider.startReviewSession();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const ReviewScreen()),
+                    );
+                  }
+                : null,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 28,
+                    backgroundColor: dueCount > 0 ? Colors.purple : Colors.grey,
+                    child: Icon(
+                      dueCount > 0 ? Icons.auto_awesome : Icons.check_circle,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          dueCount > 0 ? 'Review Cards' : 'All Caught Up!',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          dueCount > 0
+                              ? '$dueCount card${dueCount != 1 ? 's' : ''} due for review'
+                              : 'Come back later for more reviews',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (streak > 0) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.orange,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            '🔥',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '$streak',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                  if (dueCount > 0) ...[
+                    const SizedBox(width: 8),
+                    const Icon(Icons.arrow_forward_ios, size: 16),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        );
       },
     );
   }
