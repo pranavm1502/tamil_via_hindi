@@ -238,7 +238,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
                             ),
                           ),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
                                 pair.tamil,

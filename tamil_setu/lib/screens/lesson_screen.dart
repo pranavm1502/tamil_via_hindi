@@ -99,7 +99,7 @@ class _LessonScreenState extends State<LessonScreen> with SingleTickerProviderSt
                 child: Column(
                   children: [
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
                           pair.tamil,

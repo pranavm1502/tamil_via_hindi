@@ -186,6 +186,7 @@ class _QuizViewState extends State<QuizView> {
                   if (showAnswer)
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
                           currentWord.tamil,
