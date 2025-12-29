@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tamil_setu/providers/theme_provider.dart';
 import 'package:tamil_setu/providers/progress_provider.dart';
 import 'package:tamil_setu/providers/content_provider.dart';
+import 'package:tamil_setu/providers/review_provider.dart';
 import 'package:tamil_setu/models/lesson.dart';
 import 'package:tamil_setu/models/word_pair.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -71,6 +72,11 @@ Widget makeTestableWidget({required Widget child}) {
       // 3. Use pre-loaded ContentProvider to avoid asset loading in tests
       ChangeNotifierProvider.value(
         value: contentProvider,
+      ),
+
+      // 4. Trigger loadReviewCards immediately
+      ChangeNotifierProvider(
+        create: (_) => ReviewProvider()..loadReviewCards(),
       ),
     ],
     child: child,

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'providers/progress_provider.dart';
 import 'providers/theme_provider.dart';
 import 'providers/content_provider.dart';
+import 'providers/review_provider.dart';
 import 'screens/dashboard_screen.dart';
 import 'theme.dart'; // 1. Import your newly created theme file
 
@@ -14,12 +15,14 @@ void main() async {
   final progressProvider = ProgressProvider();
   final themeProvider = ThemeProvider();
   final contentProvider = ContentProvider();
+  final reviewProvider = ReviewProvider();
 
-  // Load persistent data (Progress, Themes, and Lesson Content) before the app starts
+  // Load persistent data (Progress, Themes, Lesson Content, and Review Cards) before the app starts
   await Future.wait([
     progressProvider.loadProgress(),
     themeProvider.initialize(),
-    contentProvider.loadContent(), 
+    contentProvider.loadContent(),
+    reviewProvider.loadReviewCards(),
   ]);
 
   runApp(
@@ -28,6 +31,7 @@ void main() async {
         ChangeNotifierProvider.value(value: progressProvider),
         ChangeNotifierProvider.value(value: themeProvider),
         ChangeNotifierProvider.value(value: contentProvider),
+        ChangeNotifierProvider.value(value: reviewProvider),
       ],
       child: const TamilSetuApp(),
     ),
