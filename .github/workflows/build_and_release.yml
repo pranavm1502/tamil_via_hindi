@@ -92,7 +92,7 @@ jobs:
         run: flutter pub get
 
       - name: Decode Keystore
-        run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
+        run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > tamil_setu/android/app/upload-keystore.jks
 
       - name: Build App Bundle (.aab)
         run: flutter build appbundle --release --build-number=${{ github.run_number }}
@@ -150,3 +150,12 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload to Google Play Store (Internal Testing)
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_CONFIG_JSON }}
+          packageName: com.boldesi.tamil_via_hindi
+          releaseFiles: tamil_setu/build/app/outputs/bundle/release/app-release.aab
+          track: internal # Starts in internal testing for safety
+          status: completed # Submits it for review immediately
