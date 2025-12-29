@@ -130,9 +130,12 @@ class _LessonTile extends StatelessWidget {
       builder: (context, progress, child) {
         final isLocked = progress.isLessonLocked(index);
         final isCompleted = progress.isLessonCompleted(index);
-        final Color cardColor = isLocked 
-            ? Theme.of(context).cardColor.withAlpha(179) 
-            : isCompleted ? Colors.green.shade50 : Colors.orange.shade50;
+        final bool isDark = Theme.of(context).brightness == Brightness.dark;
+        final Color cardColor = isLocked
+            ? Theme.of(context).cardColor.withAlpha(179)
+            : isCompleted
+                ? (isDark ? Colors.green.shade900 : Colors.green.shade50)
+                : (isDark ? Colors.orange.shade900 : Colors.orange.shade50);
 
         return Card(
             elevation: isLocked ? 0 : 4,
