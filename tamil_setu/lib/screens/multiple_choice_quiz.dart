@@ -237,25 +237,21 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
                               width: 2,
                             ),
                           ),
-                          child: Row(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: Text(
-                                  pair.tamil,
-                                  style: TextStyle(
-                                    fontSize: 20, 
-                                    fontWeight: FontWeight.w800,
-                                    color: showResult && !isCorrect ? Colors.grey : Colors.black87
-                                  ),
+                              Text(
+                                pair.tamil,
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w800,
+                                  color: showResult && !isCorrect ? Colors.grey : Colors.black87
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              Flexible(
-                                child: Text(
-                                  '(${pair.pronunciation})',
-                                  style: const TextStyle(fontSize: 14, color: Colors.blueGrey),
-                                  textAlign: TextAlign.right,
-                                ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '(${pair.pronunciation})',
+                                style: const TextStyle(fontSize: 14, color: Colors.blueGrey),
                               ),
                             ],
                           ),

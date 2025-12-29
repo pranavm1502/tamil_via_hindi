@@ -98,23 +98,17 @@ class _LessonScreenState extends State<LessonScreen> with SingleTickerProviderSt
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    Row(
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            pair.tamil,
-                            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.deepOrange),
-                          ),
+                        Text(
+                          pair.tamil,
+                          style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.deepOrange),
                         ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          flex: 3,
-                          child: Text(
-                            '(${pair.pronunciation})',
-                            style: TextStyle(fontSize: 18, color: Colors.grey.shade600, fontStyle: FontStyle.italic),
-                          ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '(${pair.pronunciation})',
+                          style: TextStyle(fontSize: 18, color: Colors.grey.shade600, fontStyle: FontStyle.italic),
                         ),
                       ],
                     ),
