@@ -233,6 +233,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
                     padding: const EdgeInsets.only(bottom: 12.0),
                     child: SizedBox(
                       height: 80, // Fixed height for all options
+                      width: double.infinity, // Fixed width - full width of parent
                       child: InkWell(
                         onTap: () => _selectAnswer(option),
                         borderRadius: BorderRadius.circular(15),

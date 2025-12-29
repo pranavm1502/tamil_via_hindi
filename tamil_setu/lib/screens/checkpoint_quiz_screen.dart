@@ -298,6 +298,7 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
                   padding: const EdgeInsets.only(bottom: 12.0),
                   child: SizedBox(
                     height: 80,
+                    width: double.infinity,
                     child: InkWell(
                       onTap: () => _selectAnswer(option),
                       borderRadius: BorderRadius.circular(15),
