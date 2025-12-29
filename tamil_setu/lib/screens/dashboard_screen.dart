@@ -180,7 +180,8 @@ class _LessonTile extends StatelessWidget {
 }
 
 class _ReviewButton extends StatelessWidget {
-  _ReviewButton({super.key});
+  // ignore: prefer_const_constructors_in_immutables
+  _ReviewButton();
 
   @override
   Widget build(BuildContext context) {
