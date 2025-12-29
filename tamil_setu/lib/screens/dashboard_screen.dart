@@ -279,7 +279,7 @@ class _ReviewButton extends StatelessWidget {
       },
     );
   }
-}}
+}
 
 class _LessonsAndCheckpointsBuilder extends StatelessWidget {
   final List<Lesson> lessons;
