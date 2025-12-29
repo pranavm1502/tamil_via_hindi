@@ -1,11 +1,16 @@
-name: Build and Test Signed Release
+name: Build and Test
 
 on:
   push:
     branches: [ "main" ]
-  pull_request:            # Add this line
-    branches: [ "main" ]   # And this line
+  pull_request:
+    branches: [ "main" ]
   workflow_dispatch:
+
+# Cancel in-progress runs for the same workflow on the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
@@ -23,26 +28,45 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: '21'  # Match build job version
+          cache: 'gradle'     # Cache Gradle dependencies
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          cache: true         # Cache Flutter SDK and packages
 
       - name: Get Dependencies
         run: flutter pub get
 
+      - name: Verify Formatting
+        run: dart format --set-exit-if-changed .
+        continue-on-error: true  # Don't fail build, but report
+
       - name: Analyze Code
         run: flutter analyze
+
+      - name: Check for Outdated Dependencies
+        run: flutter pub outdated
+        continue-on-error: true  # Informational only
 
       - name: Run Unit Tests
         run: flutter test --coverage
 
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./tamil_setu/coverage/lcov.info
+          fail_ci_if_error: false
+          verbose: true
+
   build:
-    name: Build Signed Bundle & APK
+    name: Build Signed Release
     needs: test
     runs-on: ubuntu-latest
+    # Only build signed releases on push to main or manual trigger
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     defaults:
       run:
         working-directory: tamil_setu
@@ -56,11 +80,13 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '21'
+          cache: 'gradle'
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          cache: true
 
       - name: Get Dependencies
         run: flutter pub get
@@ -82,10 +108,45 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
 
-      - name: Upload Artifacts
+      - name: Get Version Info
+        id: version
+        run: |
+          VERSION=$(grep 'version:' pubspec.yaml | cut -d ' ' -f 2 | tr -d '\r')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "build_number=${{ github.run_number }}" >> $GITHUB_OUTPUT
+
+      - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: tamil-setu-builds
+          name: tamil-setu-v${{ steps.version.outputs.version }}-build${{ github.run_number }}
           path: |
             tamil_setu/build/app/outputs/bundle/release/app-release.aab
             tamil_setu/build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 90  # Keep artifacts for 90 days
+
+      - name: Create GitHub Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.version.outputs.version }}-build${{ github.run_number }}
+          name: Release v${{ steps.version.outputs.version }} (Build ${{ github.run_number }})
+          body: |
+            ## Tamil Setu Release
+
+            **Version:** ${{ steps.version.outputs.version }}
+            **Build Number:** ${{ github.run_number }}
+            **Commit:** ${{ github.sha }}
+
+            ### Downloads
+            - **App Bundle (.aab):** For Google Play Store
+            - **APK (.apk):** For direct installation
+
+            ### Changes
+            See commit history for details.
+          files: |
+            tamil_setu/build/app/outputs/bundle/release/app-release.aab
+            tamil_setu/build/app/outputs/flutter-apk/app-release.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
