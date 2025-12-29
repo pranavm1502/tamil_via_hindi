@@ -231,10 +231,12 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
 
                 return Padding(
                     padding: const EdgeInsets.only(bottom: 12.0),
-                    child: InkWell(
+                    child: SizedBox(
+                      height: 80, // Fixed height for all options
+                      child: InkWell(
                         onTap: () => _selectAnswer(option),
                         borderRadius: BorderRadius.circular(15),
-                        child: Container( 
+                        child: Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             color: !showResult ? Colors.white : (isCorrect ? Colors.green.shade50 : (isSelected ? Colors.red.shade50 : Colors.white)),
@@ -245,6 +247,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
                             ),
                           ),
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
@@ -254,15 +257,21 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
                                   fontWeight: FontWeight.w800,
                                   color: showResult && !isCorrect ? Colors.grey : Colors.black87
                                 ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 '(${pair.pronunciation})',
                                 style: const TextStyle(fontSize: 14, color: Colors.blueGrey),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ],
                           ),
-                        )));
+                        ),
+                      ),
+                    ));
               }).toList(),
               ),
               
