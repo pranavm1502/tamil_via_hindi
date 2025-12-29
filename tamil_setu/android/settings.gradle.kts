@@ -14,6 +14,8 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        // Add JetBrains repository as fallback for Kotlin dependencies
+        maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
     }
 }
 
