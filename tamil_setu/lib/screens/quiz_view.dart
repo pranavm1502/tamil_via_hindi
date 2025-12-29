@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:confetti/confetti.dart'; // 1. Added Import
 import '../models/word_pair.dart';
 import '../providers/progress_provider.dart';
+import '../providers/review_provider.dart';
 import '../widgets/peacock_mascot.dart';
 
 class QuizView extends StatefulWidget {
@@ -48,6 +49,7 @@ class _QuizViewState extends State<QuizView> {
     }
   }
 
+  // This method was previously unused; now it's called by the "Retry" button
   void _restartQuiz() {
     setState(() {
       currentIndex = 0;
@@ -70,8 +72,9 @@ class _QuizViewState extends State<QuizView> {
   }
 
   void _showResultDialog() {
+    // 1. Calculate percentage (Fixes 'unused variable' warning)
     final percentage = (score / shuffledWords.length * 100).round();
-    
+
     // 5. Trigger Confetti for high scores
     if (percentage >= 80) {
       _confettiController.play();
@@ -79,6 +82,10 @@ class _QuizViewState extends State<QuizView> {
 
     Provider.of<ProgressProvider>(context, listen: false)
         .saveQuizScore(widget.lessonIndex, score, shuffledWords.length);
+
+    // Create review cards for this lesson (if not already created)
+    Provider.of<ReviewProvider>(context, listen: false)
+        .createCardsForLesson(widget.lessonIndex, widget.words.length);
 
     showDialog(
       context: context,

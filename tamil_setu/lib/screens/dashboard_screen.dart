@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/lesson.dart'; 
+import '../models/lesson.dart';
+import '../models/checkpoint.dart';
 import '../providers/content_provider.dart';
 import '../providers/progress_provider.dart';
 import '../providers/theme_provider.dart';
+import '../providers/review_provider.dart';
 import '../widgets/peacock_mascot.dart';
 import 'lesson_screen.dart';
+import 'review_screen.dart';
+import 'checkpoint_quiz_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -43,25 +47,16 @@ class DashboardScreen extends StatelessWidget {
                   ),
                 ),
                 SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: _ReviewButton(),
+                  ),
+                ),
+                SliverToBoxAdapter(
                   child: _ProgressHeader(totalLessons: contentProvider.lessons.length),
                 ),
-                SliverPadding(
-                  padding: const EdgeInsets.all(16),
-                  sliver: SliverGrid(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2, 
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      childAspectRatio: 0.85,
-                    ),
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final lesson = contentProvider.lessons[index];
-                        return _LessonTile(lesson: lesson, index: index);
-                      },
-                      childCount: contentProvider.lessons.length,
-                    ),
-                  ),
+                _LessonsAndCheckpointsBuilder(
+                  lessons: contentProvider.lessons,
                 ),
               ],
             ),
@@ -175,6 +170,306 @@ class _LessonTile extends StatelessWidget {
               ),
             ),
           );
+      },
+    );
+  }
+}
+
+class _ReviewButton extends StatelessWidget {
+  // ignore: prefer_const_constructors_in_immutables
+  _ReviewButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<ReviewProvider>(
+      builder: (context, reviewProvider, child) {
+        final dueCount = reviewProvider.dueCardCount;
+        final streak = reviewProvider.currentStreak;
+
+        if (dueCount == 0 && reviewProvider.allCards.isEmpty) {
+          // No cards created yet - don't show anything
+          return const SizedBox.shrink();
+        }
+
+        return Card(
+          elevation: 4,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          color: dueCount > 0
+              ? (Theme.of(context).brightness == Brightness.dark
+                  ? Colors.purple.shade900
+                  : Colors.purple.shade50)
+              : Theme.of(context).cardColor,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: dueCount > 0
+                ? () {
+                    reviewProvider.startReviewSession();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const ReviewScreen()),
+                    );
+                  }
+                : null,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 28,
+                    backgroundColor: dueCount > 0 ? Colors.purple : Colors.grey,
+                    child: Icon(
+                      dueCount > 0 ? Icons.auto_awesome : Icons.check_circle,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          dueCount > 0 ? 'Review Cards' : 'All Caught Up!',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          dueCount > 0
+                              ? '$dueCount card${dueCount != 1 ? 's' : ''} due for review'
+                              : 'Come back later for more reviews',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (streak > 0) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.orange,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            '🔥',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '$streak',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                  if (dueCount > 0) ...[
+                    const SizedBox(width: 8),
+                    const Icon(Icons.arrow_forward_ios, size: 16),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _LessonsAndCheckpointsBuilder extends StatelessWidget {
+  final List<Lesson> lessons;
+  const _LessonsAndCheckpointsBuilder({required this.lessons});
+
+  @override
+  Widget build(BuildContext context) {
+    final checkpoints = CheckpointService.generateCheckpoints(lessons.length);
+    final List<Widget> items = [];
+
+    int i = 0;
+    while (i < lessons.length) {
+      // Create a row with up to 2 lesson tiles
+      final List<Widget> rowChildren = [];
+
+      // First tile in row
+      rowChildren.add(
+        Expanded(
+          child: SizedBox(
+            height: 180,
+            child: _LessonTile(lesson: lessons[i], index: i),
+          ),
+        ),
+      );
+
+      // Check if we should add checkpoint after this section
+      final bool shouldAddCheckpoint = (i + 1) % CheckpointService.lessonsPerSection == 0;
+
+      // Second tile in row (if available and not at checkpoint boundary)
+      if (i + 1 < lessons.length && !shouldAddCheckpoint) {
+        rowChildren.add(const SizedBox(width: 16));
+        rowChildren.add(
+          Expanded(
+            child: SizedBox(
+              height: 180,
+              child: _LessonTile(lesson: lessons[i + 1], index: i + 1),
+            ),
+          ),
+        );
+        i += 2;
+      } else {
+        // Add empty space to maintain grid alignment
+        rowChildren.add(const SizedBox(width: 16));
+        rowChildren.add(const Expanded(child: SizedBox.shrink()));
+        i += 1;
+      }
+
+      // Add the row
+      items.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: rowChildren,
+          ),
+        ),
+      );
+
+      // Add checkpoint after every 5 lessons
+      if (shouldAddCheckpoint) {
+        final checkpointIndex = i ~/ CheckpointService.lessonsPerSection - 1;
+        if (checkpointIndex < checkpoints.length) {
+          items.add(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: _CheckpointTile(checkpoint: checkpoints[checkpointIndex]),
+            ),
+          );
+        }
+      }
+    }
+
+    return SliverList(
+      delegate: SliverChildListDelegate(items),
+    );
+  }
+}
+
+class _CheckpointTile extends StatelessWidget {
+  final Checkpoint checkpoint;
+  const _CheckpointTile({required this.checkpoint});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<ProgressProvider>(
+      builder: (context, progress, child) {
+        final isLocked = progress.isCheckpointLocked(checkpoint.checkpointNumber);
+        final isCompleted = progress.isCheckpointCompleted(checkpoint.checkpointNumber);
+
+        return Card(
+          elevation: isLocked ? 0 : 6,
+          color: isCompleted
+              ? Colors.purple.shade50
+              : (isLocked ? Colors.grey.shade200 : Colors.purple.shade100),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(
+              color: isCompleted ? Colors.purple : (isLocked ? Colors.grey : Colors.purple.shade300),
+              width: 2,
+            ),
+          ),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: isLocked
+                ? () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Complete all lessons in this section first!'),
+                      ),
+                    );
+                  }
+                : () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CheckpointQuizScreen(checkpoint: checkpoint),
+                      ),
+                    );
+                  },
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Icon(
+                    isLocked
+                        ? Icons.lock
+                        : (isCompleted ? Icons.check_circle : Icons.flag),
+                    size: 48,
+                    color: isLocked ? Colors.grey : Colors.purple,
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              checkpoint.title,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            if (isCompleted) ...[
+                              const SizedBox(width: 8),
+                              const Icon(Icons.verified, color: Colors.purple, size: 20),
+                            ],
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          checkpoint.description,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          checkpoint.lessonRange,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.shade600,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    color: isLocked ? Colors.grey : Colors.purple,
+                    size: 20,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
       },
     );
   }

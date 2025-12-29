@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; 
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_screenshot/golden_screenshot.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +12,7 @@ import 'package:tamil_setu/models/word_pair.dart';
 import 'package:tamil_setu/providers/content_provider.dart';
 import 'package:tamil_setu/providers/progress_provider.dart';
 import 'package:tamil_setu/providers/theme_provider.dart';
+import 'package:tamil_setu/providers/review_provider.dart';
 
 void main() {
   setUpAll(() async {
@@ -25,7 +26,7 @@ void main() {
     final tamilFont = rootBundle.load('assets/fonts/NotoSansTamil-Regular.ttf');
     final tamilLoader = FontLoader('NotoSansTamil')..addFont(tamilFont);
     await tamilLoader.load();
-    
+
     // 2. Mock Audio and Binary Messaging
     final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
     messenger.setMockMethodCallHandler(const MethodChannel('xyz.luan/audioplayers'), (m) async => null);
@@ -92,17 +93,17 @@ void main() {
       testGoldens('2_Lesson_Learn', (tester) async {
         await _takeAppScreenshot(tester, device, '2_learn', LessonScreen(lesson: mockLessons[0], lessonIndex: 0), mockLessons);
       });
-      
+
       // ... (Rest of your celebration/thinking tests)
     });
   });
 }
 
 Future<void> _takeAppScreenshot(
-  WidgetTester tester, 
-  ScreenshotDevice device, 
-  String fileName, 
-  Widget screen, 
+  WidgetTester tester,
+  ScreenshotDevice device,
+  String fileName,
+  Widget screen,
   List<Lesson> mockLessons
 ) async {
   // 3. Initialize Providers with pre-loaded data to bypass "isLoading" states
@@ -114,6 +115,7 @@ Future<void> _takeAppScreenshot(
       ChangeNotifierProvider.value(value: contentProvider),
       ChangeNotifierProvider(create: (_) => ProgressProvider()),
       ChangeNotifierProvider(create: (_) => ThemeProvider()),
+      ChangeNotifierProvider(create: (_) => ReviewProvider()..loadReviewCards()),
     ],
     child: Theme(
       data: ThemeData(
@@ -129,11 +131,11 @@ Future<void> _takeAppScreenshot(
   await tester.pumpWidget(ScreenshotApp(device: device, home: wrappedWidget));
 
   // 4. Manual Pumping to avoid the "pumpAndSettle timed out" error
-  await tester.loadAssets(); 
+  await tester.loadAssets();
   for (int i = 0; i < 5; i++) {
     await tester.pump(const Duration(milliseconds: 100));
   }
-  
+
   // Final wait for mascot entry/fade animations
   await tester.pumpFrames(find.byType(ScreenshotApp).evaluate().first.widget, const Duration(seconds: 1));
 

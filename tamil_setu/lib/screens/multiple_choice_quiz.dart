@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:confetti/confetti.dart'; 
 import '../models/word_pair.dart';
 import '../providers/progress_provider.dart';
+import '../providers/review_provider.dart';
 import '../widgets/peacock_mascot.dart';
 
 class MultipleChoiceQuiz extends StatefulWidget {
@@ -105,6 +106,9 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
     });
   }
 
+  // ... (The rest of your logic: _nextQuestion, _showFinalResults, build method)
+  // ... (Copy from your uploaded file, no changes needed below this point)
+
   void _nextQuestion() {
     if (currentIndex < shuffledWords.length - 1) {
       setState(() {
@@ -118,9 +122,10 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
     }
   }
 
+  // Note: Ensure _showFinalResults uses the passed lessonIndex correctly as you did before.
   void _showFinalResults() {
     final percentage = (score / shuffledWords.length * 100).round();
-    
+
     if (percentage >= 80) {
       _confettiController.play();
     }
@@ -128,6 +133,11 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
     Provider.of<ProgressProvider>(context, listen: false)
         .saveQuizScore(widget.lessonIndex, score, shuffledWords.length);
 
+    // Create review cards for this lesson (if not already created)
+    Provider.of<ReviewProvider>(context, listen: false)
+        .createCardsForLesson(widget.lessonIndex, widget.words.length);
+
+    // (Your existing dialog code here)
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -244,10 +254,13 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
 
                 return Padding(
                     padding: const EdgeInsets.only(bottom: 12.0),
-                    child: InkWell(
+                    child: SizedBox(
+                      height: 80, // Fixed height for all options
+                      width: double.infinity, // Fixed width - full width of parent
+                      child: InkWell(
                         onTap: () => _selectAnswer(option),
                         borderRadius: BorderRadius.circular(15),
-                        child: Container( 
+                        child: Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             color: !showResult ? Colors.white : (isCorrect ? Colors.green.shade50 : (isSelected ? Colors.red.shade50 : Colors.white)),
@@ -258,6 +271,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
                             ),
                           ),
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
@@ -267,15 +281,21 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
                                   fontWeight: FontWeight.w800,
                                   color: showResult && !isCorrect ? Colors.grey : Colors.black87
                                 ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 '(${pair.pronunciation})',
                                 style: const TextStyle(fontSize: 14, color: Colors.blueGrey),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ],
                           ),
-                        )));
+                        ),
+                      ),
+                    ));
               }).toList(),
               ),
               
