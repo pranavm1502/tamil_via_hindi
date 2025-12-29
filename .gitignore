@@ -30,6 +30,12 @@ android/captures/
 android/app/build/
 android/build/
 
+# gemini-cli settings
+.gemini/
+
+# GitHub App credentials
+gha-creds-*.json
+
 # iOS
 ios/Flutter/Generated.xcconfig
 ios/Flutter/flutter_export_environment.sh
