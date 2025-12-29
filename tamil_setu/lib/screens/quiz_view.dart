@@ -184,21 +184,21 @@ class _QuizViewState extends State<QuizView> {
                   ),
                   const Divider(height: 40),
                   if (showAnswer)
-                    Wrap(
-                      alignment: WrapAlignment.center,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      spacing: 8,
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          currentWord.tamil, 
+                          currentWord.tamil,
                           style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.deepOrange)
                         ),
+                        const SizedBox(height: 4),
                         Text(
-                          '(${currentWord.pronunciation})', 
+                          '(${currentWord.pronunciation})',
                           style: const TextStyle(fontSize: 20, color: Colors.blueGrey)
                         ),
+                        const SizedBox(height: 8),
                         IconButton(
-                          icon: const Icon(Icons.volume_up, color: Colors.blue), 
+                          icon: const Icon(Icons.volume_up, color: Colors.blue),
                           onPressed: () => _playAudio(currentWord.audioPath)
                         ),
                       ],
