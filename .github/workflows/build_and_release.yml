@@ -1,3 +1,6 @@
+permissions:
+  contents: write # This is required for softprops/action-gh-release
+  
 name: Build and Test
 
 on:
