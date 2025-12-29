@@ -44,9 +44,9 @@ class DashboardScreen extends StatelessWidget {
                     child: PeacockMascot(message: 'नमस्ते! आज तमिल सीखते हैं?'),
                   ),
                 ),
-                const SliverToBoxAdapter(
+                SliverToBoxAdapter(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: _ReviewButton(),
                   ),
                 ),
@@ -180,7 +180,7 @@ class _LessonTile extends StatelessWidget {
 }
 
 class _ReviewButton extends StatelessWidget {
-  const _ReviewButton();
+  _ReviewButton({super.key});
 
   @override
   Widget build(BuildContext context) {
