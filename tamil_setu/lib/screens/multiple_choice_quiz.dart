@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'dart:math';
+import 'package:flutter/foundation.dart'; // Required for kIsWeb
 import 'package:audioplayers/audioplayers.dart'; 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:confetti/confetti.dart'; // Added
+import 'package:confetti/confetti.dart'; 
 import '../models/word_pair.dart';
 import '../providers/progress_provider.dart';
 import '../widgets/peacock_mascot.dart';
@@ -28,8 +30,10 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
   late List<String> currentOptions;
   String? selectedAnswer;
   bool showResult = false;
-  final AudioPlayer _audioPlayer = AudioPlayer(); 
-  late ConfettiController _confettiController; // Added
+  
+  // 1. Changed to nullable to support safe testing
+  AudioPlayer? _audioPlayer; 
+  late ConfettiController _confettiController;
 
   @override
   void initState() {
@@ -37,19 +41,33 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
     _confettiController = ConfettiController(duration: const Duration(seconds: 2));
     shuffledWords = List.from(widget.words)..shuffle();
     _generateOptions();
+
+    // 2. Initialize AudioPlayer ONLY if NOT in a test environment
+    if (!_isTestEnvironment()) {
+      _audioPlayer = AudioPlayer();
+    }
+  }
+
+  // Helper to identify the automated screenshot test environment
+  bool _isTestEnvironment() {
+    return !kIsWeb && Platform.environment.containsKey('FLUTTER_TEST');
   }
 
   @override
   void dispose() {
-    _audioPlayer.dispose();
+    // 3. Null-safe disposal
+    _audioPlayer?.dispose();
     _confettiController.dispose();
     super.dispose();
   }
 
   void _playAudio(String path) async {
+    // 4. Return early if player is null (during tests)
+    if (_audioPlayer == null) return;
+
     try {
       final cleanPath = path.replaceFirst('assets/', '');
-      await _audioPlayer.play(AssetSource(cleanPath));
+      await _audioPlayer!.play(AssetSource(cleanPath));
     } catch (e) {
       debugPrint('Audio Error: $e');
     }

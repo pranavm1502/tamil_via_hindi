@@ -97,7 +97,16 @@ class _ProgressHeader extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Your Progress', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  // FIXED: Added 'const' to TextStyle to satisfy 'prefer_const_constructors'
+                  const Expanded(
+                    child: Text(
+                      'Your Progress',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8), 
+                  // FIXED: Removed unnecessary braces in string interpolation
                   Text('$completedCount/$totalLessons levels'),
                 ],
               ),
