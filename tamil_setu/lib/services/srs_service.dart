@@ -98,7 +98,6 @@ class SRSService {
 
   /// Get all cards that are due for review
   List<ReviewCard> getDueCards(List<ReviewCard> allCards) {
-    final now = DateTime.now();
     return allCards.where((card) => card.isDue).toList();
   }
 
