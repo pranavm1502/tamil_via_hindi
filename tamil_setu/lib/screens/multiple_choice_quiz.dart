@@ -176,7 +176,9 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
 
   @override
   Widget build(BuildContext context) {
-    if (shuffledWords.isEmpty) return const Center(child: Text('No words.'));
+    if (shuffledWords.isEmpty) {
+      return const Center(child: Text('No words.'));
+    }
     final currentWord = shuffledWords[currentIndex];
     
     return Padding(

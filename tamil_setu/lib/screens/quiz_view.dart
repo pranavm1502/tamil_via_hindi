@@ -152,7 +152,9 @@ class _QuizViewState extends State<QuizView> {
 
   @override
   Widget build(BuildContext context) {
-    if (shuffledWords.isEmpty) return const Center(child: Text('No words available.'));
+    if (shuffledWords.isEmpty) {
+      return const Center(child: Text('No words available.'));
+    }
     final currentWord = shuffledWords[currentIndex];
 
     return Padding(
