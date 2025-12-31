@@ -71,8 +71,9 @@ class ProgressProvider with ChangeNotifier {
 
   /// Checks if a checkpoint is locked (requires previous lessons to be completed)
   bool isCheckpointLocked(int checkpointNumber) {
-    // Checkpoint N requires lessons (N*5) through (N*5+4) to be completed
-    final startLesson = checkpointNumber * CheckpointService.lessonsPerSection;
+    // Checkpoint N requires lessons ((N-1)*5) through ((N-1)*5+4) to be completed
+    // Since checkpoints are numbered starting from 1, we need to subtract 1
+    final startLesson = (checkpointNumber - 1) * CheckpointService.lessonsPerSection;
     final endLesson = startLesson + CheckpointService.lessonsPerSection - 1;
 
     // Check if all lessons in this section are completed
