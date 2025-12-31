@@ -85,5 +85,57 @@ void main() {
       expect(progressProvider.unlockedLevel, 1);
       expect(progressProvider.totalCompletedLessons, 0);
     });
+
+    test('should unlock checkpoint 1 after completing first 5 lessons (0-4)',
+        () async {
+      await progressProvider.loadProgress();
+
+      // Initially, checkpoint 1 should be locked
+      expect(progressProvider.isCheckpointLocked(1), isTrue);
+
+      // Complete lessons 0-3 (not enough yet)
+      for (int i = 0; i < 4; i++) {
+        await progressProvider.saveQuizScore(i, 10, 10);
+      }
+      expect(progressProvider.isCheckpointLocked(1), isTrue);
+
+      // Complete lesson 4 (the 5th lesson) - checkpoint should unlock
+      await progressProvider.saveQuizScore(4, 10, 10);
+      expect(progressProvider.isCheckpointLocked(1), isFalse);
+    });
+
+    test('should unlock checkpoint 2 after completing lessons 5-9', () async {
+      await progressProvider.loadProgress();
+
+      // Complete first 5 lessons (0-4) and checkpoint 1
+      for (int i = 0; i < 5; i++) {
+        await progressProvider.saveQuizScore(i, 10, 10);
+      }
+      await progressProvider.saveCheckpointScore(1, 10, 10);
+
+      // Checkpoint 2 should still be locked
+      expect(progressProvider.isCheckpointLocked(2), isTrue);
+
+      // Complete lessons 5-8 (not enough yet)
+      for (int i = 5; i < 9; i++) {
+        await progressProvider.saveQuizScore(i, 10, 10);
+      }
+      expect(progressProvider.isCheckpointLocked(2), isTrue);
+
+      // Complete lesson 9 - checkpoint 2 should unlock
+      await progressProvider.saveQuizScore(9, 10, 10);
+      expect(progressProvider.isCheckpointLocked(2), isFalse);
+    });
+
+    test('should mark checkpoint as completed after passing', () async {
+      await progressProvider.loadProgress();
+
+      // Checkpoint 1 not completed initially
+      expect(progressProvider.isCheckpointCompleted(1), isFalse);
+
+      // Pass checkpoint with 80%
+      await progressProvider.saveCheckpointScore(1, 8, 10);
+      expect(progressProvider.isCheckpointCompleted(1), isTrue);
+    });
   });
 }
