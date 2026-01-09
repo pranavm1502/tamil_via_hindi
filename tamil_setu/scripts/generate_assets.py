@@ -1,6 +1,7 @@
 import os
 import json
 import time
+import re
 from pathlib import Path
 from gtts import gTTS
 from aksharamukha import transliterate
@@ -39,34 +40,36 @@ def generate_assets():
             # Extract fields
             hindi_text = item['hindi']
             # We are ignoring the 'formal' field in the output
-            spoken_tamil = item['spoken'] 
+            spoken_tamil = item['spoken']
             file_id = item['id']
 
             # A. PRONUNCIATION (Transliterate the SPOKEN version)
             try:
+                # Clean romanized text in parentheses (e.g., "நான் (Naan)" -> "நான்")
+                clean_tamil = re.sub(r'\s*\([^)]*\)', '', spoken_tamil).strip()
                 # Transliteration for the colloquial text
-                pronunciation_text = transliterate.process("Tamil", "Devanagari", spoken_tamil)
+                pronunciation_text = transliterate.process("Tamil", "Devanagari", clean_tamil)
             except Exception as e:
                 print(f"   ⚠️ Transliteration Error: {e}")
                 pronunciation_text = ""
             
-            # B. AUDIO (Google TTS - uses the spoken_tamil text)
+            # B. AUDIO (Google TTS - uses the clean Tamil text)
             audio_filename = f"{file_id}.mp3"
             audio_path = audio_dir / audio_filename
-            
+
             # Only generate if file doesn't exist
             if not audio_path.exists():
                 try:
-                    tts = gTTS(text=spoken_tamil, lang='ta', slow=False)
+                    tts = gTTS(text=clean_tamil, lang='ta', slow=False)
                     tts.save(str(audio_path))
                     time.sleep(0.5) # Rate limiting
                 except Exception as e:
                     print(f"   ❌ Audio Failed: {file_id} - {e}")
-            
-            # --- CRITICAL CHANGE IS HERE: Use 'spoken_tamil' and map it to the simple 'tamil' key ---
+
+            # --- Use cleaned Tamil text (without romanization) ---
             level_list.append({
                 "hindi": hindi_text,
-                "tamil": spoken_tamil,   # <-- This is the spoken colloquial Tamil
+                "tamil": clean_tamil,   # <-- Cleaned spoken colloquial Tamil
                 "pronunciation": pronunciation_text,
                 "audio_path": f"assets/audio/{audio_filename}"
             })
