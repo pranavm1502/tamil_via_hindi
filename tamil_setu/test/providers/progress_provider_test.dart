@@ -10,7 +10,8 @@ void main() {
 
   setUp(() {
     SharedPreferences.setMockInitialValues({});
-    progressProvider = ProgressProvider();
+    // Disable testing mode for unit tests to verify locking behavior
+    progressProvider = ProgressProvider(testingModeOverride: false);
   });
 
   group('ProgressProvider', () {

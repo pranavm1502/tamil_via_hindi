@@ -3,6 +3,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/checkpoint.dart';
 
 class ProgressProvider with ChangeNotifier {
+  // --- Configuration ---
+
+  /// Testing mode flag: When true, all lessons and checkpoints are unlocked
+  /// Set to false in production to enforce completion requirements
+  static const bool isTestingMode = true;
+
+  /// Instance-level override for testing mode (used in unit tests)
+  final bool? _testingModeOverride;
+
+  /// Returns the effective testing mode status
+  bool get _effectiveTestingMode => _testingModeOverride ?? isTestingMode;
+
   // --- State Variables ---
 
   // Tracks how many levels are unlocked (starts at 1, so Level 1 is open)
@@ -16,6 +28,13 @@ class ProgressProvider with ChangeNotifier {
 
   // Optionally track specific scores (useful for "Best Score" displays)
   final Map<int, int> _lessonScores = {};
+
+  // --- Constructor ---
+
+  /// Creates a ProgressProvider
+  /// [testingModeOverride] can be used to override the global testing mode setting
+  /// (useful for unit tests to verify locking behavior)
+  ProgressProvider({bool? testingModeOverride}) : _testingModeOverride = testingModeOverride;
 
   // --- Getters ---
   int get unlockedLevel => _unlockedLevel;
@@ -54,7 +73,13 @@ class ProgressProvider with ChangeNotifier {
   /// Logic: Lessons are locked if:
   /// 1. They are beyond the unlocked level, OR
   /// 2. They require a checkpoint that hasn't been completed
+  /// In testing mode, all lessons are always unlocked.
   bool isLessonLocked(int lessonIndex) {
+    // In testing mode, all lessons are unlocked
+    if (_effectiveTestingMode) {
+      return false;
+    }
+
     // Basic level check
     if (lessonIndex >= _unlockedLevel) {
       return true;
@@ -70,7 +95,13 @@ class ProgressProvider with ChangeNotifier {
   }
 
   /// Checks if a checkpoint is locked (requires previous lessons to be completed)
+  /// In testing mode, all checkpoints are always unlocked.
   bool isCheckpointLocked(int checkpointNumber) {
+    // In testing mode, all checkpoints are unlocked
+    if (_effectiveTestingMode) {
+      return false;
+    }
+
     // Checkpoint N requires lessons ((N-1)*5) through ((N-1)*5+4) to be completed
     // Since checkpoints are numbered starting from 1, we need to subtract 1
     final startLesson = (checkpointNumber - 1) * CheckpointService.lessonsPerSection;
