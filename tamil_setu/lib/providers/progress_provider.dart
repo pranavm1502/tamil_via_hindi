@@ -9,6 +9,12 @@ class ProgressProvider with ChangeNotifier {
   /// Set to false in production to enforce completion requirements
   static const bool isTestingMode = true;
 
+  /// Instance-level override for testing mode (used in unit tests)
+  final bool? _testingModeOverride;
+
+  /// Returns the effective testing mode status
+  bool get _effectiveTestingMode => _testingModeOverride ?? isTestingMode;
+
   // --- State Variables ---
 
   // Tracks how many levels are unlocked (starts at 1, so Level 1 is open)
@@ -22,6 +28,13 @@ class ProgressProvider with ChangeNotifier {
 
   // Optionally track specific scores (useful for "Best Score" displays)
   final Map<int, int> _lessonScores = {};
+
+  // --- Constructor ---
+
+  /// Creates a ProgressProvider
+  /// [testingModeOverride] can be used to override the global testing mode setting
+  /// (useful for unit tests to verify locking behavior)
+  ProgressProvider({bool? testingModeOverride}) : _testingModeOverride = testingModeOverride;
 
   // --- Getters ---
   int get unlockedLevel => _unlockedLevel;
@@ -63,7 +76,7 @@ class ProgressProvider with ChangeNotifier {
   /// In testing mode, all lessons are always unlocked.
   bool isLessonLocked(int lessonIndex) {
     // In testing mode, all lessons are unlocked
-    if (isTestingMode) {
+    if (_effectiveTestingMode) {
       return false;
     }
 
@@ -85,7 +98,7 @@ class ProgressProvider with ChangeNotifier {
   /// In testing mode, all checkpoints are always unlocked.
   bool isCheckpointLocked(int checkpointNumber) {
     // In testing mode, all checkpoints are unlocked
-    if (isTestingMode) {
+    if (_effectiveTestingMode) {
       return false;
     }
 
