@@ -43,6 +43,7 @@ class _QuizViewState extends State<QuizView> {
   void _playAudio(String path) async {
     try {
       final cleanPath = path.replaceFirst('assets/', '');
+      await _audioPlayer.setPlaybackRate(1.20); // Faster rate
       await _audioPlayer.play(AssetSource(cleanPath));
     } catch (e) {
       debugPrint('Audio Error: $e');

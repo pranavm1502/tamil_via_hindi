@@ -26,6 +26,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
   void _playAudio(String path) async {
     try {
       final cleanPath = path.replaceFirst('assets/', '');
+      // Set speed slightly faster for quick revision
+      await _audioPlayer.setPlaybackRate(1.2);
       await _audioPlayer.play(AssetSource(cleanPath));
     } catch (e) {
       debugPrint('Audio Error: $e');
