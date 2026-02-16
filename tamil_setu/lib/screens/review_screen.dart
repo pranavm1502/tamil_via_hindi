@@ -40,7 +40,6 @@ class _ReviewScreenState extends State<ReviewScreen> {
       _showAnswer = false;
     });
 
-    // If no more cards, show completion dialog
     if (!reviewProvider.hasMoreCards) {
       _showCompletionDialog();
     }
@@ -84,7 +83,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
           FilledButton(
             onPressed: () {
               Navigator.pop(ctx);
-              Navigator.pop(context); // Return to dashboard
+              Navigator.pop(context);
             },
             child: const Text('Done'),
           ),
@@ -131,41 +130,41 @@ class _ReviewScreenState extends State<ReviewScreen> {
           final progress = (reviewProvider.currentCardIndex + 1) /
               reviewProvider.totalCardsInSession;
 
-          // Get the actual word pair from the lesson
           final lesson = contentProvider.lessons[currentCard.lessonIndex];
           final wordPair = lesson.words[currentCard.wordIndex];
 
-          return Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Progress indicator
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Card ${reviewProvider.currentCardIndex + 1} / ${reviewProvider.totalCardsInSession}',
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      '${(progress * 100).toStringAsFixed(0)}%',
-                      style: const TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                LinearProgressIndicator(
-                  value: progress,
-                  minHeight: 8,
-                  borderRadius: BorderRadius.circular(4),
-                  color: Colors.green,
-                ),
-                const SizedBox(height: 32),
+          // FIX: Wrap the entire content in a SingleChildScrollView to prevent vertical overflow
+          return SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Card ${reviewProvider.currentCardIndex + 1} / ${reviewProvider.totalCardsInSession}',
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        '${(progress * 100).toStringAsFixed(0)}%',
+                        style: const TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  LinearProgressIndicator(
+                    value: progress,
+                    minHeight: 8,
+                    borderRadius: BorderRadius.circular(4),
+                    color: Colors.green,
+                  ),
+                  const SizedBox(height: 32),
 
-                // Flashcard
-                Expanded(
-                  child: GestureDetector(
+                  // FIX: Removed Expanded. Card will now take as much space as needed and scroll if necessary.
+                  GestureDetector(
                     onTap: () {
                       if (!_showAnswer) {
                         setState(() => _showAnswer = true);
@@ -178,11 +177,12 @@ class _ReviewScreenState extends State<ReviewScreen> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Container(
+                        // Added minHeight so the card looks good even with short text
+                        constraints: const BoxConstraints(minHeight: 300),
                         padding: const EdgeInsets.all(32),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            // Question side
                             const Text(
                               'Translate to Tamil:',
                               style: TextStyle(color: Colors.grey, fontSize: 16),
@@ -200,7 +200,6 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
                             const Divider(height: 48),
 
-                            // Answer side
                             if (_showAnswer) ...[
                               Column(
                                 children: [
@@ -254,92 +253,91 @@ class _ReviewScreenState extends State<ReviewScreen> {
                       ),
                     ),
                   ),
-                ),
 
-                const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-                // Rating buttons (only show when answer is revealed)
-                if (_showAnswer) ...[
-                  const Text(
-                    'How well did you remember?',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _RatingButton(
-                          label: 'Again',
-                          color: Colors.red,
-                          interval: '10m',
-                          onPressed: () => _handleReview(context, ReviewQuality.again),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: _RatingButton(
-                          label: 'Hard',
-                          color: Colors.orange,
-                          interval: _getIntervalText(
-                            reviewProvider.predictNextReview(
-                              currentCard,
-                              ReviewQuality.hard,
-                            ),
-                          ),
-                          onPressed: () => _handleReview(context, ReviewQuality.hard),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _RatingButton(
-                          label: 'Good',
-                          color: Colors.green,
-                          interval: _getIntervalText(
-                            reviewProvider.predictNextReview(
-                              currentCard,
-                              ReviewQuality.good,
-                            ),
-                          ),
-                          onPressed: () => _handleReview(context, ReviewQuality.good),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: _RatingButton(
-                          label: 'Easy',
-                          color: Colors.blue,
-                          interval: _getIntervalText(
-                            reviewProvider.predictNextReview(
-                              currentCard,
-                              ReviewQuality.easy,
-                            ),
-                          ),
-                          onPressed: () => _handleReview(context, ReviewQuality.easy),
-                        ),
-                      ),
-                    ],
-                  ),
-                ] else ...[
-                  FilledButton(
-                    onPressed: () {
-                      setState(() => _showAnswer = true);
-                      _playAudio(wordPair.audioPath);
-                    },
-                    style: FilledButton.styleFrom(
-                      padding: const EdgeInsets.all(18),
+                  if (_showAnswer) ...[
+                    const Text(
+                      'How well did you remember?',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
-                    child: const Text(
-                      'Show Answer',
-                      style: TextStyle(fontSize: 18),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _RatingButton(
+                            label: 'Again',
+                            color: Colors.red,
+                            interval: '10m',
+                            onPressed: () => _handleReview(context, ReviewQuality.again),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _RatingButton(
+                            label: 'Hard',
+                            color: Colors.orange,
+                            interval: _getIntervalText(
+                              reviewProvider.predictNextReview(
+                                currentCard,
+                                ReviewQuality.hard,
+                              ),
+                            ),
+                            onPressed: () => _handleReview(context, ReviewQuality.hard),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _RatingButton(
+                            label: 'Good',
+                            color: Colors.green,
+                            interval: _getIntervalText(
+                              reviewProvider.predictNextReview(
+                                currentCard,
+                                ReviewQuality.good,
+                              ),
+                            ),
+                            onPressed: () => _handleReview(context, ReviewQuality.good),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _RatingButton(
+                            label: 'Easy',
+                            color: Colors.blue,
+                            interval: _getIntervalText(
+                              reviewProvider.predictNextReview(
+                                currentCard,
+                                ReviewQuality.easy,
+                              ),
+                            ),
+                            onPressed: () => _handleReview(context, ReviewQuality.easy),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ] else ...[
+                    FilledButton(
+                      onPressed: () {
+                        setState(() => _showAnswer = true);
+                        _playAudio(wordPair.audioPath);
+                      },
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.all(18),
+                      ),
+                      child: const Text(
+                        'Show Answer',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
           );
         },

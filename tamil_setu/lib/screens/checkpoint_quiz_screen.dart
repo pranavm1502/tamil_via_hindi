@@ -211,7 +211,6 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
       return null;
     }
   }
-
   @override
   Widget build(BuildContext context) {
     if (quizWords.isEmpty) {
@@ -230,135 +229,152 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Column(
-              children: [
-                Row(
+      // FIX 1: Use LayoutBuilder to respect screen constraints
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: ConstrainedBox(
+              // FIX 2: Ensure the content is at least as tall as the screen
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text(
-                      'Question ${currentIndex + 1} / ${quizWords.length}',
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      widget.checkpoint.lessonRange,
-                      style: const TextStyle(fontSize: 14, color: Colors.grey),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                LinearProgressIndicator(
-                  value: progress,
-                  minHeight: 10,
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colors.purple,
-                ),
-                const SizedBox(height: 30),
-                Card(
-                  elevation: 6,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
+                    // Header & Question Card Section
+                    Column(
                       children: [
-                        const Text(
-                          'Choose the correct Tamil translation:',
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          currentWord.hindi,
-                          style: const TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.blue,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Column(
-              children: currentOptions.map((option) {
-                final pair = _getWordPairForOption(option);
-                if (pair == null) return const SizedBox.shrink();
-
-                bool isCorrect = option == currentWord.tamil;
-                bool isSelected = option == selectedAnswer;
-
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 12.0),
-                  child: SizedBox(
-                    height: 80,
-                    width: double.infinity,
-                    child: InkWell(
-                      onTap: () => _selectAnswer(option),
-                      borderRadius: BorderRadius.circular(15),
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: !showResult
-                              ? Colors.white
-                              : (isCorrect
-                                  ? Colors.green.shade50
-                                  : (isSelected ? Colors.red.shade50 : Colors.white)),
-                          borderRadius: BorderRadius.circular(15),
-                          border: Border.all(
-                            color: !showResult
-                                ? Colors.grey.shade300
-                                : (isCorrect
-                                    ? Colors.green
-                                    : (isSelected ? Colors.red : Colors.grey.shade300)),
-                            width: 2,
-                          ),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              pair.tamil,
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w800,
-                                color: showResult && !isCorrect ? Colors.grey : Colors.black87,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                              'Question ${currentIndex + 1} / ${quizWords.length}',
+                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                             ),
-                            const SizedBox(height: 4),
                             Text(
-                              '(${pair.pronunciation})',
-                              style: const TextStyle(fontSize: 14, color: Colors.blueGrey),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                              widget.checkpoint.lessonRange,
+                              style: const TextStyle(fontSize: 14, color: Colors.grey),
                             ),
                           ],
                         ),
-                      ),
+                        const SizedBox(height: 8),
+                        LinearProgressIndicator(
+                          value: progress,
+                          minHeight: 10,
+                          borderRadius: BorderRadius.circular(5),
+                          color: Colors.purple,
+                        ),
+                        const SizedBox(height: 30),
+                        Card(
+                          elevation: 6,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              children: [
+                                const Text(
+                                  'Choose the correct Tamil translation:',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  currentWord.hindi,
+                                  style: const TextStyle(
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.blue,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                );
-              }).toList(),
+
+                    const SizedBox(height: 20), // Spacer between card and options
+
+                    // Options Section
+                    Column(
+                      children: currentOptions.map((option) {
+                        final pair = _getWordPairForOption(option);
+                        if (pair == null) return const SizedBox.shrink();
+
+                        bool isCorrect = option == currentWord.tamil;
+                        bool isSelected = option == selectedAnswer;
+
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12.0),
+                          child: InkWell(
+                            onTap: () => _selectAnswer(option),
+                            borderRadius: BorderRadius.circular(15),
+                            child: Container(
+                              // FIX 3: Changed height to minHeight to allow growth for long text
+                              constraints: const BoxConstraints(minHeight: 80),
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              decoration: BoxDecoration(
+                                color: !showResult
+                                    ? Colors.white
+                                    : (isCorrect
+                                        ? Colors.green.shade50
+                                        : (isSelected ? Colors.red.shade50 : Colors.white)),
+                                borderRadius: BorderRadius.circular(15),
+                                border: Border.all(
+                                  color: !showResult
+                                      ? Colors.grey.shade300
+                                      : (isCorrect
+                                          ? Colors.green
+                                          : (isSelected ? Colors.red : Colors.grey.shade300)),
+                                  width: 2,
+                                ),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    pair.tamil,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w800,
+                                      color: showResult && !isCorrect ? Colors.grey : Colors.black87,
+                                    ),
+                                    // Removed hard constraints here to allow natural wrapping
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '(${pair.pronunciation})',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(fontSize: 14, color: Colors.blueGrey),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+
+                    // Action Button Section
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: showResult
+                          ? FilledButton(
+                              onPressed: _nextQuestion,
+                              style: FilledButton.styleFrom(padding: const EdgeInsets.all(18)),
+                              child: const Text('Continue', style: TextStyle(fontSize: 20)),
+                            )
+                          : const SizedBox(height: 60), // Maintain space even when button hidden
+                    ),
+                  ],
+                ),
+              ),
             ),
-            if (showResult)
-              FilledButton(
-                onPressed: _nextQuestion,
-                style: FilledButton.styleFrom(padding: const EdgeInsets.all(18)),
-                child: const Text('Continue', style: TextStyle(fontSize: 20)),
-              )
-            else
-              const SizedBox(height: 50),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
