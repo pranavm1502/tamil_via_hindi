@@ -202,110 +202,120 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    if (shuffledWords.isEmpty) {
-      return const Center(child: Text('No words.'));
-    }
-    final currentWord = shuffledWords[currentIndex];
-    
-    return Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Column(
-                children: [
-                  LinearProgressIndicator(
-                    value: (currentIndex + 1) / shuffledWords.length,
-                    minHeight: 10,
-                    borderRadius: BorderRadius.circular(5),
-                    color: Colors.green.shade600,
-                  ),
-                  const SizedBox(height: 30),
-                  Card(
-                      elevation: 6,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
+    @override
+    Widget build(BuildContext context) {
+      if (shuffledWords.isEmpty) {
+        return const Center(child: Text('No words.'));
+      }
+      final currentWord = shuffledWords[currentIndex];
+
+      // FIX: Wrap in LayoutBuilder and SingleChildScrollView
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Column(
                           children: [
-                            const Text('Choose the correct Tamil translation:', style: TextStyle(color: Colors.grey)),
-                            const SizedBox(height: 10),
-                            Text(
-                              currentWord.hindi,
-                              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.blue),
-                              textAlign: TextAlign.center,
+                            LinearProgressIndicator(
+                              value: (currentIndex + 1) / shuffledWords.length,
+                              minHeight: 10,
+                              borderRadius: BorderRadius.circular(5),
+                              color: Colors.green.shade600,
                             ),
+                            const SizedBox(height: 30),
+                            Card(
+                                elevation: 6,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: Column(
+                                    children: [
+                                      const Text('Choose the correct Tamil translation:', style: TextStyle(color: Colors.grey)),
+                                      const SizedBox(height: 10),
+                                      Text(
+                                        currentWord.hindi,
+                                        style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.blue),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
+                                )),
                           ],
                         ),
-                      )),
-                ],
-              ),
-              
-              Column(
-                children: currentOptions.map((option) {
-                final pair = _getWordPairForOption(option);
-                if (pair == null) return const SizedBox.shrink();
 
-                bool isCorrect = option == currentWord.tamil;
-                bool isSelected = option == selectedAnswer;
+                        const SizedBox(height: 20), // Added spacer
 
-                return Padding(
-                    padding: const EdgeInsets.only(bottom: 12.0),
-                    child: SizedBox(
-                      height: 80, // Fixed height for all options
-                      width: double.infinity, // Fixed width - full width of parent
-                      child: InkWell(
-                        onTap: () => _selectAnswer(option),
-                        borderRadius: BorderRadius.circular(15),
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: !showResult ? Colors.white : (isCorrect ? Colors.green.shade50 : (isSelected ? Colors.red.shade50 : Colors.white)),
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(
-                              color: !showResult ? Colors.grey.shade300 : (isCorrect ? Colors.green : (isSelected ? Colors.red : Colors.grey.shade300)),
-                              width: 2,
-                            ),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                pair.tamil,
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w800,
-                                  color: showResult && !isCorrect ? Colors.grey : Colors.black87
+                        Column(
+                          children: currentOptions.map((option) {
+                          final pair = _getWordPairForOption(option);
+                          if (pair == null) return const SizedBox.shrink();
+
+                          bool isCorrect = option == currentWord.tamil;
+                          bool isSelected = option == selectedAnswer;
+
+                          return Padding(
+                              padding: const EdgeInsets.only(bottom: 12.0),
+                              child: InkWell(
+                                onTap: () => _selectAnswer(option),
+                                borderRadius: BorderRadius.circular(15),
+                                child: Container(
+                                  padding: const EdgeInsets.all(16),
+                                  // FIX: Use minHeight 80 instead of height 80
+                                  constraints: const BoxConstraints(minHeight: 80),
+                                  decoration: BoxDecoration(
+                                    color: !showResult ? Colors.white : (isCorrect ? Colors.green.shade50 : (isSelected ? Colors.red.shade50 : Colors.white)),
+                                    borderRadius: BorderRadius.circular(15),
+                                    border: Border.all(
+                                      color: !showResult ? Colors.grey.shade300 : (isCorrect ? Colors.green : (isSelected ? Colors.red : Colors.grey.shade300)),
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        pair.tamil,
+                                        textAlign: TextAlign.center, // Center text for wrapping
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w800,
+                                          color: showResult && !isCorrect ? Colors.grey : Colors.black87
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '(${pair.pronunciation})',
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(fontSize: 14, color: Colors.blueGrey),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                '(${pair.pronunciation})',
-                                style: const TextStyle(fontSize: 14, color: Colors.blueGrey),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
+                              ));
+                        }).toList(),
                         ),
-                      ),
-                    ));
-              }).toList(),
-              ),
-              
-              if (showResult)
-                FilledButton(
-                    onPressed: _nextQuestion, 
-                    style: FilledButton.styleFrom(padding: const EdgeInsets.all(18)),
-                    child: const Text('Continue', style: TextStyle(fontSize: 20)))
-              else
-                const SizedBox(height: 50), 
-            ]));
-  }
-}
+
+                        const SizedBox(height: 16), // Added spacer
+
+                        if (showResult)
+                          FilledButton(
+                              onPressed: _nextQuestion,
+                              style: FilledButton.styleFrom(padding: const EdgeInsets.all(18)),
+                              child: const Text('Continue', style: TextStyle(fontSize: 20)))
+                        else
+                          const SizedBox(height: 50),
+                      ])),
+            ),
+          );
+        }
+      );
+    }
+   }

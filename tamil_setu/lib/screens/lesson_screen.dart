@@ -91,6 +91,7 @@ class _LessonScreenState extends State<LessonScreen> with SingleTickerProviderSt
     );
   }
 
+// (Inside _buildLearnTab method)
   Widget _buildLearnTab() {
     return ListView.builder(
       padding: const EdgeInsets.all(16),
@@ -117,28 +118,29 @@ class _LessonScreenState extends State<LessonScreen> with SingleTickerProviderSt
               ),
               Padding(
                 padding: const EdgeInsets.all(16),
-                child: Column(
+                child: Row( // FIX: Switch to Row to put button on the right
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          pair.tamil,
-                          style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.deepOrange),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '(${pair.pronunciation})',
-                          style: TextStyle(fontSize: 18, color: Colors.grey.shade600, fontStyle: FontStyle.italic),
-                        ),
-                      ],
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: IconButton(
-                        icon: const Icon(Icons.volume_up_rounded, size: 36, color: Colors.blue),
-                        onPressed: () => _playAudio(pair.audioPath),
+                    Expanded( // FIX: Wrap text in Expanded so it wraps instead of overflowing
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            pair.tamil,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.deepOrange),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '(${pair.pronunciation})',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 18, color: Colors.grey.shade600, fontStyle: FontStyle.italic),
+                          ),
+                        ],
                       ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.volume_up_rounded, size: 36, color: Colors.blue),
+                      onPressed: () => _playAudio(pair.audioPath),
                     ),
                   ],
                 ),
@@ -149,4 +151,4 @@ class _LessonScreenState extends State<LessonScreen> with SingleTickerProviderSt
       },
     );
   }
-}
+ }

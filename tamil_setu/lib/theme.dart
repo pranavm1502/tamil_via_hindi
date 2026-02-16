@@ -23,7 +23,6 @@ class PeacockTheme {
         centerTitle: true,
         elevation: 0,
       ),
-      // CHANGE: CardTheme replaced with CardThemeData
       cardTheme: CardThemeData(
         color: Colors.white,
         elevation: 2,
@@ -58,6 +57,22 @@ class PeacockTheme {
       appBarTheme: const AppBarTheme(
         backgroundColor: Color(0xFF1A1A1A),
         foregroundColor: Colors.white,
+      ),
+      cardTheme: CardThemeData(
+        elevation: 2,
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: peacockGreen,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+        ),
+      ),
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
+        color: vibrantOrange,
       ),
     );
   }
