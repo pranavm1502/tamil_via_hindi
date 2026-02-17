@@ -6,11 +6,18 @@ import 'providers/content_provider.dart';
 import 'providers/review_provider.dart';
 import 'screens/dashboard_screen.dart';
 import 'theme.dart'; // 1. Import your newly created theme file
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 void main() async {
   // Ensure Flutter bindings are initialized for async data loading
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize Firebase with the generated options
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  
   // Initialize providers
   final progressProvider = ProgressProvider();
   final themeProvider = ThemeProvider();

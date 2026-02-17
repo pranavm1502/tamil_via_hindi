@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1088671298063",
+    "project_id": "tamil-setu-app",
+    "storage_bucket": "tamil-setu-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1088671298063:android:cc8ef9cd548f1af210e97a",
+        "android_client_info": {
+          "package_name": "com.boldesi.tamil_via_hindi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKpZduLB_ujlpJt1szUUXYg5XW4Rk8HDQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
