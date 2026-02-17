@@ -17,6 +17,7 @@
 .pub-cache/
 .pub/
 /build/
+lib/firebase_options.dart
 
 # Android
 android/**/gradlew
@@ -40,3 +41,4 @@ gha-creds-*.json
 ios/Flutter/Generated.xcconfig
 ios/Flutter/flutter_export_environment.sh
 ios/Pods/
+ios/Runner/GoogleService-Info.plist
