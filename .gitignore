@@ -52,3 +52,4 @@ ui-debug.log
 
 # Firebase configuration that might contain local paths
 .firebase/
+.firebaserc

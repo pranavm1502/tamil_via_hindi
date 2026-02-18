@@ -28,12 +28,15 @@ class DashboardScreen extends StatelessWidget {
         actions: [
           // ADD THIS LOGIN BUTTON
           StreamBuilder<User?>(
-            stream: FirebaseAuth.instance.authStateChanges(),
+            // FIX: Use the service instead of direct Firebase access
+            stream: context.read<AuthService>().userStream,
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return IconButton(
                   icon: const Icon(Icons.login),
-                  onPressed: () => AuthService().signInWithGoogle(),
+                  // FIX: Call sign-in through the service
+                  onPressed: () =>
+                      context.read<AuthService>().signInWithGoogle(),
                 );
               }
               return CircleAvatar(

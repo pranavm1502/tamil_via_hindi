@@ -3,19 +3,31 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart';
 
 class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  // 1. Nullable fields to allow truly silent mocks in tests
+  final FirebaseAuth? _auth;
+  final GoogleSignIn? _googleSignIn;
 
-  // Use the singleton instance for version 7.x
-  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+  AuthService({
+    FirebaseAuth? auth,
+    GoogleSignIn? googleSignIn,
+  })  : _auth = auth,
+        _googleSignIn = googleSignIn;
 
-  // Track initialization to call it exactly once as required
+  // Track initialization status
   bool _isInitialized = false;
 
-  Stream<User?> get userStream => _auth.authStateChanges();
+  // 2. Getters that fallback to singletons only in production
+  FirebaseAuth get auth => _auth ?? FirebaseAuth.instance;
+  GoogleSignIn get googleSignIn => _googleSignIn ?? GoogleSignIn.instance;
+
+  // FIX: Return an empty stream if _auth is null (during tests)
+  // This prevents the native Pigeon channel crashes
+  Stream<User?> get userStream =>
+      _auth?.authStateChanges() ?? const Stream.empty();
 
   Future<void> _ensureInitialized() async {
     if (!_isInitialized) {
-      await _googleSignIn.initialize();
+      await googleSignIn.initialize();
       _isInitialized = true;
     }
   }
@@ -24,12 +36,13 @@ class AuthService {
     try {
       await _ensureInitialized();
 
-      // It now throws a GoogleSignInException if the user cancels
-      final GoogleSignInAccount googleUser = await _googleSignIn.authenticate();
+      // FIX: Removed '?' because the v7.x SDK throws exceptions on cancel rather than returning null
+      final GoogleSignInAccount googleUser = await googleSignIn.authenticate();
 
+      // FIX: Removed 'await' because .authentication is not a Future
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
 
-      // Access tokens are now obtained via the authorizationClient in v7.x
+      // Type is inferred correctly as non-nullable
       final authorization =
           await googleUser.authorizationClient.authorizeScopes(['email']);
 
@@ -39,10 +52,9 @@ class AuthService {
       );
 
       final UserCredential userCredential =
-          await _auth.signInWithCredential(credential);
+          await auth.signInWithCredential(credential);
       return userCredential.user;
     } on GoogleSignInException catch (e) {
-      // Handle the "canceled" state or other Google-specific errors here
       debugPrint('Google Sign-In Exception: ${e.code}');
       return null;
     } catch (e) {
@@ -53,8 +65,8 @@ class AuthService {
 
   Future<void> signOut() async {
     try {
-      await _googleSignIn.signOut();
-      await _auth.signOut();
+      await googleSignIn.signOut();
+      await auth.signOut();
     } catch (e) {
       debugPrint('Sign-out Error: $e');
     }

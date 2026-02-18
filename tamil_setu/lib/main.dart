@@ -11,6 +11,7 @@ import 'firebase_options.dart';
 import 'package:flutter/foundation.dart'; // For kDebugMode
 import 'package:firebase_auth/firebase_auth.dart'; // For FirebaseAuth
 import 'package:cloud_firestore/cloud_firestore.dart'; // For FirebaseFirestore
+import 'services/auth_service.dart';
 
 void main() async {
   // Ensure Flutter bindings are initialized for async data loading
@@ -33,6 +34,7 @@ void main() async {
   final themeProvider = ThemeProvider();
   final contentProvider = ContentProvider();
   final reviewProvider = ReviewProvider();
+  final authService = AuthService();
 
   // Load persistent data (Progress, Themes, Lesson Content, and Review Cards) before the app starts
   await Future.wait([
@@ -45,6 +47,8 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        Provider<AuthService>.value(value: authService),
+        ChangeNotifierProvider.value(value: progressProvider),
         ChangeNotifierProvider.value(value: progressProvider),
         ChangeNotifierProvider.value(value: themeProvider),
         ChangeNotifierProvider.value(value: contentProvider),

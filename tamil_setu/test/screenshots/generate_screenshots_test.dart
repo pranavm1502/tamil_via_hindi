@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_screenshot/golden_screenshot.dart';
 import 'package:provider/provider.dart';
+import 'package:tamil_setu/services/auth_service.dart';
 
 // Ensure these match your project structure
 import 'package:tamil_setu/screens/dashboard_screen.dart';
@@ -128,6 +129,8 @@ Future<void> _takeAppScreenshot(WidgetTester tester, ScreenshotDevice device,
 
   final wrappedWidget = MultiProvider(
     providers: [
+      Provider<AuthService>.value(
+          value: AuthService(auth: null, googleSignIn: null)),
       ChangeNotifierProvider.value(value: contentProvider),
       ChangeNotifierProvider(create: (_) => ProgressProvider()),
       ChangeNotifierProvider(create: (_) => ThemeProvider()),
