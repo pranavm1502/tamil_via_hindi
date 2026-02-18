@@ -4,7 +4,7 @@
 
 **A Hindi-to-Tamil language learning application built with Flutter**
 
-[![Build APK](https://github.com/vivekkr1809/tamil_via_hindi/actions/workflows/build_apk.yml/badge.svg)](https://github.com/vivekkr1809/tamil_via_hindi/actions/workflows/build_apk.yml)
+[![Build & Release](https://github.com/pmundada/tamil_via_hindi/actions/workflows/build_and_release.yml/badge.svg)](https://github.com/pmundada/tamil_via_hindi/actions/workflows/build_and_release.yml)
 
 </div>
 
@@ -14,17 +14,24 @@ Tamil Setu is a Flutter application designed to help Hindi speakers learn Tamil 
 
 ## ✨ Features
 
-- **📚 Topic-based Learning** - 8 comprehensive lessons covering basics, pronouns, verbs, numbers, family, colors, food, and time
-- **🔊 Audio Support (TTS)** - Native Text-to-Speech for proper Tamil pronunciation
-- **🎯 Interactive Quizzes** - Test your knowledge with flashcard-style quizzes
-- **📊 Progress Tracking** - Track completed lessons and quiz scores
-- **🏆 Achievement System** - Visual progress indicators and completion badges
-- **🎨 Clean UI** - Modern Material Design 3 interface
-- **💾 Offline First** - All content available offline, progress saved locally
+- **📚 Dynamic Curriculum** - Over 30 lessons loaded from a central JSON file, covering everything from survival basics to complex sentences.
+- **🔊 Audio Support** - Native audio playback for every word and phrase to ensure proper pronunciation.
+- **🎯 Interactive Quizzes** - Test your knowledge with multiple-choice and flashcard-style quizzes at the end of each lesson.
+- **🧠 Spaced Repetition System (SRS)** - A smart review system to help you remember words more effectively over time.
+- **🏆 Checkpoint Quizzes** - Unlock new sets of lessons by passing checkpoint quizzes.
+- **📊 Progress Tracking** - Keep track of completed lessons and quiz scores.
+- **☁️ Cloud Sync** - Authenticate with Google Sign-In to sync your progress across devices.
+- **🎨 Peacock Theme** - A beautiful, modern UI inspired by the colors of a peacock, with both light and dark modes.
+- **💾 Offline First** - All lesson content and progress are saved locally, so you can learn even without an internet connection.
 
 ## 📸 Screenshots
 
-*(Screenshots would go here in production)*
+*To generate and update screenshots, run the following command from the root of the repository:*
+```bash
+./update_golden_screenshots.sh
+```
+*The generated screenshots will be placed in the `tamil_setu/test/screenshots` directory and can be used to update this section.*
+
 
 ## 🚀 Getting Started
 
@@ -39,7 +46,7 @@ Tamil Setu is a Flutter application designed to help Hindi speakers learn Tamil 
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/vivekkr1809/tamil_via_hindi.git
+   git clone https://github.com/pmundada/tamil_via_hindi.git
    cd tamil_via_hindi/tamil_setu
    ```
 
@@ -71,65 +78,68 @@ flutter build ios --release
 ```
 lib/
 ├── main.dart                 # App entry point and configuration
+├── theme.dart                # App theme and styling (PeacockTheme)
+├── firebase_options.dart     # Firebase configuration
+├── data/                     # Data loading logic
+│   └── curriculum.dart      # Loads lesson and quiz content from JSON
 ├── models/                   # Data models
 │   ├── lesson.dart          # Lesson model
-│   └── word_pair.dart       # Word pair model
-├── data/                     # Static data
-│   └── curriculum.dart      # Lesson content
+│   ├── word_pair.dart       # Word pair model for lessons
+│   ├── checkpoint.dart      # Checkpoint quiz model
+│   └── review_card.dart     # Review card model for SRS
+├── providers/                # State management using Provider
+│   ├── content_provider.dart  # Provides lesson and quiz content
+│   ├── progress_provider.dart # Manages user progress
+│   ├── review_provider.dart   # Manages review cards for SRS
+│   └── theme_provider.dart    # Manages app theme (light/dark)
 ├── screens/                  # UI screens
-│   ├── dashboard_screen.dart # Main lesson list
-│   ├── lesson_screen.dart   # Lesson details with tabs
-│   └── quiz_view.dart       # Quiz interface
-├── services/                 # Business logic services
-│   ├── tts_service.dart     # Text-to-speech service
-│   └── progress_service.dart # Progress tracking
-└── providers/                # State management
-    └── progress_provider.dart # Progress state provider
+│   ├── dashboard_screen.dart    # Main screen with lesson list
+│   ├── lesson_screen.dart       # Screen for individual lessons
+│   ├── quiz_view.dart           # View for lesson quizzes
+│   ├── checkpoint_quiz_screen.dart # Screen for checkpoint quizzes
+│   ├── multiple_choice_quiz.dart # Multiple choice quiz widget
+│   └── review_screen.dart       # Screen for spaced repetition review
+├── services/                 # Business logic and services
+│   ├── auth_service.dart        # Authentication service (Google Sign-In)
+│   ├── progress_service.dart    # Service for saving/loading progress locally
+│   ├── review_storage_service.dart # Local storage for review cards
+│   ├── srs_service.dart         # Spaced Repetition System logic
+│   ├── sync_service.dart        # Service for syncing data with Cloud Firestore
+│   └── tts_service.dart         # Text-to-Speech service
+└── widgets/                    # Reusable UI widgets
+    ├── peacock_mascot.dart    # Peacock mascot widget
+    └── word_card.dart         # Card widget for displaying words
 ```
 
 ## 📚 Curriculum
 
-The app currently includes 8 lessons with 60+ word pairs:
+The app currently includes over 30 lessons with hundreds of word pairs, loaded dynamically from `assets/data/master_content.json`. The curriculum covers a wide range of topics, including:
 
-1. **Basics** - Greetings and basic questions (9 words)
-2. **Pronouns** - Personal and demonstrative pronouns (8 words)
-3. **Common Verbs** - Essential daily actions (9 words)
-4. **Numbers** - Counting from 1-10 (10 words)
-5. **Family Members** - Family relationships (9 words)
-6. **Colors** - Basic colors (8 words)
-7. **Food & Drinks** - Common food items (9 words)
-8. **Time & Days** - Time expressions and days (9 words)
+- Survival Basics
+- Pronouns
+- Verbs & Tenses
+- Questions
+- Numbers & Time
+- Family, Food & Shopping
+- ...and much more!
 
 ## 🔧 Configuration
 
 ### Adding New Lessons
 
-1. Edit `lib/data/curriculum.dart`
-2. Add a new `Lesson` object to the `curriculum` list:
-   ```dart
-   Lesson(
-     title: "9. Your Topic",
-     description: "Description of the topic",
-     words: [
-       WordPair(
-         hindi: "Hindi word",
-         tamil: "Tamil word",
-         pronunciation: "Devanagari pronunciation",
-       ),
-       // Add more word pairs...
-     ],
-   ),
-   ```
+1. Edit `assets/data/master_content.json`
+2. Add a new lesson object to the JSON array following the existing structure.
 
 ### Customizing Theme
 
-Edit `lib/main.dart` to modify colors and theme:
+Edit `lib/theme.dart` to modify the `PeacockTheme` class. You can change colors for both light and dark themes.
 ```dart
-theme: ThemeData(
-  primarySwatch: Colors.orange,  // Change primary color
-  scaffoldBackgroundColor: Colors.orange[50],
-  useMaterial3: true,
-),
+class PeacockTheme {
+  // Peacock-inspired color palette
+  static const Color peacockBlue = Color(0xFF005DAA);
+  static const Color peacockGreen = Color(0xFF00A896);
+  // ... more colors
+}
 ```
 
 ## 🧪 Testing
@@ -144,27 +154,23 @@ flutter test
 flutter test --coverage
 ```
 
-### Widget tests
-The app includes widget tests for:
-- App launch and initialization
-- Dashboard lesson display
-- Navigation to lesson screens
-
 ## 🔄 CI/CD
 
-The project uses GitHub Actions for continuous integration:
+The project uses GitHub Actions for continuous integration and release:
 
-- **Build APK** - Automatically builds release APK on push to main branch
-- Artifacts are uploaded and available for download
+- **Build & Release** - Automatically builds and releases APK on push to main branch.
 
-See `.github/workflows/build_apk.yml` for configuration.
+See `.github/workflows/build_and_release.yml` for configuration.
 
 ## 🛠️ Technologies Used
 
 - **Flutter** - Cross-platform UI framework
 - **Provider** - State management
-- **SharedPreferences** - Local data persistence
-- **flutter_tts** - Text-to-Speech functionality
+- **Firebase** - Backend services (Authentication, Firestore)
+- **Google Sign-In** - For user authentication
+- **SharedPreferences** - For local data persistence
+- **audioplayers** - For audio playback
+- **confetti** - For celebrations
 - **Material Design 3** - Modern UI components
 
 ## 📖 Learning Approach
@@ -212,7 +218,8 @@ This project is open source and available under the MIT License.
 
 ## 👥 Authors
 
-- [vivekkr1809](https://github.com/vivekkr1809)
+- [Pranav](https://github.com/pranavm1502)
+- [Vivek](https://github.com/vivekkr1809)
 
 ## 🙏 Acknowledgments
 
