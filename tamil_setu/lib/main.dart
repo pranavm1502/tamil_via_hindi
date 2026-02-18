@@ -8,7 +8,9 @@ import 'screens/dashboard_screen.dart';
 import 'theme.dart'; // 1. Import your newly created theme file
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-
+import 'package:flutter/foundation.dart'; // For kDebugMode
+import 'package:firebase_auth/firebase_auth.dart'; // For FirebaseAuth
+import 'package:cloud_firestore/cloud_firestore.dart'; // For FirebaseFirestore
 void main() async {
   // Ensure Flutter bindings are initialized for async data loading
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,6 +20,13 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   
+  if (kDebugMode) {
+    // 10.0.2.2 is the magic IP for Android Emulators to see your Mac
+    await FirebaseAuth.instance.useAuthEmulator('10.0.2.2', 9099);
+    FirebaseFirestore.instance.useFirestoreEmulator('10.0.2.2', 8080);
+    debugPrint('Using Firebase Emulator Suite');
+  }
+
   // Initialize providers
   final progressProvider = ProgressProvider();
   final themeProvider = ThemeProvider();
