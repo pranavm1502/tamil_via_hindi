@@ -4,8 +4,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'package:tamil_setu/main.dart';
 import 'test_helpers.dart';
+import 'firebase_mock.dart';
 
-void main() {
+void main() { 
+  
+  setupFirebaseMocks(); 
+  
   TestWidgetsFlutterBinding.ensureInitialized();
   SharedPreferences.setMockInitialValues({});
 
