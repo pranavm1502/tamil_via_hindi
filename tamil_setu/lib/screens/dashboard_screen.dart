@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import '../services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/lesson.dart';
@@ -24,6 +26,21 @@ class DashboardScreen extends StatelessWidget {
         centerTitle: true,
         elevation: 2,
         actions: [
+          // ADD THIS LOGIN BUTTON
+          StreamBuilder<User?>(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return IconButton(
+                  icon: const Icon(Icons.login),
+                  onPressed: () => AuthService().signInWithGoogle(),
+                );
+              }
+              return CircleAvatar(
+                backgroundImage: NetworkImage(snapshot.data!.photoURL ?? ''),
+              );
+            },
+          ),
           Consumer<ThemeProvider>(
             builder: (context, themeProvider, child) {
               return IconButton(

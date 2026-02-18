@@ -9,6 +9,8 @@ import '../models/word_pair.dart';
 import '../providers/progress_provider.dart';
 import '../providers/review_provider.dart';
 import '../widgets/peacock_mascot.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../services/sync_service.dart';
 
 class MultipleChoiceQuiz extends StatefulWidget {
   final List<WordPair> words;
@@ -131,10 +133,15 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
     if (percentage >= 80) {
       _confettiController.play();
     }
-
+    // 1. YOUR LOCAL SAVE
     Provider.of<ProgressProvider>(context, listen: false)
         .saveQuizScore(widget.lessonIndex, score, shuffledWords.length);
-
+    // 2. ADD THE CLOUD SYNC HERE
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null && percentage >= 80) {
+      // Award 50 XP for passing a lesson
+      SyncService().updateStreakAndXP(user.uid, 50); 
+    }
     // Create review cards for this lesson (if not already created)
     Provider.of<ReviewProvider>(context, listen: false)
         .createCardsForLesson(widget.lessonIndex, widget.words.length);

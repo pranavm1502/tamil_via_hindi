@@ -6,6 +6,8 @@ import '../models/word_pair.dart';
 import '../providers/progress_provider.dart';
 import '../providers/review_provider.dart';
 import '../widgets/peacock_mascot.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../services/sync_service.dart';
 
 class QuizView extends StatefulWidget {
   final List<WordPair> words;
@@ -84,6 +86,11 @@ class _QuizViewState extends State<QuizView> {
     Provider.of<ProgressProvider>(context, listen: false)
         .saveQuizScore(widget.lessonIndex, score, shuffledWords.length);
 
+    // 2. ADD THE CLOUD SYNC HERE
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null && percentage >= 80) {
+      SyncService().updateStreakAndXP(user.uid, 50);
+    }
     // Create review cards for this lesson (if not already created)
     Provider.of<ReviewProvider>(context, listen: false)
         .createCardsForLesson(widget.lessonIndex, widget.words.length);
