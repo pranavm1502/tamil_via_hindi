@@ -12,7 +12,28 @@
           "package_name": "com.boldesi.tamil_via_hindi"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1088671298063-oh8noc5o685ksqf9gqvvburdhl0gquve.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.boldesi.tamil_via_hindi",
+            "certificate_hash": "69273b899ddf76fca51bb225a393522001b2f95b"
+          }
+        },
+        {
+          "client_id": "1088671298063-qfa1j88e6gggi73fbc7gsvgmoiqt83n8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.boldesi.tamil_via_hindi",
+            "certificate_hash": "762e466be08e28880880a833320231d710643ec8"
+          }
+        },
+        {
+          "client_id": "1088671298063-avcjo9vr74ejpsi3nj5etc1s3fjup6go.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCKpZduLB_ujlpJt1szUUXYg5XW4Rk8HDQ"
@@ -20,7 +41,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1088671298063-avcjo9vr74ejpsi3nj5etc1s3fjup6go.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
