@@ -240,7 +240,8 @@ void main() {
           intervalDays: 6,
         );
 
-        final predicted = srsService.predictNextReview(card, ReviewQuality.good);
+        final predicted =
+            srsService.predictNextReview(card, ReviewQuality.good);
         final now = DateTime.now();
 
         // Should be approximately 15 days from now (6 * 2.5)

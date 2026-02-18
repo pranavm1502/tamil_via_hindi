@@ -65,11 +65,13 @@ class ReviewCard {
   }
 
   /// Check if this card is due for review
-  bool get isDue => DateTime.now().isAfter(nextReview) ||
-                    DateTime.now().isAtSameMomentAs(nextReview);
+  bool get isDue =>
+      DateTime.now().isAfter(nextReview) ||
+      DateTime.now().isAtSameMomentAs(nextReview);
 
   /// Calculate accuracy percentage
-  double get accuracy => totalReviews == 0 ? 0.0 : (totalCorrect / totalReviews) * 100;
+  double get accuracy =>
+      totalReviews == 0 ? 0.0 : (totalCorrect / totalReviews) * 100;
 
   /// Convert to JSON for storage
   Map<String, dynamic> toJson() {

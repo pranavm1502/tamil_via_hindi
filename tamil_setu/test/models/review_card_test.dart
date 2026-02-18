@@ -160,7 +160,8 @@ void main() {
     });
 
     test('round-trip serialization preserves data', () {
-      final original = ReviewCard.newCard(lessonIndex: 3, wordIndex: 7).copyWith(
+      final original =
+          ReviewCard.newCard(lessonIndex: 3, wordIndex: 7).copyWith(
         repetitions: 2,
         easiness: 2.4,
         intervalDays: 6,

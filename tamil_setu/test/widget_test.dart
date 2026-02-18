@@ -6,22 +6,26 @@ import 'package:tamil_setu/main.dart';
 import 'test_helpers.dart';
 import 'firebase_mock.dart';
 
-void main() { 
-  
-  setupFirebaseMocks(); 
-  
+void main() {
+  setupFirebaseMocks();
+
   TestWidgetsFlutterBinding.ensureInitialized();
   SharedPreferences.setMockInitialValues({});
 
   // Mock Platform Channels
   TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-      .setMockMethodCallHandler(const MethodChannel('flutter_tts'), (c) async => 1);
+      .setMockMethodCallHandler(
+          const MethodChannel('flutter_tts'), (c) async => 1);
   TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-      .setMockMethodCallHandler(const MethodChannel('xyz.luan/audioplayers'), (c) async => 1);
+      .setMockMethodCallHandler(
+          const MethodChannel('xyz.luan/audioplayers'), (c) async => 1);
   TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-      .setMockMethodCallHandler(const MethodChannel('plugins.flutter.io/path_provider'), (c) async => '.');
+      .setMockMethodCallHandler(
+          const MethodChannel('plugins.flutter.io/path_provider'),
+          (c) async => '.');
 
-  testWidgets('Tamil Setu app launches and loads dashboard', (WidgetTester tester) async {
+  testWidgets('Tamil Setu app launches and loads dashboard',
+      (WidgetTester tester) async {
     await tester.pumpWidget(makeTestableWidget(child: const TamilSetuApp()));
 
     // ✅ App Start: Wait for the Spinner to go away
@@ -31,9 +35,10 @@ void main() {
     expect(find.byType(Card), findsWidgets);
   });
 
-  testWidgets('Dashboard shows correct lesson titles and icons', (WidgetTester tester) async {
+  testWidgets('Dashboard shows correct lesson titles and icons',
+      (WidgetTester tester) async {
     await tester.pumpWidget(makeTestableWidget(child: const TamilSetuApp()));
-    
+
     // ✅ App Start: Wait for the Spinner to go away
     await waitForLoader(tester);
 
@@ -44,7 +49,7 @@ void main() {
 
   testWidgets('Can navigate to lesson screen', (WidgetTester tester) async {
     await tester.pumpWidget(makeTestableWidget(child: const TamilSetuApp()));
-    
+
     // ✅ App Start: Wait for the Spinner to go away
     await waitForLoader(tester);
 
@@ -54,7 +59,7 @@ void main() {
     // ✅ NAVIGATION FIX: Use pumpAndSettle here!
     // Why? Because we are waiting for a "Slide Transition" animation, not a loading spinner.
     await tester.pumpAndSettle();
-    
+
     expect(find.text('Learn'), findsOneWidget);
     expect(find.text('Flashcards'), findsOneWidget);
     expect(find.text('MCQ'), findsOneWidget);

@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter/foundation.dart'; 
+import 'package:flutter/foundation.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  
+
   // Use the singleton instance for version 7.x
   final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
 
@@ -30,16 +30,17 @@ class AuthService {
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
 
       // Access tokens are now obtained via the authorizationClient in v7.x
-      final authorization = await googleUser.authorizationClient.authorizeScopes(['email']);
+      final authorization =
+          await googleUser.authorizationClient.authorizeScopes(['email']);
 
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: authorization.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      final UserCredential userCredential = await _auth.signInWithCredential(credential);
+      final UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
       return userCredential.user;
-      
     } on GoogleSignInException catch (e) {
       // Handle the "canceled" state or other Google-specific errors here
       debugPrint('Google Sign-In Exception: ${e.code}');

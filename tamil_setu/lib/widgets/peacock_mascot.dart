@@ -6,11 +6,8 @@ class PeacockMascot extends StatelessWidget {
   final String message;
   final MascotState state;
 
-  const PeacockMascot({
-    super.key, 
-    required this.message, 
-    this.state = MascotState.guide
-  });
+  const PeacockMascot(
+      {super.key, required this.message, this.state = MascotState.guide});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +31,7 @@ class PeacockMascot extends StatelessWidget {
       builder: (context, value, child) {
         return Opacity(
           // FIX: Clamp the value so it never goes above 1.0 or below 0.0
-          opacity: value.clamp(0.0, 1.0), 
+          opacity: value.clamp(0.0, 1.0),
           child: Transform.translate(
             offset: Offset(0, 20 * (1 - value)),
             child: child,
@@ -79,8 +76,8 @@ class PeacockMascot extends StatelessWidget {
             assetPath,
             height: 90,
             // Fallback icon if the image fails to load
-            errorBuilder: (context, error, stackTrace) => 
-              const Icon(Icons.star, size: 50, color: Colors.orange),
+            errorBuilder: (context, error, stackTrace) =>
+                const Icon(Icons.star, size: 50, color: Colors.orange),
           ),
         ],
       ),

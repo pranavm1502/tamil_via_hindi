@@ -11,6 +11,7 @@ import 'firebase_options.dart';
 import 'package:flutter/foundation.dart'; // For kDebugMode
 import 'package:firebase_auth/firebase_auth.dart'; // For FirebaseAuth
 import 'package:cloud_firestore/cloud_firestore.dart'; // For FirebaseFirestore
+
 void main() async {
   // Ensure Flutter bindings are initialized for async data loading
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +20,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  
+
   if (kDebugMode) {
     // 10.0.2.2 is the magic IP for Android Emulators to see your Mac
     await FirebaseAuth.instance.useAuthEmulator('10.0.2.2', 9099);
@@ -65,16 +66,17 @@ class TamilSetuApp extends StatelessWidget {
         return MaterialApp(
           title: 'Tamil Setu',
           debugShowCheckedModeBanner: false,
-          
+
           // 2. Apply your custom Peacock-inspired light theme
-          theme: PeacockTheme.lightTheme, 
-          
+          theme: PeacockTheme.lightTheme,
+
           // 3. Apply your custom Peacock-inspired dark theme
           darkTheme: PeacockTheme.darkTheme,
-          
+
           // 4. Use the state from your ThemeProvider to decide which theme to show
-          themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-          
+          themeMode:
+              themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+
           home: const DashboardScreen(),
         );
       },

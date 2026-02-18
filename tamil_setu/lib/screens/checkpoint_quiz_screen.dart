@@ -32,7 +32,8 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
   @override
   void initState() {
     super.initState();
-    _confettiController = ConfettiController(duration: const Duration(seconds: 2));
+    _confettiController =
+        ConfettiController(duration: const Duration(seconds: 2));
     _loadWordsFromLessons();
     _generateOptions();
   }
@@ -42,7 +43,9 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
     allWords = [];
 
     // Collect all words from the checkpoint's lesson range
-    for (int i = widget.checkpoint.startLessonIndex; i <= widget.checkpoint.endLessonIndex; i++) {
+    for (int i = widget.checkpoint.startLessonIndex;
+        i <= widget.checkpoint.endLessonIndex;
+        i++) {
       if (i < contentProvider.lessons.length) {
         allWords.addAll(contentProvider.lessons[i].words);
       }
@@ -121,8 +124,8 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
       _confettiController.play();
     }
 
-    Provider.of<ProgressProvider>(context, listen: false)
-        .saveCheckpointScore(widget.checkpoint.checkpointNumber, score, quizWords.length);
+    Provider.of<ProgressProvider>(context, listen: false).saveCheckpointScore(
+        widget.checkpoint.checkpointNumber, score, quizWords.length);
 
     showDialog(
       context: context,
@@ -131,7 +134,8 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
         alignment: Alignment.topCenter,
         children: [
           AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -139,7 +143,9 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
                   message: percentage >= 80
                       ? 'Checkpoint Passed! 🎉'
                       : 'Keep practicing! थोड़ा और!',
-                  state: percentage >= 80 ? MascotState.celebrate : MascotState.confused,
+                  state: percentage >= 80
+                      ? MascotState.celebrate
+                      : MascotState.confused,
                 ),
                 const SizedBox(height: 20),
                 Text(
@@ -197,7 +203,12 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
             confettiController: _confettiController,
             blastDirectionality: BlastDirectionality.explosive,
             shouldLoop: false,
-            colors: const [Colors.green, Colors.blue, Colors.pink, Colors.orange],
+            colors: const [
+              Colors.green,
+              Colors.blue,
+              Colors.pink,
+              Colors.orange
+            ],
           ),
         ],
       ),
@@ -211,12 +222,14 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
       return null;
     }
   }
+
   @override
   Widget build(BuildContext context) {
     if (quizWords.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: Text(widget.checkpoint.title)),
-        body: const Center(child: Text('No words available for this checkpoint.')),
+        body: const Center(
+            child: Text('No words available for this checkpoint.')),
       );
     }
 
@@ -251,11 +264,13 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
                           children: [
                             Text(
                               'Question ${currentIndex + 1} / ${quizWords.length}',
-                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             Text(
                               widget.checkpoint.lessonRange,
-                              style: const TextStyle(fontSize: 14, color: Colors.grey),
+                              style: const TextStyle(
+                                  fontSize: 14, color: Colors.grey),
                             ),
                           ],
                         ),
@@ -269,7 +284,8 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
                         const SizedBox(height: 30),
                         Card(
                           elevation: 6,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15)),
                           child: Padding(
                             padding: const EdgeInsets.all(20.0),
                             child: Column(
@@ -295,7 +311,8 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
                       ],
                     ),
 
-                    const SizedBox(height: 20), // Spacer between card and options
+                    const SizedBox(
+                        height: 20), // Spacer between card and options
 
                     // Options Section
                     Column(
@@ -314,20 +331,25 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
                             child: Container(
                               // FIX 3: Changed height to minHeight to allow growth for long text
                               constraints: const BoxConstraints(minHeight: 80),
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
                               decoration: BoxDecoration(
                                 color: !showResult
                                     ? Colors.white
                                     : (isCorrect
                                         ? Colors.green.shade50
-                                        : (isSelected ? Colors.red.shade50 : Colors.white)),
+                                        : (isSelected
+                                            ? Colors.red.shade50
+                                            : Colors.white)),
                                 borderRadius: BorderRadius.circular(15),
                                 border: Border.all(
                                   color: !showResult
                                       ? Colors.grey.shade300
                                       : (isCorrect
                                           ? Colors.green
-                                          : (isSelected ? Colors.red : Colors.grey.shade300)),
+                                          : (isSelected
+                                              ? Colors.red
+                                              : Colors.grey.shade300)),
                                   width: 2,
                                 ),
                               ),
@@ -340,7 +362,9 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.w800,
-                                      color: showResult && !isCorrect ? Colors.grey : Colors.black87,
+                                      color: showResult && !isCorrect
+                                          ? Colors.grey
+                                          : Colors.black87,
                                     ),
                                     // Removed hard constraints here to allow natural wrapping
                                   ),
@@ -348,7 +372,8 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
                                   Text(
                                     '(${pair.pronunciation})',
                                     textAlign: TextAlign.center,
-                                    style: const TextStyle(fontSize: 14, color: Colors.blueGrey),
+                                    style: const TextStyle(
+                                        fontSize: 14, color: Colors.blueGrey),
                                   ),
                                 ],
                               ),
@@ -364,10 +389,14 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
                       child: showResult
                           ? FilledButton(
                               onPressed: _nextQuestion,
-                              style: FilledButton.styleFrom(padding: const EdgeInsets.all(18)),
-                              child: const Text('Continue', style: TextStyle(fontSize: 20)),
+                              style: FilledButton.styleFrom(
+                                  padding: const EdgeInsets.all(18)),
+                              child: const Text('Continue',
+                                  style: TextStyle(fontSize: 20)),
                             )
-                          : const SizedBox(height: 60), // Maintain space even when button hidden
+                          : const SizedBox(
+                              height:
+                                  60), // Maintain space even when button hidden
                     ),
                   ],
                 ),

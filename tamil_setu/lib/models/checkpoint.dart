@@ -35,7 +35,8 @@ class Checkpoint {
   });
 
   /// Get the lesson range as a readable string
-  String get lessonRange => 'Lessons ${startLessonIndex + 1}-${endLessonIndex + 1}';
+  String get lessonRange =>
+      'Lessons ${startLessonIndex + 1}-${endLessonIndex + 1}';
 
   /// Get number of lessons covered
   int get lessonCount => endLessonIndex - startLessonIndex + 1;
@@ -59,7 +60,8 @@ class CheckpointService {
       checkpoints.add(Checkpoint(
         checkpointNumber: checkpointNumber,
         title: 'Checkpoint $checkpointNumber',
-        description: 'Review Quiz for ${_getCheckpointDescription(checkpointNumber)}',
+        description:
+            'Review Quiz for ${_getCheckpointDescription(checkpointNumber)}',
         startLessonIndex: startIndex,
         endLessonIndex: endIndex,
       ));
@@ -94,7 +96,8 @@ class CheckpointService {
   }
 
   /// Check if a lesson is part of a section that requires checkpoint completion
-  static bool requiresCheckpointCompletion(int lessonIndex, int checkpointNumber) {
+  static bool requiresCheckpointCompletion(
+      int lessonIndex, int checkpointNumber) {
     final sectionStart = checkpointNumber * lessonsPerSection;
     return lessonIndex >= sectionStart;
   }

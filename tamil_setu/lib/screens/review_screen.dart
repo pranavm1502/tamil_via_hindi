@@ -148,11 +148,13 @@ class _ReviewScreenState extends State<ReviewScreen> {
                     children: [
                       Text(
                         'Card ${reviewProvider.currentCardIndex + 1} / ${reviewProvider.totalCardsInSession}',
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       Text(
                         '${(progress * 100).toStringAsFixed(0)}%',
-                        style: const TextStyle(fontSize: 16, color: Colors.grey),
+                        style:
+                            const TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                     ],
                   ),
@@ -187,7 +189,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
                           children: [
                             const Text(
                               'Translate to Tamil:',
-                              style: TextStyle(color: Colors.grey, fontSize: 16),
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 16),
                             ),
                             const SizedBox(height: 16),
                             Text(
@@ -199,9 +202,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                               ),
                               textAlign: TextAlign.center,
                             ),
-
                             const Divider(height: 48),
-
                             if (_showAnswer) ...[
                               Column(
                                 children: [
@@ -231,7 +232,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
                                       size: 36,
                                       color: Colors.blue,
                                     ),
-                                    onPressed: () => _playAudio(wordPair.audioPath),
+                                    onPressed: () =>
+                                        _playAudio(wordPair.audioPath),
                                   ),
                                 ],
                               ),
@@ -262,7 +264,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
                     const Text(
                       'How well did you remember?',
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 16),
                     Row(
@@ -272,7 +275,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
                             label: 'Again',
                             color: Colors.red,
                             interval: '10m',
-                            onPressed: () => _handleReview(context, ReviewQuality.again),
+                            onPressed: () =>
+                                _handleReview(context, ReviewQuality.again),
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -286,7 +290,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
                                 ReviewQuality.hard,
                               ),
                             ),
-                            onPressed: () => _handleReview(context, ReviewQuality.hard),
+                            onPressed: () =>
+                                _handleReview(context, ReviewQuality.hard),
                           ),
                         ),
                       ],
@@ -304,7 +309,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
                                 ReviewQuality.good,
                               ),
                             ),
-                            onPressed: () => _handleReview(context, ReviewQuality.good),
+                            onPressed: () =>
+                                _handleReview(context, ReviewQuality.good),
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -318,7 +324,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
                                 ReviewQuality.easy,
                               ),
                             ),
-                            onPressed: () => _handleReview(context, ReviewQuality.easy),
+                            onPressed: () =>
+                                _handleReview(context, ReviewQuality.easy),
                           ),
                         ),
                       ],

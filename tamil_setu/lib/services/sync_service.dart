@@ -17,7 +17,7 @@ class SyncService {
           'total_xp': xpGained,
           'streak_count': 1,
           'last_activity': Timestamp.fromDate(today),
-          'display_name': 'Learner', 
+          'display_name': 'Learner',
         });
         return;
       }

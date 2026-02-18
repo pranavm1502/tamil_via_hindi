@@ -153,7 +153,8 @@ class ReviewStorageService {
       stats['lastReviewDate'] = today.toIso8601String();
     } else {
       final lastReview = DateTime.parse(lastReviewStr);
-      final lastReviewDay = DateTime(lastReview.year, lastReview.month, lastReview.day);
+      final lastReviewDay =
+          DateTime(lastReview.year, lastReview.month, lastReview.day);
 
       final daysSinceLastReview = today.difference(lastReviewDay).inDays;
 
@@ -179,11 +180,14 @@ class ReviewStorageService {
   }
 
   /// Increment total review session count
-  Future<void> incrementReviewSession(int cardsReviewed, int minutesSpent) async {
+  Future<void> incrementReviewSession(
+      int cardsReviewed, int minutesSpent) async {
     final stats = await loadReviewStats();
     stats['totalReviewSessions'] = (stats['totalReviewSessions'] ?? 0) + 1;
-    stats['totalCardsReviewed'] = (stats['totalCardsReviewed'] ?? 0) + cardsReviewed;
-    stats['totalTimeSpentMinutes'] = (stats['totalTimeSpentMinutes'] ?? 0) + minutesSpent;
+    stats['totalCardsReviewed'] =
+        (stats['totalCardsReviewed'] ?? 0) + cardsReviewed;
+    stats['totalTimeSpentMinutes'] =
+        (stats['totalTimeSpentMinutes'] ?? 0) + minutesSpent;
     await saveReviewStats(stats);
   }
 }
