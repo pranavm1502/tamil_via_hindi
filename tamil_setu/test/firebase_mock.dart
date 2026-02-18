@@ -1,9 +1,8 @@
 import 'package:firebase_core_platform_interface/firebase_core_platform_interface.dart';
-import 'package:flutter/services.dart'; // Required for BinaryMessenger and MethodCodec
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-// FIX: Mock now inherits from MockPlatformInterfaceMixin and implements FirebasePlatform correctly
 class MockFirebaseCorePlatform extends FirebasePlatform
     with MockPlatformInterfaceMixin {
   @override
@@ -11,7 +10,6 @@ class MockFirebaseCorePlatform extends FirebasePlatform
     String? name,
     FirebaseOptions? options,
   }) async {
-    // FIX: Use FirebaseAppPlatform instead of the high-level FirebaseApp class
     return FirebaseAppPlatform(
       name ?? '[DEFAULT]',
       options ??
@@ -25,48 +23,47 @@ class MockFirebaseCorePlatform extends FirebasePlatform
   }
 
   @override
-  FirebaseAppPlatform app([String name = '[DEFAULT]']) {
-    return FirebaseAppPlatform(
-        name,
-        const FirebaseOptions(
+  FirebaseAppPlatform app([String name = '[DEFAULT]']) => FirebaseAppPlatform(
+      name,
+      const FirebaseOptions(
           apiKey: 'test',
           appId: 'test',
           messagingSenderId: 'test',
-          projectId: 'test',
-        ));
-  }
+          projectId: 'test'));
 
   @override
   List<FirebaseAppPlatform> get apps => [];
 }
 
-// void setupFirebaseMocks() {
-//   // FIX: Ensure you initialize the test environment
-//   TestWidgetsFlutterBinding.ensureInitialized();
-//   FirebasePlatform.instance = MockFirebaseCorePlatform();
-// }
-
 void setupFirebaseMocks() {
+  // 1. Initialize the core mock environment
   TestWidgetsFlutterBinding.ensureInitialized();
   FirebasePlatform.instance = MockFirebaseCorePlatform();
 
-  // Define the codec used by Pigeon channels
-  const MethodCodec authCodec = StandardMethodCodec();
+  // 2. Set up the Pigeon codec for modern Firebase Auth/Core channels
+  const StandardMessageCodec pigeonCodec = StandardMessageCodec();
 
-  // The specific channels triggered by DashboardScreen's auth listeners
-  final List<String> authChannels = [
+  // These specific channels expect a non-null return value to avoid PlatformException(null-error)
+  final List<String> pigeonChannels = [
     'dev.flutter.pigeon.firebase_auth_platform_interface.FirebaseAuthHostApi.registerIdTokenListener',
     'dev.flutter.pigeon.firebase_auth_platform_interface.FirebaseAuthHostApi.registerAuthStateListener',
-    'plugins.flutter.io/firebase_auth',
+    'dev.flutter.pigeon.firebase_core_platform_interface.FirebaseCoreHostApi.optionsFromResource',
   ];
 
-  for (final channel in authChannels) {
-    // Using setMockMessageHandler bypasses standard decoding and allows us
-    // to return the exact binary ByteData the Pigeon codec requires.
+  for (final channel in pigeonChannels) {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMessageHandler(channel, (ByteData? message) async {
-      // Return a binary success envelope containing a null value
-      return authCodec.encodeSuccessEnvelope(null);
+      // FIX: Returning a List containing an empty Map satisfies the non-null return requirement
+      // for the listener registration handles and the core options request.
+      return pigeonCodec.encodeMessage(<Object?>[<Object?, Object?>{}]);
     });
   }
+
+  // 3. Handle the legacy MethodChannel for backward compatibility
+  const MethodCodec legacyCodec = StandardMethodCodec();
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMessageHandler('plugins.flutter.io/firebase_auth',
+          (ByteData? message) async {
+    return legacyCodec.encodeSuccessEnvelope(null);
+  });
 }
