@@ -10,15 +10,17 @@ class LessonScreen extends StatefulWidget {
   final Lesson lesson;
   final int lessonIndex;
 
-  const LessonScreen({super.key, required this.lesson, required this.lessonIndex});
+  const LessonScreen(
+      {super.key, required this.lesson, required this.lessonIndex});
 
   @override
   State<LessonScreen> createState() => _LessonScreenState();
 }
 
-class _LessonScreenState extends State<LessonScreen> with SingleTickerProviderStateMixin {
+class _LessonScreenState extends State<LessonScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  
+
   // 1. Initialize as nullable to allow conditional setup
   AudioPlayer? _audioPlayer;
 
@@ -85,7 +87,8 @@ class _LessonScreenState extends State<LessonScreen> with SingleTickerProviderSt
         children: [
           _buildLearnTab(),
           QuizView(words: widget.lesson.words, lessonIndex: widget.lessonIndex),
-          MultipleChoiceQuiz(words: widget.lesson.words, lessonIndex: widget.lessonIndex),
+          MultipleChoiceQuiz(
+              words: widget.lesson.words, lessonIndex: widget.lessonIndex),
         ],
       ),
     );
@@ -100,7 +103,8 @@ class _LessonScreenState extends State<LessonScreen> with SingleTickerProviderSt
         final pair = widget.lesson.words[index];
         return Card(
           elevation: 4,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           margin: const EdgeInsets.only(bottom: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -108,38 +112,51 @@ class _LessonScreenState extends State<LessonScreen> with SingleTickerProviderSt
               Container(
                 decoration: BoxDecoration(
                   color: Colors.blue.shade50,
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(15)),
                 ),
                 padding: const EdgeInsets.all(16),
                 child: Text(
                   pair.hindi,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.blue.shade800),
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.blue.shade800),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(16),
-                child: Row( // FIX: Switch to Row to put button on the right
+                child: Row(
+                  // FIX: Switch to Row to put button on the right
                   children: [
-                    Expanded( // FIX: Wrap text in Expanded so it wraps instead of overflowing
+                    Expanded(
+                      // FIX: Wrap text in Expanded so it wraps instead of overflowing
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
                             pair.tamil,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.deepOrange),
+                            style: const TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.w900,
+                                color: Colors.deepOrange),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             '(${pair.pronunciation})',
                             textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 18, color: Colors.grey.shade600, fontStyle: FontStyle.italic),
+                            style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.grey.shade600,
+                                fontStyle: FontStyle.italic),
                           ),
                         ],
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.volume_up_rounded, size: 36, color: Colors.blue),
+                      icon: const Icon(Icons.volume_up_rounded,
+                          size: 36, color: Colors.blue),
                       onPressed: () => _playAudio(pair.audioPath),
                     ),
                   ],
@@ -151,4 +168,4 @@ class _LessonScreenState extends State<LessonScreen> with SingleTickerProviderSt
       },
     );
   }
- }
+}

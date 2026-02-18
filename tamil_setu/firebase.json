@@ -1,0 +1,34 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "tamil-setu-app",
+          "appId": "1:1088671298063:android:cc8ef9cd548f1af210e97a",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "tamil-setu-app",
+          "configurations": {
+            "android": "1:1088671298063:android:cc8ef9cd548f1af210e97a",
+            "web": "1:1088671298063:web:e4373b503485a7a710e97a"
+          }
+        }
+      }
+    }
+  },
+  "emulators": {
+    "singleProjectMode": true,
+    "auth": {
+      "port": 9099
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "ui": {
+      "enabled": true
+    }
+  }
+}

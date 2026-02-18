@@ -5,8 +5,8 @@ class PeacockTheme {
   static const Color peacockBlue = Color(0xFF005DAA);
   static const Color peacockGreen = Color(0xFF00A896);
   static const Color deepTeal = Color(0xFF028090);
-  static const Color vibrantOrange = Color(0xFFF4A261); 
-  static const Color softCream = Color(0xFFFDFCF0); 
+  static const Color vibrantOrange = Color(0xFFF4A261);
+  static const Color softCream = Color(0xFFFDFCF0);
 
   static ThemeData get lightTheme {
     return ThemeData(
@@ -33,7 +33,8 @@ class PeacockTheme {
         style: FilledButton.styleFrom(
           backgroundColor: peacockBlue,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
         ),
       ),
@@ -67,7 +68,8 @@ class PeacockTheme {
         style: FilledButton.styleFrom(
           backgroundColor: peacockGreen,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
         ),
       ),

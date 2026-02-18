@@ -2,10 +2,10 @@ import '../models/review_card.dart';
 
 /// Quality rating for SM-2 algorithm
 enum ReviewQuality {
-  again(0),  // Complete blackout, didn't remember
-  hard(3),   // Correct response, but with serious difficulty
-  good(4),   // Correct response after hesitation
-  easy(5);   // Perfect response, no hesitation
+  again(0), // Complete blackout, didn't remember
+  hard(3), // Correct response, but with serious difficulty
+  good(4), // Correct response after hesitation
+  easy(5); // Perfect response, no hesitation
 
   final int value;
   const ReviewQuality(this.value);
@@ -51,7 +51,8 @@ class SRSService {
       // Failed recall - reset repetitions and review soon
       newRepetitions = 0;
       newInterval = 1;
-      newNextReview = now.add(const Duration(minutes: 10)); // Review in 10 minutes
+      newNextReview =
+          now.add(const Duration(minutes: 10)); // Review in 10 minutes
     } else {
       // Successful recall - calculate next interval
       newRepetitions = card.repetitions + 1;
@@ -108,25 +109,30 @@ class SRSService {
     final tomorrowStart = todayStart.add(const Duration(days: 1));
 
     return allCards.where((card) {
-      return card.nextReview.isAfter(todayStart.subtract(const Duration(days: 1))) &&
-             card.nextReview.isBefore(tomorrowStart);
+      return card.nextReview
+              .isAfter(todayStart.subtract(const Duration(days: 1))) &&
+          card.nextReview.isBefore(tomorrowStart);
     }).toList();
   }
 
   /// Get statistics for all cards
   Map<String, dynamic> getStatistics(List<ReviewCard> allCards) {
     final dueCards = getDueCards(allCards);
-    final totalReviews = allCards.fold<int>(0, (sum, card) => sum + card.totalReviews);
-    final totalCorrect = allCards.fold<int>(0, (sum, card) => sum + card.totalCorrect);
+    final totalReviews =
+        allCards.fold<int>(0, (sum, card) => sum + card.totalReviews);
+    final totalCorrect =
+        allCards.fold<int>(0, (sum, card) => sum + card.totalCorrect);
 
     // Calculate average easiness
     final avgEasiness = allCards.isEmpty
         ? 0.0
-        : allCards.fold<double>(0, (sum, card) => sum + card.easiness) / allCards.length;
+        : allCards.fold<double>(0, (sum, card) => sum + card.easiness) /
+            allCards.length;
 
     // Find cards by maturity level
     final newCards = allCards.where((c) => c.repetitions == 0).length;
-    final learningCards = allCards.where((c) => c.repetitions > 0 && c.repetitions < 3).length;
+    final learningCards =
+        allCards.where((c) => c.repetitions > 0 && c.repetitions < 3).length;
     final matureCards = allCards.where((c) => c.repetitions >= 3).length;
 
     return {

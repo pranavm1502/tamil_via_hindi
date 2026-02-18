@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_screenshot/golden_screenshot.dart';
 import 'package:provider/provider.dart';
+import 'package:tamil_setu/services/auth_service.dart';
 
 // Ensure these match your project structure
 import 'package:tamil_setu/screens/dashboard_screen.dart';
@@ -13,13 +14,16 @@ import 'package:tamil_setu/providers/content_provider.dart';
 import 'package:tamil_setu/providers/progress_provider.dart';
 import 'package:tamil_setu/providers/theme_provider.dart';
 import 'package:tamil_setu/providers/review_provider.dart';
+import '../firebase_mock.dart';
 
 void main() {
   setUpAll(() async {
-    TestWidgetsFlutterBinding.ensureInitialized();
+    // 1. Initialize Firebase Mocks first
+    setupFirebaseMocks();
 
-    // 1. Load Fonts for rendering Hindi and Tamil correctly
-    final hindiFont = rootBundle.load('assets/fonts/NotoSansDevanagari-Regular.ttf');
+    // 2. Load Fonts for rendering Hindi and Tamil correctly
+    final hindiFont =
+        rootBundle.load('assets/fonts/NotoSansDevanagari-Regular.ttf');
     final hindiLoader = FontLoader('NotoSansDevanagari')..addFont(hindiFont);
     await hindiLoader.load();
 
@@ -27,11 +31,15 @@ void main() {
     final tamilLoader = FontLoader('NotoSansTamil')..addFont(tamilFont);
     await tamilLoader.load();
 
-    // 2. Mock Audio and Binary Messaging
-    final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
-    messenger.setMockMethodCallHandler(const MethodChannel('xyz.luan/audioplayers'), (m) async => null);
-    messenger.setMockMethodCallHandler(const MethodChannel('xyz.luan/audioplayers.global'), (m) async => null);
-    messenger.setMockMessageHandler('xyz.luan/audioplayers.global/events', (m) async => null);
+    // 3. Mock Audio and Binary Messaging
+    final messenger =
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    messenger.setMockMethodCallHandler(
+        const MethodChannel('xyz.luan/audioplayers'), (m) async => null);
+    messenger.setMockMethodCallHandler(
+        const MethodChannel('xyz.luan/audioplayers.global'), (m) async => null);
+    messenger.setMockMessageHandler(
+        'xyz.luan/audioplayers.global/events', (m) async => null);
   });
 
   const tablet7 = ScreenshotDevice(
@@ -58,40 +66,54 @@ void main() {
 
   // Mock Data to inject into ContentProvider
   final mockLessons = [
-  Lesson(
-    level: 1,
-    title: 'Greetings',
-    description: 'Learn basic welcomes',
-    words: [
-      WordPair(hindi: 'नमस्ते', tamil: 'வணக்கம்', pronunciation: 'Vanakkam', audioPath: 'assets/audio/vanakkam.mp3'),
-    ],
-  ),
-  Lesson(
-    level: 2,
-    title: 'Numbers',
-    description: 'Learn counting 1-10',
-    words: [
-      WordPair(hindi: 'एक', tamil: 'ஒன்று', pronunciation: 'Ondru', audioPath: 'assets/audio/one.mp3'),
-    ],
-  ),
-  Lesson(
-    level: 3,
-    title: 'Colors',
-    description: 'Red, Blue, and Green',
-    words: [
-       WordPair(hindi: 'लाल', tamil: 'சிவப்பு', pronunciation: 'Sivappu', audioPath: 'assets/audio/red.mp3'),
-    ],
-  ),
+    Lesson(
+      level: 1,
+      title: 'Greetings',
+      description: 'Learn basic welcomes',
+      words: [
+        WordPair(
+            hindi: 'नमस्ते',
+            tamil: 'வணக்கம்',
+            pronunciation: 'Vanakkam',
+            audioPath: 'assets/audio/vanakkam.mp3'),
+      ],
+    ),
+    Lesson(
+      level: 2,
+      title: 'Numbers',
+      description: 'Learn counting 1-10',
+      words: [
+        WordPair(
+            hindi: 'एक',
+            tamil: 'ஒன்று',
+            pronunciation: 'Ondru',
+            audioPath: 'assets/audio/one.mp3'),
+      ],
+    ),
+    Lesson(
+      level: 3,
+      title: 'Colors',
+      description: 'Red, Blue, and Green',
+      words: [
+        WordPair(
+            hindi: 'लाल',
+            tamil: 'சிவப்பு',
+            pronunciation: 'Sivappu',
+            audioPath: 'assets/audio/red.mp3'),
+      ],
+    ),
   ];
 
   deviceMap.forEach((deviceName, device) {
     group('Capturing $deviceName', () {
       testGoldens('1_Dashboard', (tester) async {
-        await _takeAppScreenshot(tester, device, '1_dashboard', const DashboardScreen(), mockLessons);
+        await _takeAppScreenshot(tester, device, '1_dashboard',
+            const DashboardScreen(), mockLessons);
       });
 
       testGoldens('2_Lesson_Learn', (tester) async {
-        await _takeAppScreenshot(tester, device, '2_learn', LessonScreen(lesson: mockLessons[0], lessonIndex: 0), mockLessons);
+        await _takeAppScreenshot(tester, device, '2_learn',
+            LessonScreen(lesson: mockLessons[0], lessonIndex: 0), mockLessons);
       });
 
       // ... (Rest of your celebration/thinking tests)
@@ -99,23 +121,21 @@ void main() {
   });
 }
 
-Future<void> _takeAppScreenshot(
-  WidgetTester tester,
-  ScreenshotDevice device,
-  String fileName,
-  Widget screen,
-  List<Lesson> mockLessons
-) async {
+Future<void> _takeAppScreenshot(WidgetTester tester, ScreenshotDevice device,
+    String fileName, Widget screen, List<Lesson> mockLessons) async {
   // 3. Initialize Providers with pre-loaded data to bypass "isLoading" states
   final contentProvider = ContentProvider();
   contentProvider.setLessonsForTesting(mockLessons); // Bypass loading loop
 
   final wrappedWidget = MultiProvider(
     providers: [
+      Provider<AuthService>.value(
+          value: AuthService(auth: null, googleSignIn: null)),
       ChangeNotifierProvider.value(value: contentProvider),
       ChangeNotifierProvider(create: (_) => ProgressProvider()),
       ChangeNotifierProvider(create: (_) => ThemeProvider()),
-      ChangeNotifierProvider(create: (_) => ReviewProvider()..loadReviewCards()),
+      ChangeNotifierProvider(
+          create: (_) => ReviewProvider()..loadReviewCards()),
     ],
     child: Theme(
       data: ThemeData(
@@ -137,7 +157,8 @@ Future<void> _takeAppScreenshot(
   }
 
   // Final wait for mascot entry/fade animations
-  await tester.pumpFrames(find.byType(ScreenshotApp).evaluate().first.widget, const Duration(seconds: 1));
+  await tester.pumpFrames(find.byType(ScreenshotApp).evaluate().first.widget,
+      const Duration(seconds: 1));
 
   await tester.expectScreenshot(device, fileName);
 }

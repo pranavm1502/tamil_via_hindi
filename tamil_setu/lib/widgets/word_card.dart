@@ -27,9 +27,12 @@ class WordCard extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.blue.shade50,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(15)),
             ),
-            child: Text(hindi, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            child: Text(hindi,
+                style:
+                    const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
           ),
           // Tamil Section (Answer)
           Padding(
@@ -39,18 +42,25 @@ class WordCard extends StatelessWidget {
               children: [
                 Text(
                   tamil,
-                  style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Colors.deepOrange),
+                  style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.deepOrange),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '($pronunciation)',
-                  style: TextStyle(fontSize: 18, color: Colors.grey.shade700, fontStyle: FontStyle.italic),
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.grey.shade700,
+                      fontStyle: FontStyle.italic),
                 ),
                 const SizedBox(height: 8),
                 Align(
                   alignment: Alignment.centerRight,
                   child: IconButton(
-                    icon: const Icon(Icons.volume_up, color: Colors.blue, size: 30),
+                    icon: const Icon(Icons.volume_up,
+                        color: Colors.blue, size: 30),
                     onPressed: onPlayAudio,
                   ),
                 ),

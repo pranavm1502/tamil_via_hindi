@@ -34,7 +34,8 @@ class ProgressProvider with ChangeNotifier {
   /// Creates a ProgressProvider
   /// [testingModeOverride] can be used to override the global testing mode setting
   /// (useful for unit tests to verify locking behavior)
-  ProgressProvider({bool? testingModeOverride}) : _testingModeOverride = testingModeOverride;
+  ProgressProvider({bool? testingModeOverride})
+      : _testingModeOverride = testingModeOverride;
 
   // --- Getters ---
   int get unlockedLevel => _unlockedLevel;
@@ -58,10 +59,12 @@ class ProgressProvider with ChangeNotifier {
     }
 
     // Load the list of completed checkpoint indices
-    final completedCheckpointsList = prefs.getStringList('completedCheckpoints');
+    final completedCheckpointsList =
+        prefs.getStringList('completedCheckpoints');
     if (completedCheckpointsList != null) {
       _completedCheckpoints.clear();
-      _completedCheckpoints.addAll(completedCheckpointsList.map((e) => int.parse(e)));
+      _completedCheckpoints
+          .addAll(completedCheckpointsList.map((e) => int.parse(e)));
     }
 
     notifyListeners();
@@ -86,8 +89,10 @@ class ProgressProvider with ChangeNotifier {
     }
 
     // Check if this lesson requires a checkpoint to be completed
-    final requiredCheckpoint = (lessonIndex) ~/ CheckpointService.lessonsPerSection - 1;
-    if (requiredCheckpoint >= 0 && !_completedCheckpoints.contains(requiredCheckpoint)) {
+    final requiredCheckpoint =
+        (lessonIndex) ~/ CheckpointService.lessonsPerSection - 1;
+    if (requiredCheckpoint >= 0 &&
+        !_completedCheckpoints.contains(requiredCheckpoint)) {
       return true;
     }
 
@@ -104,7 +109,8 @@ class ProgressProvider with ChangeNotifier {
 
     // Checkpoint N requires lessons ((N-1)*5) through ((N-1)*5+4) to be completed
     // Since checkpoints are numbered starting from 1, we need to subtract 1
-    final startLesson = (checkpointNumber - 1) * CheckpointService.lessonsPerSection;
+    final startLesson =
+        (checkpointNumber - 1) * CheckpointService.lessonsPerSection;
     final endLesson = startLesson + CheckpointService.lessonsPerSection - 1;
 
     // Check if all lessons in this section are completed
@@ -167,7 +173,8 @@ class ProgressProvider with ChangeNotifier {
   }
 
   /// Save checkpoint quiz score and unlock next section if passed
-  Future<void> saveCheckpointScore(int checkpointNumber, int score, int total) async {
+  Future<void> saveCheckpointScore(
+      int checkpointNumber, int score, int total) async {
     final prefs = await SharedPreferences.getInstance();
     final double percentage = (score / total) * 100;
 
@@ -194,4 +201,3 @@ class ProgressProvider with ChangeNotifier {
     notifyListeners();
   }
 }
-

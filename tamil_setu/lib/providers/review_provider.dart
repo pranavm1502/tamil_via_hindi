@@ -26,7 +26,8 @@ class ReviewProvider with ChangeNotifier {
   int get currentCardIndex => _currentCardIndex;
   int get totalCardsInSession => _currentReviewQueue.length;
   bool get hasMoreCards => _currentCardIndex < _currentReviewQueue.length;
-  ReviewCard? get currentCard => hasMoreCards ? _currentReviewQueue[_currentCardIndex] : null;
+  ReviewCard? get currentCard =>
+      hasMoreCards ? _currentReviewQueue[_currentCardIndex] : null;
 
   /// Load all review cards from storage
   Future<void> loadReviewCards() async {
@@ -156,7 +157,8 @@ class ReviewProvider with ChangeNotifier {
   /// Get maturity breakdown
   Map<String, int> get maturityBreakdown {
     final newCards = _allCards.where((c) => c.repetitions == 0).length;
-    final learningCards = _allCards.where((c) => c.repetitions > 0 && c.repetitions < 3).length;
+    final learningCards =
+        _allCards.where((c) => c.repetitions > 0 && c.repetitions < 3).length;
     final matureCards = _allCards.where((c) => c.repetitions >= 3).length;
 
     return {
@@ -175,7 +177,7 @@ class ReviewProvider with ChangeNotifier {
     final today = DateTime.now();
 
     return lastReview.year == today.year &&
-           lastReview.month == today.month &&
-           lastReview.day == today.day;
+        lastReview.month == today.month &&
+        lastReview.day == today.day;
   }
 }

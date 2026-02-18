@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import '../services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/lesson.dart';
@@ -24,6 +26,24 @@ class DashboardScreen extends StatelessWidget {
         centerTitle: true,
         elevation: 2,
         actions: [
+          // ADD THIS LOGIN BUTTON
+          StreamBuilder<User?>(
+            // FIX: Use the service instead of direct Firebase access
+            stream: context.read<AuthService>().userStream,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return IconButton(
+                  icon: const Icon(Icons.login),
+                  // FIX: Call sign-in through the service
+                  onPressed: () =>
+                      context.read<AuthService>().signInWithGoogle(),
+                );
+              }
+              return CircleAvatar(
+                backgroundImage: NetworkImage(snapshot.data!.photoURL ?? ''),
+              );
+            },
+          ),
           Consumer<ThemeProvider>(
             builder: (context, themeProvider, child) {
               return IconButton(
@@ -48,12 +68,14 @@ class DashboardScreen extends StatelessWidget {
                 ),
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: _ReviewButton(),
                   ),
                 ),
                 SliverToBoxAdapter(
-                  child: _ProgressHeader(totalLessons: contentProvider.lessons.length),
+                  child: _ProgressHeader(
+                      totalLessons: contentProvider.lessons.length),
                 ),
                 _LessonsAndCheckpointsBuilder(
                   lessons: contentProvider.lessons,
@@ -83,7 +105,10 @@ class _ProgressHeader extends StatelessWidget {
             color: theme.cardColor,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
-              BoxShadow(color: Colors.black.withAlpha(25), blurRadius: 8, offset: const Offset(0, 2)),
+              BoxShadow(
+                  color: Colors.black.withAlpha(25),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2)),
             ],
           ),
           child: Column(
@@ -96,11 +121,12 @@ class _ProgressHeader extends StatelessWidget {
                   const Expanded(
                     child: Text(
                       'Your Progress',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const SizedBox(width: 8), 
+                  const SizedBox(width: 8),
                   // FIXED: Removed unnecessary braces in string interpolation
                   Text('$completedCount/$totalLessons levels'),
                 ],
@@ -108,7 +134,9 @@ class _ProgressHeader extends StatelessWidget {
               const SizedBox(height: 12),
               LinearProgressIndicator(
                 value: totalLessons == 0 ? 0 : completedCount / totalLessons,
-                backgroundColor: theme.brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[300],
+                backgroundColor: theme.brightness == Brightness.dark
+                    ? Colors.grey[800]
+                    : Colors.grey[300],
                 color: Colors.orange,
                 minHeight: 8,
                 borderRadius: BorderRadius.circular(4),
@@ -124,7 +152,7 @@ class _ProgressHeader extends StatelessWidget {
 }
 
 class _LessonTile extends StatelessWidget {
-  final Lesson lesson; 
+  final Lesson lesson;
   final int index;
   const _LessonTile({required this.lesson, required this.index});
 
@@ -142,34 +170,56 @@ class _LessonTile extends StatelessWidget {
                 : (isDark ? Colors.orange.shade900 : Colors.orange.shade50);
 
         return Card(
-            elevation: isLocked ? 0 : 4,
-            color: cardColor, 
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(16),
-              onTap: isLocked ? () {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Complete previous levels to unlock!')));
-              } : () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => LessonScreen(lesson: lesson, lessonIndex: index)));
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      radius: 28,
-                      backgroundColor: isLocked ? Colors.grey : (isCompleted ? Colors.green : Colors.orange),
-                      child: Icon(isLocked ? Icons.lock : (isCompleted ? Icons.check : Icons.play_arrow), color: Colors.white),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(lesson.title, textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.bold)),
-                    Text(lesson.description, textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12)),
-                  ],
-                ),
+          elevation: isLocked ? 0 : 4,
+          color: cardColor,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: isLocked
+                ? () {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('Complete previous levels to unlock!')));
+                  }
+                : () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => LessonScreen(
+                                lesson: lesson, lessonIndex: index)));
+                  },
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 28,
+                    backgroundColor: isLocked
+                        ? Colors.grey
+                        : (isCompleted ? Colors.green : Colors.orange),
+                    child: Icon(
+                        isLocked
+                            ? Icons.lock
+                            : (isCompleted ? Icons.check : Icons.play_arrow),
+                        color: Colors.white),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(lesson.title,
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(lesson.description,
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 12)),
+                ],
               ),
             ),
-          );
+          ),
+        );
       },
     );
   }
@@ -193,7 +243,8 @@ class _ReviewButton extends StatelessWidget {
 
         return Card(
           elevation: 4,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           color: dueCount > 0
               ? (Theme.of(context).brightness == Brightness.dark
                   ? Colors.purple.shade900
@@ -206,7 +257,8 @@ class _ReviewButton extends StatelessWidget {
                     reviewProvider.startReviewSession();
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const ReviewScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const ReviewScreen()),
                     );
                   }
                 : null,
@@ -251,7 +303,8 @@ class _ReviewButton extends StatelessWidget {
                   if (streak > 0) ...[
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         color: Colors.orange,
                         borderRadius: BorderRadius.circular(20),
@@ -315,7 +368,8 @@ class _LessonsAndCheckpointsBuilder extends StatelessWidget {
       );
 
       // Check if we should add checkpoint after this section
-      final bool shouldAddCheckpoint = (i + 1) % CheckpointService.lessonsPerSection == 0;
+      final bool shouldAddCheckpoint =
+          (i + 1) % CheckpointService.lessonsPerSection == 0;
 
       // Second tile in row (if available and not at checkpoint boundary)
       if (i + 1 < lessons.length && !shouldAddCheckpoint) {
@@ -375,8 +429,10 @@ class _CheckpointTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ProgressProvider>(
       builder: (context, progress, child) {
-        final isLocked = progress.isCheckpointLocked(checkpoint.checkpointNumber);
-        final isCompleted = progress.isCheckpointCompleted(checkpoint.checkpointNumber);
+        final isLocked =
+            progress.isCheckpointLocked(checkpoint.checkpointNumber);
+        final isCompleted =
+            progress.isCheckpointCompleted(checkpoint.checkpointNumber);
 
         return Card(
           elevation: isLocked ? 0 : 6,
@@ -386,7 +442,9 @@ class _CheckpointTile extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
             side: BorderSide(
-              color: isCompleted ? Colors.purple : (isLocked ? Colors.grey : Colors.purple.shade300),
+              color: isCompleted
+                  ? Colors.purple
+                  : (isLocked ? Colors.grey : Colors.purple.shade300),
               width: 2,
             ),
           ),
@@ -396,7 +454,8 @@ class _CheckpointTile extends StatelessWidget {
                 ? () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Complete all lessons in this section first!'),
+                        content:
+                            Text('Complete all lessons in this section first!'),
                       ),
                     );
                   }
@@ -404,7 +463,8 @@ class _CheckpointTile extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CheckpointQuizScreen(checkpoint: checkpoint),
+                        builder: (context) =>
+                            CheckpointQuizScreen(checkpoint: checkpoint),
                       ),
                     );
                   },
@@ -436,7 +496,8 @@ class _CheckpointTile extends StatelessWidget {
                             ),
                             if (isCompleted) ...[
                               const SizedBox(width: 8),
-                              const Icon(Icons.verified, color: Colors.purple, size: 20),
+                              const Icon(Icons.verified,
+                                  color: Colors.purple, size: 20),
                             ],
                           ],
                         ),

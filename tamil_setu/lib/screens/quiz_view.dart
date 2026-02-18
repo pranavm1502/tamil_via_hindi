@@ -6,6 +6,8 @@ import '../models/word_pair.dart';
 import '../providers/progress_provider.dart';
 import '../providers/review_provider.dart';
 import '../widgets/peacock_mascot.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../services/sync_service.dart';
 
 class QuizView extends StatefulWidget {
   final List<WordPair> words;
@@ -30,7 +32,8 @@ class _QuizViewState extends State<QuizView> {
     super.initState();
     shuffledWords = List.from(widget.words)..shuffle();
     // 3. Initialize Controller
-    _confettiController = ConfettiController(duration: const Duration(seconds: 2));
+    _confettiController =
+        ConfettiController(duration: const Duration(seconds: 2));
   }
 
   @override
@@ -43,6 +46,7 @@ class _QuizViewState extends State<QuizView> {
   void _playAudio(String path) async {
     try {
       final cleanPath = path.replaceFirst('assets/', '');
+      await _audioPlayer.setPlaybackRate(1.20); // Faster rate
       await _audioPlayer.play(AssetSource(cleanPath));
     } catch (e) {
       debugPrint('Audio Error: $e');
@@ -83,6 +87,11 @@ class _QuizViewState extends State<QuizView> {
     Provider.of<ProgressProvider>(context, listen: false)
         .saveQuizScore(widget.lessonIndex, score, shuffledWords.length);
 
+    // 2. ADD THE CLOUD SYNC HERE
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null && percentage >= 80) {
+      SyncService().updateStreakAndXP(user.uid, 50);
+    }
     // Create review cards for this lesson (if not already created)
     Provider.of<ReviewProvider>(context, listen: false)
         .createCardsForLesson(widget.lessonIndex, widget.words.length);
@@ -90,19 +99,23 @@ class _QuizViewState extends State<QuizView> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (ctx) => Stack( // 6. Wrap in Stack to overlay confetti
+      builder: (ctx) => Stack(
+        // 6. Wrap in Stack to overlay confetti
         alignment: Alignment.topCenter,
         children: [
           AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 PeacockMascot(
-                  message: percentage >= 80 
-                      ? 'Excellent! बहुत अच्छा!' 
+                  message: percentage >= 80
+                      ? 'Excellent! बहुत अच्छा!'
                       : 'Keep practicing! अभ्यास करते रहो!',
-                  state: percentage >= 80 ? MascotState.celebrate : MascotState.confused,
+                  state: percentage >= 80
+                      ? MascotState.celebrate
+                      : MascotState.confused,
                 ),
                 const SizedBox(height: 24),
                 Text(
@@ -125,15 +138,15 @@ class _QuizViewState extends State<QuizView> {
                 onPressed: () {
                   _confettiController.stop(); // Stop animation on exit
                   Navigator.pop(ctx);
-                  _restartQuiz(); 
+                  _restartQuiz();
                 },
                 child: const Text('Retry Quiz'),
               ),
               FilledButton(
                 onPressed: () {
                   _confettiController.stop();
-                  Navigator.pop(ctx); 
-                  Navigator.pop(context); 
+                  Navigator.pop(ctx);
+                  Navigator.pop(context);
                 },
                 child: const Text('Finish'),
               ),
@@ -171,50 +184,53 @@ class _QuizViewState extends State<QuizView> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           LinearProgressIndicator(
-            value: (currentIndex + 1) / shuffledWords.length, 
-            minHeight: 10, 
-            color: Colors.green.shade600
-          ),
+              value: (currentIndex + 1) / shuffledWords.length,
+              minHeight: 10,
+              color: Colors.green.shade600),
           const SizedBox(height: 20),
           Card(
             elevation: 10,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             child: Container(
               height: 300,
               padding: const EdgeInsets.all(20),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Translate this Hindi word:', style: TextStyle(color: Colors.grey)),
+                  const Text('Translate this Hindi word:',
+                      style: TextStyle(color: Colors.grey)),
                   const SizedBox(height: 10),
-                  Text(
-                    currentWord.hindi, 
-                    style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.blue)
-                  ),
+                  Text(currentWord.hindi,
+                      style: const TextStyle(
+                          fontSize: 36,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue)),
                   const Divider(height: 40),
                   if (showAnswer)
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          currentWord.tamil,
-                          style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.deepOrange)
-                        ),
+                        Text(currentWord.tamil,
+                            style: const TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.deepOrange)),
                         const SizedBox(height: 4),
-                        Text(
-                          '(${currentWord.pronunciation})',
-                          style: const TextStyle(fontSize: 20, color: Colors.blueGrey)
-                        ),
+                        Text('(${currentWord.pronunciation})',
+                            style: const TextStyle(
+                                fontSize: 20, color: Colors.blueGrey)),
                         const SizedBox(height: 8),
                         IconButton(
-                          icon: const Icon(Icons.volume_up, color: Colors.blue),
-                          onPressed: () => _playAudio(currentWord.audioPath)
-                        ),
+                            icon:
+                                const Icon(Icons.volume_up, color: Colors.blue),
+                            onPressed: () => _playAudio(currentWord.audioPath)),
                       ],
                     )
                   else
-                    const Text('?', style: TextStyle(fontSize: 50, color: Colors.grey)),
+                    const Text('?',
+                        style: TextStyle(fontSize: 50, color: Colors.grey)),
                 ],
               ),
             ),
@@ -222,27 +238,22 @@ class _QuizViewState extends State<QuizView> {
           const SizedBox(height: 40),
           if (!showAnswer)
             FilledButton(
-              onPressed: () { 
-                setState(() => showAnswer = true); 
-                _playAudio(currentWord.audioPath); 
-              }, 
-              child: const Text('Show Answer')
-            )
+                onPressed: () {
+                  setState(() => showAnswer = true);
+                  _playAudio(currentWord.audioPath);
+                },
+                child: const Text('Show Answer'))
           else
             Row(children: [
               Expanded(
-                child: OutlinedButton(
-                  onPressed: () => _nextCard(false), 
-                  child: const Text('Practice')
-                )
-              ),
+                  child: OutlinedButton(
+                      onPressed: () => _nextCard(false),
+                      child: const Text('Practice'))),
               const SizedBox(width: 16),
               Expanded(
-                child: FilledButton(
-                  onPressed: () => _nextCard(true), 
-                  child: const Text('I knew it!')
-                )
-              ),
+                  child: FilledButton(
+                      onPressed: () => _nextCard(true),
+                      child: const Text('I knew it!'))),
             ]),
         ],
       ),

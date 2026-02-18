@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1088671298063",
+    "project_id": "tamil-setu-app",
+    "storage_bucket": "tamil-setu-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1088671298063:android:cc8ef9cd548f1af210e97a",
+        "android_client_info": {
+          "package_name": "com.boldesi.tamil_via_hindi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1088671298063-oh8noc5o685ksqf9gqvvburdhl0gquve.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.boldesi.tamil_via_hindi",
+            "certificate_hash": "69273b899ddf76fca51bb225a393522001b2f95b"
+          }
+        },
+        {
+          "client_id": "1088671298063-qfa1j88e6gggi73fbc7gsvgmoiqt83n8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.boldesi.tamil_via_hindi",
+            "certificate_hash": "762e466be08e28880880a833320231d710643ec8"
+          }
+        },
+        {
+          "client_id": "1088671298063-avcjo9vr74ejpsi3nj5etc1s3fjup6go.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKpZduLB_ujlpJt1szUUXYg5XW4Rk8HDQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1088671298063-avcjo9vr74ejpsi3nj5etc1s3fjup6go.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
