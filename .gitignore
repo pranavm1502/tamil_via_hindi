@@ -42,3 +42,13 @@ ios/Flutter/Generated.xcconfig
 ios/Flutter/flutter_export_environment.sh
 ios/Pods/
 ios/Runner/GoogleService-Info.plist
+
+# Firebase Emulator data
+# Exclude the folder where you export your local test users/Firestore data
+emulator_data/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# Firebase configuration that might contain local paths
+.firebase/
