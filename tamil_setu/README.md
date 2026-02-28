@@ -21,6 +21,9 @@ Tamil Setu is a Flutter application designed to help Hindi speakers learn Tamil 
 - **🏆 Checkpoint Quizzes** - Unlock new sets of lessons by passing checkpoint quizzes.
 - **📊 Progress Tracking** - Keep track of completed lessons and quiz scores.
 - **☁️ Cloud Sync** - Authenticate with Google Sign-In to sync your progress across devices.
+- **🔥 Streaks & Leaderboards** - Maintain learning streaks and compare progress.
+- **🎯 Daily Goals** - Set a daily review target and track progress toward it.
+- **🔔 Reminders** - Optional daily review notifications at your preferred time.
 - **🎨 Peacock Theme** - A beautiful, modern UI inspired by the colors of a peacock, with both light and dark modes.
 - **💾 Offline First** - All lesson content and progress are saved locally, so you can learn even without an internet connection.
 
@@ -153,6 +156,29 @@ flutter test
 ```bash
 flutter test --coverage
 ```
+
+### Testing Notes
+
+- Widget and provider tests use Firebase/Auth mocks and Fake Firestore instances.
+- If you add new Firebase-dependent tests, mock initialization is required.
+
+## 🔐 Firebase & Sign-In
+
+- Firebase config is generated in [lib/firebase_options.dart](lib/firebase_options.dart).
+- Android requires [android/app/google-services.json](android/app/google-services.json).
+- iOS requires the GoogleService-Info.plist in [ios/Runner](ios/Runner).
+- Sign-in flows are centralized in [lib/services/auth_service.dart](lib/services/auth_service.dart).
+
+## 🔔 Notifications
+
+- Daily reminders are scheduled via [lib/services/notification_service.dart](lib/services/notification_service.dart).
+- The app requests notification permission at scheduling time and uses local time zones.
+
+## 🧭 Architecture Notes
+
+- Providers in [lib/providers](lib/providers) own state and delegate persistence to services.
+- Firestore sync lives in [lib/services/sync_service.dart](lib/services/sync_service.dart) and is injected in tests.
+- Review logic is in [lib/services/srs_service.dart](lib/services/srs_service.dart) and surfaced by [lib/providers/review_provider.dart](lib/providers/review_provider.dart).
 
 ## 🔄 CI/CD
 

@@ -8,7 +8,8 @@ import '../services/sync_service.dart';
 import '../theme.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  final SyncService? syncService;
+  const ProfileScreen({super.key, this.syncService});
 
   @override
   Widget build(BuildContext context) {
@@ -43,12 +44,12 @@ class ProfileScreen extends StatelessWidget {
 
     final reviewStats = review.statistics;
     final accuracy = (reviewStats['accuracy'] as double?) ?? 0.0;
-    final syncService = SyncService();
+    final statsService = syncService ?? SyncService();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
       body: StreamBuilder<Map<String, dynamic>>(
-        stream: syncService.userStatsStream(user.uid),
+        stream: statsService.userStatsStream(user.uid),
         builder: (context, snapshot) {
           final data = snapshot.data;
           final displayName =
@@ -65,7 +66,7 @@ class ProfileScreen extends StatelessWidget {
                 photoUrl: user.photoURL,
               ),
               const SizedBox(height: 16),
-              _SectionTitle(title: 'Learning Stats'),
+              const _SectionTitle(title: 'Learning Stats'),
               const SizedBox(height: 8),
               _StatsGrid(
                 items: [
@@ -82,11 +83,11 @@ class ProfileScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              _SectionTitle(title: 'Daily Goal & Reminders'),
+              const _SectionTitle(title: 'Daily Goal & Reminders'),
               const SizedBox(height: 8),
               _DailyGoalSettings(review: review),
               const SizedBox(height: 16),
-              _SectionTitle(title: 'Achievements'),
+              const _SectionTitle(title: 'Achievements'),
               const SizedBox(height: 8),
               _AchievementsPanel(
                 totalXp: totalXp,
@@ -95,7 +96,7 @@ class ProfileScreen extends StatelessWidget {
                 totalReviews: reviewStats['totalReviews'] ?? 0,
               ),
               const SizedBox(height: 16),
-              _SectionTitle(title: 'Review Performance'),
+              const _SectionTitle(title: 'Review Performance'),
               const SizedBox(height: 8),
               _StatsGrid(
                 items: [

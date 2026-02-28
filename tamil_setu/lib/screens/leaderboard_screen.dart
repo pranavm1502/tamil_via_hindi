@@ -4,7 +4,8 @@ import '../theme.dart';
 
 /// Displays ranked learners by XP from Firestore.
 class LeaderboardScreen extends StatelessWidget {
-  const LeaderboardScreen({super.key});
+  final FirebaseFirestore? firestore;
+  const LeaderboardScreen({super.key, this.firestore});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +29,7 @@ class LeaderboardScreen extends StatelessWidget {
             ),
           ),
           StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
+            stream: (firestore ?? FirebaseFirestore.instance)
                 .collection('users')
                 .orderBy('total_xp', descending: true)
                 .limit(20)
