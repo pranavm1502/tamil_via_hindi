@@ -8,6 +8,7 @@ import '../models/word_pair.dart';
 import '../providers/progress_provider.dart';
 import '../providers/content_provider.dart';
 import '../widgets/peacock_mascot.dart';
+import '../services/tts_service.dart';
 
 class CheckpointQuizScreen extends StatefulWidget {
   final Checkpoint checkpoint;
@@ -63,13 +64,26 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
     super.dispose();
   }
 
-  void _playAudio(String path) async {
+  void _playAudio(WordPair pair) async {
     try {
-      final cleanPath = path.replaceFirst('assets/', '');
+      await _audioPlayer.stop();
+      await TtsService().stop();
+      final colloquial = _colloquialTamil(pair.tamil);
+      if (pair.tamil.contains('/') && colloquial.isNotEmpty) {
+        final spoke = await TtsService().speak(colloquial);
+        if (spoke) return;
+      }
+
+      if (pair.audioPath.isEmpty) return;
+      final cleanPath = pair.audioPath.replaceFirst('assets/', '');
       await _audioPlayer.play(AssetSource(cleanPath));
     } catch (e) {
       debugPrint('Audio Error: $e');
     }
+  }
+
+  String _colloquialTamil(String value) {
+    return value.split('/').last.trim();
   }
 
   void _generateOptions() {
@@ -99,8 +113,8 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
       final currentWord = quizWords[currentIndex];
       if (answer == currentWord.tamil) {
         score++;
-        _playAudio(currentWord.audioPath);
       }
+      _playAudio(currentWord);
     });
   }
 

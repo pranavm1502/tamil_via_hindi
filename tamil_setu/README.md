@@ -133,6 +133,20 @@ The app currently includes over 30 lessons with hundreds of word pairs, loaded d
 1. Edit `assets/data/master_content.json`
 2. Add a new lesson object to the JSON array following the existing structure.
 
+### Curriculum Validation & Audio Regeneration
+
+When editing `assets/data/curriculum.json`, normalize and validate before
+regenerating audio assets:
+
+```bash
+python3 scripts/normalize_curriculum.py
+python3 scripts/validate_curriculum.py
+python3 scripts/generate_assets.py --overwrite-audio
+```
+
+Note: On macOS you may see a LibreSSL warning from `urllib3` when running the
+audio generator. This is safe to ignore unless downloads fail.
+
 ### Customizing Theme
 
 Edit `lib/theme.dart` to modify the `PeacockTheme` class. You can change colors for both light and dark themes.

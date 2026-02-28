@@ -11,6 +11,7 @@ import '../providers/review_provider.dart';
 import '../widgets/peacock_mascot.dart';
 import 'package:tamil_setu/services/auth_service.dart';
 import '../services/sync_service.dart';
+import '../services/tts_service.dart';
 
 class MultipleChoiceQuiz extends StatefulWidget {
   final List<WordPair> words;
@@ -65,12 +66,19 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
     super.dispose();
   }
 
-  void _playAudio(String path) async {
+  void _playAudio(WordPair pair) async {
     // 4. Return early if player is null (during tests)
     if (_audioPlayer == null) return;
 
     try {
-      final cleanPath = path.replaceFirst('assets/', '');
+      final colloquial = _colloquialTamil(pair.tamil);
+      if (pair.tamil.contains('/') && colloquial.isNotEmpty) {
+        final spoke = await TtsService().speak(colloquial);
+        if (spoke) return;
+      }
+
+      if (pair.audioPath.isEmpty) return;
+      final cleanPath = pair.audioPath.replaceFirst('assets/', '');
       // Set speed to 20% faster
       await _audioPlayer!.setPlaybackRate(1.20);
       await _audioPlayer!.stop();
@@ -78,6 +86,10 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
     } catch (e) {
       debugPrint('Audio Error: $e');
     }
+  }
+
+  String _colloquialTamil(String value) {
+    return value.split('/').last.trim();
   }
 
   void _generateOptions() {
@@ -108,7 +120,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
       if (answer == currentWord.tamil) {
         score++;
       }
-      _playAudio(currentWord.audioPath);
+      _playAudio(currentWord);
     });
   }
 
