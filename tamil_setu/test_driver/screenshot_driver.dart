@@ -15,9 +15,25 @@ Future<void> main() async {
       if (!outputDir.existsSync()) {
         outputDir.createSync(recursive: true);
       }
-      final file = File('${outputDir.path}/$name.png');
+      final file = _uniqueScreenshotFile(outputDir, name);
       await file.writeAsBytes(image, flush: true);
       return true;
     },
   );
+}
+
+File _uniqueScreenshotFile(Directory outputDir, String baseName) {
+  var candidate = File('${outputDir.path}/$baseName.png');
+  if (!candidate.existsSync()) {
+    return candidate;
+  }
+
+  var counter = 2;
+  while (true) {
+    candidate = File('${outputDir.path}/${baseName}_$counter.png');
+    if (!candidate.existsSync()) {
+      return candidate;
+    }
+    counter += 1;
+  }
 }
