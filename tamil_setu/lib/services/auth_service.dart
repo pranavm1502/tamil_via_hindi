@@ -2,6 +2,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart';
 
+/// Sign-in result with optional error details for UI feedback.
+class SignInResult {
+  final User? user;
+  final String? errorMessage;
+
+  const SignInResult({this.user, this.errorMessage});
+
+  bool get isSuccess => user != null;
+}
+
 /// Wraps Google Sign-In + Firebase Auth with test-friendly injection points.
 class AuthService {
   // 1. Nullable fields to allow truly silent mocks in tests
@@ -36,6 +46,12 @@ class AuthService {
 
   /// Sign in via Google and return the Firebase user, or null on failure.
   Future<User?> signInWithGoogle() async {
+    final result = await signInWithGoogleDetailed();
+    return result.user;
+  }
+
+  /// Sign in via Google and return both user and error details.
+  Future<SignInResult> signInWithGoogleDetailed() async {
     try {
       await _ensureInitialized();
 
@@ -56,13 +72,17 @@ class AuthService {
 
       final UserCredential userCredential =
           await auth.signInWithCredential(credential);
-      return userCredential.user;
+      return SignInResult(user: userCredential.user);
     } on GoogleSignInException catch (e) {
       debugPrint('Google Sign-In Exception: ${e.code}');
-      return null;
+      return SignInResult(
+        errorMessage: 'Google sign-in failed (${e.code}).',
+      );
     } catch (e) {
       debugPrint('General Sign-in Error: $e');
-      return null;
+      return const SignInResult(
+        errorMessage: 'Sign-in failed. Please try again.',
+      );
     }
   }
 

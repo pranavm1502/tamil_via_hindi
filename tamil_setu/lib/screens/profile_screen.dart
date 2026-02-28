@@ -31,8 +31,19 @@ class ProfileScreen extends StatelessWidget {
                 const Text('Sign in to view your stats'),
                 const SizedBox(height: 16),
                 FilledButton(
-                  onPressed: () =>
-                      context.read<AuthService>().signInWithGoogle(),
+                  onPressed: () async {
+                    final result = await context
+                        .read<AuthService>()
+                        .signInWithGoogleDetailed();
+                    if (!result.isSuccess && context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              result.errorMessage ?? 'Sign-in failed.'),
+                        ),
+                      );
+                    }
+                  },
                   child: const Text('Sign in with Google'),
                 ),
               ],
