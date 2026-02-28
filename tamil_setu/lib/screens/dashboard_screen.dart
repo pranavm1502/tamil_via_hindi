@@ -115,11 +115,43 @@ class DashboardScreen extends StatelessWidget {
                 ),
                 CustomScrollView(
                   slivers: [
-                    const SliverToBoxAdapter(
+                    SliverToBoxAdapter(
                       child: Padding(
-                        padding: EdgeInsets.fromLTRB(16, 20, 16, 0),
-                        child: PeacockMascot(
-                          message: 'नमस्कारम्! इन्द्रु तमिऴ् कर्कलामा?'),
+                        padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                PeacockTheme.peacockBlue.withAlpha(18),
+                                PeacockTheme.peacockGreen.withAlpha(18),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(
+                              color: PeacockTheme.peacockBlue.withAlpha(50),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withAlpha(14),
+                                blurRadius: 12,
+                                offset: const Offset(0, 6),
+                              ),
+                            ],
+                          ),
+                          child: const PeacockMascot(
+                            message: 'नमस्कारम्! इन्द्रु तमिऴ् कर्कलामा?',
+                            imageSize: 150,
+                            fontSize: 17,
+                            bubblePadding: EdgeInsets.symmetric(
+                              horizontal: 18,
+                              vertical: 14,
+                            ),
+                            layout: MascotLayout.overlap,
+                            overlapInset: 140,
+                            imageOffset: Offset(14, 10),
+                          ),
+                        ),
                       ),
                     ),
                     if (user == null)
