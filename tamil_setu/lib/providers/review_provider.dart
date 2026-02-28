@@ -65,11 +65,20 @@ class ReviewProvider with ChangeNotifier {
   /// Start a review session with due cards
   void startReviewSession({int? maxCards}) {
     final due = _srsService.sortCardsForReview(dueCards);
+    List<ReviewCard> pool = due;
 
-    if (maxCards != null && due.length > maxCards) {
-      _currentReviewQueue = due.sublist(0, maxCards);
+    // If nothing is due yet, surface new cards (or any cards) for practice.
+    if (pool.isEmpty && _allCards.isNotEmpty) {
+      final newCards = _allCards.where((c) => c.repetitions == 0).toList();
+      pool = newCards.isNotEmpty
+          ? newCards
+          : _srsService.sortCardsForReview(_allCards);
+    }
+
+    if (maxCards != null && pool.length > maxCards) {
+      _currentReviewQueue = pool.sublist(0, maxCards);
     } else {
-      _currentReviewQueue = due;
+      _currentReviewQueue = pool;
     }
 
     _currentCardIndex = 0;
