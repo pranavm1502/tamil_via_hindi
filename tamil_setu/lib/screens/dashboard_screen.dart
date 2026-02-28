@@ -13,6 +13,7 @@ import '../theme.dart';
 import 'lesson_screen.dart';
 import 'review_screen.dart';
 import 'checkpoint_quiz_screen.dart';
+import 'package:sign_in_button/sign_in_button.dart';
 
 /// Main entry screen showing progress, streak, and lesson list.
 class DashboardScreen extends StatelessWidget {
@@ -36,37 +37,23 @@ class DashboardScreen extends StatelessWidget {
               Navigator.pushNamed(context, '/leaderboard');
             },
           ),
-          if (user == null)
+          if (user != null) ...[
             IconButton(
-              icon: const Icon(Icons.login),
-              tooltip: 'Sign in',
-              onPressed: () => context.read<AuthService>().signInWithGoogle(),
-            )
-          else
-            PopupMenuButton<String>(
-              tooltip: 'Account',
-              onSelected: (value) {
-                if (value == 'sign_out') {
-                  context.read<AuthService>().signOut();
-                }
-              },
-              itemBuilder: (context) => const [
-                PopupMenuItem(
-                  value: 'sign_out',
-                  child: Text('Sign out'),
-                ),
-              ],
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: CircleAvatar(
-                  backgroundImage:
-                      user.photoURL != null ? NetworkImage(user.photoURL!) : null,
-                  child: user.photoURL == null
-                      ? const Icon(Icons.person, color: Colors.white)
-                      : null,
-                ),
+              icon: const Icon(Icons.logout),
+              tooltip: 'Sign out',
+              onPressed: () => context.read<AuthService>().signOut(),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: CircleAvatar(
+                backgroundImage:
+                    user.photoURL != null ? NetworkImage(user.photoURL!) : null,
+                child: user.photoURL == null
+                    ? const Icon(Icons.person, color: Colors.white)
+                    : null,
               ),
             ),
+          ],
           Consumer<ThemeProvider>(
             builder: (context, themeProvider, child) {
               return IconButton(
@@ -193,6 +180,8 @@ class _OrnamentCircle extends StatelessWidget {
 class _QuickActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<User?>();
+    final isSignedIn = user != null;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -205,28 +194,50 @@ class _QuickActions extends StatelessWidget {
         ),
         border: Border.all(color: PeacockTheme.peacockBlue.withAlpha(50)),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(
-            child: FilledButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ReviewScreen()),
-                );
-              },
-              icon: const Icon(Icons.auto_awesome),
-              label: const Text('Quick Review'),
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ReviewScreen()),
+                    );
+                  },
+                  icon: const Icon(Icons.auto_awesome),
+                  label: const Text('Quick Review'),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: isSignedIn
+                      ? () => Navigator.pushNamed(context, '/leaderboard')
+                      : () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content:
+                                  Text('Sign in to view the leaderboard.'),
+                            ),
+                          );
+                        },
+                  icon: const Icon(Icons.leaderboard),
+                  label: const Text('Leaderboard'),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: OutlinedButton.icon(
-              onPressed: () => Navigator.pushNamed(context, '/leaderboard'),
-              icon: const Icon(Icons.leaderboard),
-              label: const Text('Leaderboard'),
+          if (!isSignedIn) ...[
+            const SizedBox(height: 8),
+            Text(
+              'Sign in to appear on leaderboards and sync your streaks.',
+              style: Theme.of(context).textTheme.bodySmall,
             ),
-          ),
+          ],
         ],
       ),
     );
@@ -289,19 +300,21 @@ class _SignInCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'अपनी प्रगति सुरक्षित करें',
+            'Save your progress',
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 6),
           Text(
-            'स्कोर, स्ट्रीक और लीडरबोर्ड के लिए Google से साइन इन करें।',
+            'Sign in with Google to sync scores, streaks, and leaderboards.',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 12),
-          FilledButton.icon(
-            onPressed: () => context.read<AuthService>().signInWithGoogle(),
-            icon: const Icon(Icons.login),
-            label: const Text('Google से साइन इन करें'),
+          SizedBox(
+            width: double.infinity,
+            child: SignInButton(
+              Buttons.google,
+              onPressed: () => context.read<AuthService>().signInWithGoogle(),
+            ),
           ),
         ],
       ),
