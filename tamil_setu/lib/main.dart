@@ -17,56 +17,98 @@ import 'services/auth_service.dart';
 import 'services/notification_service.dart';
 
 void main() async {
-  // Ensure Flutter bindings are initialized for async data loading
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase with the generated options
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
 
-  await NotificationService().initialize();
+    await NotificationService().initialize();
 
-  const useEmulator = bool.fromEnvironment('USE_FIREBASE_EMULATOR');
-  if (kDebugMode && useEmulator) {
-    // 10.0.2.2 is the magic IP for Android Emulators to see your Mac
-    await FirebaseAuth.instance.useAuthEmulator('10.0.2.2', 9099);
-    FirebaseFirestore.instance.useFirestoreEmulator('10.0.2.2', 8080);
-    debugPrint('Using Firebase Emulator Suite');
-  }
+    const useEmulator = bool.fromEnvironment('USE_FIREBASE_EMULATOR');
+    if (kDebugMode && useEmulator) {
+      // 10.0.2.2 is the magic IP for Android Emulators to see your Mac
+      await FirebaseAuth.instance.useAuthEmulator('10.0.2.2', 9099);
+      FirebaseFirestore.instance.useFirestoreEmulator('10.0.2.2', 8080);
+      debugPrint('Using Firebase Emulator Suite');
+    }
 
-  // Initialize providers
-  final progressProvider = ProgressProvider();
-  final themeProvider = ThemeProvider();
-  final contentProvider = ContentProvider();
-  final reviewProvider = ReviewProvider();
-  final authService = AuthService();
+    // Initialize providers
+    final progressProvider = ProgressProvider();
+    final themeProvider = ThemeProvider();
+    final contentProvider = ContentProvider();
+    final reviewProvider = ReviewProvider();
+    final authService = AuthService();
 
-  // Load persistent data (Progress, Themes, Lesson Content, and Review Cards) before the app starts
-  await Future.wait([
-    progressProvider.loadProgress(),
-    themeProvider.initialize(),
-    contentProvider.loadContent(),
-    reviewProvider.loadReviewCards(),
-  ]);
+    // Load persistent data (Progress, Themes, Lesson Content, and Review Cards)
+    await Future.wait([
+      progressProvider.loadProgress(),
+      themeProvider.initialize(),
+      contentProvider.loadContent(),
+      reviewProvider.loadReviewCards(),
+    ]);
 
-  runApp(
-    StreamProvider<User?>.value(
-      value: authService.userStream,
-      initialData: null,
-      child: MultiProvider(
-        providers: [
-          Provider<AuthService>.value(value: authService),
-          ChangeNotifierProvider.value(value: progressProvider),
-          ChangeNotifierProvider.value(value: progressProvider),
-          ChangeNotifierProvider.value(value: themeProvider),
-          ChangeNotifierProvider.value(value: contentProvider),
-          ChangeNotifierProvider.value(value: reviewProvider),
-        ],
-        child: const TamilSetuApp(),
+    runApp(
+      StreamProvider<User?>.value(
+        value: authService.userStream,
+        initialData: null,
+        child: MultiProvider(
+          providers: [
+            Provider<AuthService>.value(value: authService),
+            ChangeNotifierProvider.value(value: progressProvider),
+            ChangeNotifierProvider.value(value: progressProvider),
+            ChangeNotifierProvider.value(value: themeProvider),
+            ChangeNotifierProvider.value(value: contentProvider),
+            ChangeNotifierProvider.value(value: reviewProvider),
+          ],
+          child: const TamilSetuApp(),
+        ),
       ),
-    ),
-  );
+    );
+  } catch (e, stackTrace) {
+    debugPrint('Startup error: $e');
+    debugPrintStack(stackTrace: stackTrace);
+    runApp(StartupErrorApp(error: e.toString()));
+  }
+}
+
+class StartupErrorApp extends StatelessWidget {
+  final String error;
+  const StartupErrorApp({super.key, required this.error});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Tamil Setu',
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: PeacockTheme.softCream,
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, size: 56, color: Colors.red),
+                const SizedBox(height: 12),
+                const Text(
+                  'Startup failed',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  error,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.black54),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class TamilSetuApp extends StatelessWidget {
