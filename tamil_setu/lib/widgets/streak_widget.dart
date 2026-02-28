@@ -29,41 +29,47 @@ class StreakWidget extends StatelessWidget {
         }
         final data = snapshot.data!.data() as Map<String, dynamic>?;
         final streak = data?['streak_count'] ?? 0;
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: ZoomIn(
-            duration: const Duration(milliseconds: 800),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                gradient: LinearGradient(
-                  colors: [
-                    PeacockTheme.peacockBlue.withAlpha(24),
-                    PeacockTheme.peacockGreen.withAlpha(28),
-                  ],
-                ),
-                border: Border.all(color: PeacockTheme.peacockBlue.withAlpha(60)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.local_fire_department,
-                          color: PeacockTheme.vibrantOrange, size: 28),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Streak',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
+        return Semantics(
+          container: true,
+          label: 'Streak: $streak days',
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ZoomIn(
+              duration: const Duration(milliseconds: 800),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  gradient: LinearGradient(
+                    colors: [
+                      PeacockTheme.peacockBlue.withAlpha(24),
+                      PeacockTheme.peacockGreen.withAlpha(28),
                     ],
                   ),
-                  Chip(
-                    label: Text('$streak days'),
-                    backgroundColor: PeacockTheme.peacockGreen.withAlpha(60),
-                  ),
-                ],
+                  border:
+                      Border.all(color: PeacockTheme.peacockBlue.withAlpha(60)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.local_fire_department,
+                            color: PeacockTheme.vibrantOrange, size: 28),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Streak',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ],
+                    ),
+                    Chip(
+                      label: Text('$streak days'),
+                      backgroundColor: PeacockTheme.peacockGreen.withAlpha(60),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

@@ -147,6 +147,15 @@ class DashboardScreen extends StatelessWidget {
                       child: _ProgressHeader(
                           totalLessons: contentProvider.lessons.length),
                     ),
+                    const SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(16, 12, 16, 4),
+                        child: _SectionHeader(
+                          title: 'Lessons',
+                          subtitle: 'Start where you left off',
+                        ),
+                      ),
+                    ),
                     _LessonsAndCheckpointsBuilder(
                       lessons: contentProvider.lessons,
                     ),
@@ -217,6 +226,38 @@ class _QuickActions extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  const _SectionHeader({required this.title, required this.subtitle});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 2),
+              Text(subtitle, style: Theme.of(context).textTheme.bodySmall),
+            ],
+          ),
+        ),
+        Container(
+          width: 44,
+          height: 4,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: PeacockTheme.peacockBlue.withAlpha(140),
+          ),
+        ),
+      ],
     );
   }
 }
