@@ -403,11 +403,13 @@ class _SignInCard extends StatelessWidget {
               child: SignInButton(
                 Buttons.google,
                 onPressed: () async {
-                  final user = await context.read<AuthService>().signInWithGoogle();
-                  if (user == null && context.mounted) {
+                  final result =
+                      await context.read<AuthService>().signInWithGoogleDetailed();
+                  if (!result.isSuccess && context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Sign-in failed. Please try again.'),
+                      SnackBar(
+                        content:
+                            Text(result.errorMessage ?? 'Sign-in failed.'),
                       ),
                     );
                   }
