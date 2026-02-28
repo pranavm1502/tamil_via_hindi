@@ -84,9 +84,16 @@ void main() {
 
     await waitForLoader(tester);
 
-    // Tap the first lesson card found
-    final lessonFinder = find.byType(Card).first;
-    await tester.tap(lessonFinder);
+    // Tap the lesson tile by title (ensures we hit the correct card)
+    final lessonTitleFinder = find.text('Basics (Greet)');
+    final lessonTileFinder = find.ancestor(
+      of: lessonTitleFinder,
+      matching: find.byType(InkWell),
+    );
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, -800));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(lessonTitleFinder);
+    await tester.tap(lessonTileFinder);
 
     // Wait for navigation animation
     await tester.pumpAndSettle();

@@ -20,6 +20,7 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final contentProvider = context.watch<ContentProvider>();
+    final user = context.watch<User?>();
 
     return Scaffold(
       appBar: AppBar(
@@ -34,21 +35,37 @@ class DashboardScreen extends StatelessWidget {
               Navigator.pushNamed(context, '/leaderboard');
             },
           ),
-          StreamBuilder<User?>(
-            stream: context.read<AuthService>().userStream,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return IconButton(
-                  icon: const Icon(Icons.login),
-                  onPressed: () =>
-                      context.read<AuthService>().signInWithGoogle(),
-                );
-              }
-              return CircleAvatar(
-                backgroundImage: NetworkImage(snapshot.data!.photoURL ?? ''),
-              );
-            },
-          ),
+          if (user == null)
+            IconButton(
+              icon: const Icon(Icons.login),
+              tooltip: 'Sign in',
+              onPressed: () => context.read<AuthService>().signInWithGoogle(),
+            )
+          else
+            PopupMenuButton<String>(
+              tooltip: 'Account',
+              onSelected: (value) {
+                if (value == 'sign_out') {
+                  context.read<AuthService>().signOut();
+                }
+              },
+              itemBuilder: (context) => const [
+                PopupMenuItem(
+                  value: 'sign_out',
+                  child: Text('Sign out'),
+                ),
+              ],
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: CircleAvatar(
+                  backgroundImage:
+                      user.photoURL != null ? NetworkImage(user.photoURL!) : null,
+                  child: user.photoURL == null
+                      ? const Icon(Icons.person, color: Colors.white)
+                      : null,
+                ),
+              ),
+            ),
           Consumer<ThemeProvider>(
             builder: (context, themeProvider, child) {
               return IconButton(
@@ -105,6 +122,14 @@ class DashboardScreen extends StatelessWidget {
                           message: 'नमस्कारम्! इन्द्रु तमिऴ् कर्कलामा?'),
                       ),
                     ),
+                    if (user == null)
+                      const SliverToBoxAdapter(
+                        child: Padding(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          child: _SignInCard(),
+                        ),
+                      ),
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -189,6 +214,48 @@ class _QuickActions extends StatelessWidget {
               icon: const Icon(Icons.leaderboard),
               label: const Text('Leaderboard'),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SignInCard extends StatelessWidget {
+  const _SignInCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: Theme.of(context).cardColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(18),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'अपनी प्रगति सुरक्षित करें',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'स्कोर, स्ट्रीक और लीडरबोर्ड के लिए Google से साइन इन करें।',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 12),
+          FilledButton.icon(
+            onPressed: () => context.read<AuthService>().signInWithGoogle(),
+            icon: const Icon(Icons.login),
+            label: const Text('Google से साइन इन करें'),
           ),
         ],
       ),
