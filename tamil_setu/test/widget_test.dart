@@ -42,10 +42,11 @@ void main() {
           (c) async => '.');
 
   Widget createTestableApp() {
+    final mockAuth = MockFirebaseAuth();
     return MultiProvider(
       providers: [
         Provider<AuthService>.value(
-            value: AuthService(auth: null, googleSignIn: null)),
+            value: AuthService(auth: mockAuth, googleSignIn: null)),
         ChangeNotifierProvider(create: (_) => ProgressProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         // FIX: Inject the mock lessons so Cards and Icons actually render

@@ -21,12 +21,10 @@ class AuthService {
   GoogleSignIn get googleSignIn => _googleSignIn ?? GoogleSignIn.instance;
 
   // Expose the current user for centralized access
-  User? get currentUser => _auth?.currentUser;
+  User? get currentUser => auth.currentUser;
 
-  // FIX: Return an empty stream if _auth is null (during tests)
-  // This prevents the native Pigeon channel crashes
-  Stream<User?> get userStream =>
-      _auth?.authStateChanges() ?? const Stream.empty();
+  // Auth state stream; tests can inject a mock FirebaseAuth
+  Stream<User?> get userStream => auth.authStateChanges();
 
   Future<void> _ensureInitialized() async {
     if (!_isInitialized) {
