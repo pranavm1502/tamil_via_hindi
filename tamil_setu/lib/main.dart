@@ -45,16 +45,20 @@ void main() async {
   ]);
 
   runApp(
-    MultiProvider(
-      providers: [
-        Provider<AuthService>.value(value: authService),
-        ChangeNotifierProvider.value(value: progressProvider),
-        ChangeNotifierProvider.value(value: progressProvider),
-        ChangeNotifierProvider.value(value: themeProvider),
-        ChangeNotifierProvider.value(value: contentProvider),
-        ChangeNotifierProvider.value(value: reviewProvider),
-      ],
-      child: const TamilSetuApp(),
+    StreamProvider<User?>.value(
+      value: authService.userStream,
+      initialData: null,
+      child: MultiProvider(
+        providers: [
+          Provider<AuthService>.value(value: authService),
+          ChangeNotifierProvider.value(value: progressProvider),
+          ChangeNotifierProvider.value(value: progressProvider),
+          ChangeNotifierProvider.value(value: themeProvider),
+          ChangeNotifierProvider.value(value: contentProvider),
+          ChangeNotifierProvider.value(value: reviewProvider),
+        ],
+        child: const TamilSetuApp(),
+      ),
     ),
   );
 }

@@ -9,7 +9,7 @@ import '../models/word_pair.dart';
 import '../providers/progress_provider.dart';
 import '../providers/review_provider.dart';
 import '../widgets/peacock_mascot.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tamil_setu/services/auth_service.dart';
 import '../services/sync_service.dart';
 
 class MultipleChoiceQuiz extends StatefulWidget {
@@ -138,7 +138,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
     Provider.of<ProgressProvider>(context, listen: false)
         .saveQuizScore(widget.lessonIndex, score, shuffledWords.length);
     // 2. ADD THE CLOUD SYNC HERE
-    final user = FirebaseAuth.instance.currentUser;
+    final user = AuthService().currentUser;
     if (user != null && percentage >= 80) {
       // Award 50 XP for passing a lesson
       SyncService().updateStreakAndXP(user.uid, 50);
