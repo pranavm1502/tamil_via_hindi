@@ -104,13 +104,6 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
 
-      - name: Build Universal APK (.apk)
-        run: flutter build apk --release --build-number=${{ github.run_number }}
-        env:
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-
       - name: Get Version Info
         id: version
         run: |
@@ -124,7 +117,6 @@ jobs:
           name: tamil-setu-v${{ steps.version.outputs.version }}-build${{ github.run_number }}
           path: |
             tamil_setu/build/app/outputs/bundle/release/app-release.aab
-            tamil_setu/build/app/outputs/flutter-apk/app-release.apk
           retention-days: 90  # Keep artifacts for 90 days
 
       - name: Create GitHub Release
@@ -142,13 +134,11 @@ jobs:
 
             ### Downloads
             - **App Bundle (.aab):** For Google Play Store
-            - **APK (.apk):** For direct installation
 
             ### Changes
             See commit history for details.
           files: |
             tamil_setu/build/app/outputs/bundle/release/app-release.aab
-            tamil_setu/build/app/outputs/flutter-apk/app-release.apk
           draft: false
           prerelease: false
         env:
