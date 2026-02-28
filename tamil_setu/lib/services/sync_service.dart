@@ -3,6 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class SyncService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
+  Stream<Map<String, dynamic>> userStatsStream(String uid) {
+    return _db.collection('users').doc(uid).snapshots().map(
+          (doc) => doc.data() ?? <String, dynamic>{},
+        );
+  }
+
   Future<void> updateStreakAndXP(String uid, int xpGained) async {
     final userRef = _db.collection('users').doc(uid);
     final now = DateTime.now();

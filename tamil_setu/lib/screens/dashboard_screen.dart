@@ -6,6 +6,7 @@ import '../models/lesson.dart';
 import '../models/checkpoint.dart';
 import '../providers/content_provider.dart';
 import '../providers/progress_provider.dart';
+import '../providers/review_provider.dart';
 import '../providers/theme_provider.dart';
 import '../widgets/peacock_mascot.dart';
 import '../widgets/streak_widget.dart';
@@ -45,12 +46,17 @@ class DashboardScreen extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: CircleAvatar(
-                backgroundImage:
-                    user.photoURL != null ? NetworkImage(user.photoURL!) : null,
-                child: user.photoURL == null
-                    ? const Icon(Icons.person, color: Colors.white)
-                    : null,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(24),
+                onTap: () => Navigator.pushNamed(context, '/profile'),
+                child: CircleAvatar(
+                  backgroundImage: user.photoURL != null
+                      ? NetworkImage(user.photoURL!)
+                      : null,
+                  child: user.photoURL == null
+                      ? const Icon(Icons.person, color: Colors.white)
+                      : null,
+                ),
               ),
             ),
           ],
@@ -122,6 +128,12 @@ class DashboardScreen extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         child: StreakWidget(),
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: _DailyGoalCard(),
                       ),
                     ),
                     SliverToBoxAdapter(
@@ -277,6 +289,77 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
+class _DailyGoalCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final review = context.watch<ReviewProvider>();
+    final goal = review.dailyGoalCards;
+    final reviewed = review.cardsReviewedToday;
+    final progress = goal == 0 ? 0.0 : (reviewed / goal).clamp(0.0, 1.0);
+    final nextReview = review.nextReviewAt;
+    final dueNow = review.dueCardCount;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: Theme.of(context).cardColor,
+        border: Border.all(color: PeacockTheme.peacockBlue.withAlpha(40)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Daily Goal',
+                  style: Theme.of(context).textTheme.titleMedium),
+              Text('$reviewed / $goal',
+                  style: Theme.of(context).textTheme.bodySmall),
+            ],
+          ),
+          const SizedBox(height: 8),
+          LinearProgressIndicator(
+            value: progress,
+            minHeight: 8,
+            borderRadius: BorderRadius.circular(6),
+            color: PeacockTheme.peacockGreen,
+            backgroundColor: PeacockTheme.peacockBlue.withAlpha(24),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            nextReview == null
+                ? 'No upcoming reviews scheduled.'
+                : 'Next review: ${_formatNextReview(nextReview)}',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Due now: $dueNow card${dueNow == 1 ? '' : 's'}',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatNextReview(DateTime dateTime) {
+    final now = DateTime.now();
+    final diff = dateTime.difference(now);
+    if (diff.inMinutes <= 0) {
+      return 'now';
+    }
+    if (diff.inMinutes < 60) {
+      return 'in ${diff.inMinutes} min';
+    }
+    if (diff.inHours < 24) {
+      return 'in ${diff.inHours} hr';
+    }
+    return 'on ${dateTime.month}/${dateTime.day}';
+  }
+}
+
 /// Call-to-action card to encourage sign-in for progress sync.
 class _SignInCard extends StatelessWidget {
   const _SignInCard();
@@ -311,10 +394,19 @@ class _SignInCard extends StatelessWidget {
           const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
-            child: SignInButton(
-              Buttons.google,
-              onPressed: () => context.read<AuthService>().signInWithGoogle(),
-            ),
+              child: SignInButton(
+                Buttons.google,
+                onPressed: () async {
+                  final user = await context.read<AuthService>().signInWithGoogle();
+                  if (user == null && context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Sign-in failed. Please try again.'),
+                      ),
+                    );
+                  }
+                },
+              ),
           ),
         ],
       ),

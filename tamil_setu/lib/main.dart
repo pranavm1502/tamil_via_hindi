@@ -7,12 +7,14 @@ import 'providers/review_provider.dart';
 import 'screens/dashboard_screen.dart';
 import 'theme.dart'; // 1. Import your newly created theme file
 import 'screens/leaderboard_screen.dart';
+import 'screens/profile_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter/foundation.dart'; // For kDebugMode
 import 'package:firebase_auth/firebase_auth.dart'; // For FirebaseAuth
 import 'package:cloud_firestore/cloud_firestore.dart'; // For FirebaseFirestore
 import 'services/auth_service.dart';
+import 'services/notification_service.dart';
 
 void main() async {
   // Ensure Flutter bindings are initialized for async data loading
@@ -23,7 +25,10 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  if (kDebugMode) {
+  await NotificationService().initialize();
+
+  const useEmulator = bool.fromEnvironment('USE_FIREBASE_EMULATOR');
+  if (kDebugMode && useEmulator) {
     // 10.0.2.2 is the magic IP for Android Emulators to see your Mac
     await FirebaseAuth.instance.useAuthEmulator('10.0.2.2', 9099);
     FirebaseFirestore.instance.useFirestoreEmulator('10.0.2.2', 8080);
@@ -81,6 +86,7 @@ class TamilSetuApp extends StatelessWidget {
           home: const DashboardScreen(),
           routes: {
             '/leaderboard': (context) => const LeaderboardScreen(),
+            '/profile': (context) => const ProfileScreen(),
           },
         );
       },
