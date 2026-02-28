@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.boldesi.tamil_via_hindi">
     <application
         android:label="Tamil Setu"
         android:name="${applicationName}"
