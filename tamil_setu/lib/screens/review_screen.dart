@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -18,18 +20,21 @@ class ReviewScreen extends StatefulWidget {
 
 class _ReviewScreenState extends State<ReviewScreen> {
   bool _showAnswer = false;
-  final AudioPlayer _audioPlayer = AudioPlayer();
+  AudioPlayer? _audioPlayer;
   bool _sessionInitialized = false;
 
   @override
   void dispose() {
-    _audioPlayer.dispose();
+    _audioPlayer?.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
+    if (!_isTestEnvironment()) {
+      _audioPlayer = AudioPlayer();
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted || _sessionInitialized) return;
       _sessionInitialized = true;
@@ -42,6 +47,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
   }
 
   void _playAudio(WordPair pair) async {
+    if (_audioPlayer == null) return;
     try {
       final colloquial = _colloquialTamil(pair.tamil);
       if (pair.tamil.contains('/') && colloquial.isNotEmpty) {
@@ -52,11 +58,15 @@ class _ReviewScreenState extends State<ReviewScreen> {
       if (pair.audioPath.isEmpty) return;
       final cleanPath = pair.audioPath.replaceFirst('assets/', '');
       // Set speed slightly faster for quick revision
-      await _audioPlayer.setPlaybackRate(1.2);
-      await _audioPlayer.play(AssetSource(cleanPath));
+      await _audioPlayer!.setPlaybackRate(1.2);
+      await _audioPlayer!.play(AssetSource(cleanPath));
     } catch (e) {
       debugPrint('Audio Error: $e');
     }
+  }
+
+  bool _isTestEnvironment() {
+    return !kIsWeb && Platform.environment.containsKey('FLUTTER_TEST');
   }
 
   String _colloquialTamil(String value) {

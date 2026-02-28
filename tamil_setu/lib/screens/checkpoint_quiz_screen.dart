@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -27,7 +29,7 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
   late List<String> currentOptions;
   String? selectedAnswer;
   bool showResult = false;
-  final AudioPlayer _audioPlayer = AudioPlayer();
+  AudioPlayer? _audioPlayer;
   late ConfettiController _confettiController;
 
   @override
@@ -35,6 +37,9 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
     super.initState();
     _confettiController =
         ConfettiController(duration: const Duration(seconds: 2));
+    if (!_isTestEnvironment()) {
+      _audioPlayer = AudioPlayer();
+    }
     _loadWordsFromLessons();
     _generateOptions();
   }
@@ -59,14 +64,15 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
 
   @override
   void dispose() {
-    _audioPlayer.dispose();
+    _audioPlayer?.dispose();
     _confettiController.dispose();
     super.dispose();
   }
 
   void _playAudio(WordPair pair) async {
+    if (_audioPlayer == null) return;
     try {
-      await _audioPlayer.stop();
+      await _audioPlayer!.stop();
       await TtsService().stop();
       final colloquial = _colloquialTamil(pair.tamil);
       if (pair.tamil.contains('/') && colloquial.isNotEmpty) {
@@ -76,10 +82,14 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
 
       if (pair.audioPath.isEmpty) return;
       final cleanPath = pair.audioPath.replaceFirst('assets/', '');
-      await _audioPlayer.play(AssetSource(cleanPath));
+      await _audioPlayer!.play(AssetSource(cleanPath));
     } catch (e) {
       debugPrint('Audio Error: $e');
     }
+  }
+
+  bool _isTestEnvironment() {
+    return !kIsWeb && Platform.environment.containsKey('FLUTTER_TEST');
   }
 
   String _colloquialTamil(String value) {

@@ -29,11 +29,26 @@ Tamil Setu is a Flutter application designed to help Hindi speakers learn Tamil 
 
 ## 📸 Screenshots
 
-*To generate and update screenshots, run the following command from the root of the repository:*
+*To update Play Store screenshots from a real Android emulator/device:*
+```bash
+cd tamil_setu
+flutter drive --driver=test_driver/screenshot_driver.dart \
+   --target=integration_test/screenshots_test.dart \
+   -d <android-device-id>
+```
+*To save to the 10-inch tablet folder, add:*
+```bash
+SCREENSHOT_OUTPUT_DIR=test/metadata/en-US/images/tenInchScreenshots \
+   flutter drive --driver=test_driver/screenshot_driver.dart \
+      --target=integration_test/screenshots_test.dart \
+      -d <android-device-id>
+```
+
+*For golden widget screenshots (UI regression):*
 ```bash
 ./update_golden_screenshots.sh
 ```
-*The generated screenshots will be placed in the `tamil_setu/test/screenshots` directory and can be used to update this section.*
+*Play Store screenshots are saved under `tamil_setu/test/metadata/en-US/images`.*
 
 
 ## 🚀 Getting Started
