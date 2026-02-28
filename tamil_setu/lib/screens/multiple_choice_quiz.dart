@@ -106,8 +106,8 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
       final currentWord = shuffledWords[currentIndex];
       if (answer == currentWord.tamil) {
         score++;
-        _playAudio(currentWord.audioPath);
       }
+      _playAudio(currentWord.audioPath);
     });
   }
 
