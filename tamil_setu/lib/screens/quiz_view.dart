@@ -177,85 +177,90 @@ class _QuizViewState extends State<QuizView> {
     }
     final currentWord = shuffledWords[currentIndex];
 
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          LinearProgressIndicator(
-              value: (currentIndex + 1) / shuffledWords.length,
-              minHeight: 10,
-              color: Colors.green.shade600),
-          const SizedBox(height: 20),
-          Card(
-            elevation: 10,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            child: Container(
-              height: 300,
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text('Translate this Hindi word:',
-                      style: TextStyle(color: Colors.grey)),
-                  const SizedBox(height: 10),
-                  Text(currentWord.hindi,
-                      style: const TextStyle(
-                          fontSize: 36,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue)),
-                  const Divider(height: 40),
-                  if (showAnswer)
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(currentWord.tamil,
-                            style: const TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.deepOrange)),
-                        const SizedBox(height: 4),
-                        Text('(${currentWord.pronunciation})',
-                            style: const TextStyle(
-                                fontSize: 20, color: Colors.blueGrey)),
-                        const SizedBox(height: 8),
-                        IconButton(
-                            icon:
-                                const Icon(Icons.volume_up, color: Colors.blue),
-                            onPressed: () => _playAudio(currentWord.audioPath)),
-                      ],
-                    )
-                  else
-                    const Text('?',
-                        style: TextStyle(fontSize: 50, color: Colors.grey)),
-                ],
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            LinearProgressIndicator(
+                value: (currentIndex + 1) / shuffledWords.length,
+                minHeight: 10,
+                color: Colors.green.shade600),
+            const SizedBox(height: 20),
+            Card(
+              elevation: 10,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              child: Container(
+                constraints: const BoxConstraints(minHeight: 240),
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Translate this Hindi word:',
+                        style: TextStyle(color: Colors.grey)),
+                    const SizedBox(height: 10),
+                    Text(currentWord.hindi,
+                        style: const TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue)),
+                    const Divider(height: 40),
+                    if (showAnswer)
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(currentWord.tamil,
+                              style: const TextStyle(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.deepOrange)),
+                          const SizedBox(height: 4),
+                          Text('(${currentWord.pronunciation})',
+                              style: const TextStyle(
+                                  fontSize: 20, color: Colors.blueGrey)),
+                          const SizedBox(height: 8),
+                          IconButton(
+                              icon: const Icon(Icons.volume_up,
+                                  color: Colors.blue),
+                              onPressed: () =>
+                                  _playAudio(currentWord.audioPath)),
+                        ],
+                      )
+                    else
+                      const Text('?',
+                          style: TextStyle(fontSize: 50, color: Colors.grey)),
+                  ],
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 40),
-          if (!showAnswer)
-            FilledButton(
-                onPressed: () {
-                  setState(() => showAnswer = true);
-                  _playAudio(currentWord.audioPath);
-                },
-                child: const Text('Show Answer'))
-          else
-            Row(children: [
-              Expanded(
-                  child: OutlinedButton(
-                      onPressed: () => _nextCard(false),
-                      child: const Text('Practice'))),
-              const SizedBox(width: 16),
-              Expanded(
-                  child: FilledButton(
-                      onPressed: () => _nextCard(true),
-                      child: const Text('I knew it!'))),
-            ]),
-        ],
+            const SizedBox(height: 40),
+            if (!showAnswer)
+              FilledButton(
+                  onPressed: () {
+                    setState(() => showAnswer = true);
+                    _playAudio(currentWord.audioPath);
+                  },
+                  child: const Text('Show Answer'))
+            else
+              Row(children: [
+                Expanded(
+                    child: OutlinedButton(
+                        onPressed: () => _nextCard(false),
+                        child: const Text('Practice'))),
+                const SizedBox(width: 16),
+                Expanded(
+                    child: FilledButton(
+                        onPressed: () => _nextCard(true),
+                        child: const Text('I knew it!'))),
+              ]),
+            const SizedBox(height: 12),
+          ],
+        ),
       ),
     );
   }
