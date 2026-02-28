@@ -7,9 +7,9 @@ import '../models/checkpoint.dart';
 import '../providers/content_provider.dart';
 import '../providers/progress_provider.dart';
 import '../providers/theme_provider.dart';
-import '../providers/review_provider.dart';
 import '../widgets/peacock_mascot.dart';
 import '../widgets/streak_widget.dart';
+import '../theme.dart';
 import 'lesson_screen.dart';
 import 'review_screen.dart';
 import 'checkpoint_quiz_screen.dart';
@@ -63,37 +63,135 @@ class DashboardScreen extends StatelessWidget {
       ),
       body: contentProvider.isLoading
           ? const Center(child: CircularProgressIndicator())
-          : CustomScrollView(
-              slivers: [
-                const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(16, 20, 16, 0),
-                    child: PeacockMascot(message: 'नमस्ते! आज तमिल सीखते हैं?'),
+          : Stack(
+              children: [
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          PeacockTheme.softCream,
+                          PeacockTheme.softCream.withAlpha(230),
+                          PeacockTheme.peacockGreen.withAlpha(22),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-                // StreakWidget integration
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: StreakWidget(),
+                Positioned(
+                  top: -120,
+                  right: -80,
+                  child: _OrnamentCircle(
+                    size: 220,
+                    color: PeacockTheme.peacockBlue.withAlpha(18),
                   ),
                 ),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: _ReviewButton(),
+                Positioned(
+                  bottom: -140,
+                  left: -60,
+                  child: _OrnamentCircle(
+                    size: 260,
+                    color: PeacockTheme.deepTeal.withAlpha(20),
                   ),
                 ),
-                SliverToBoxAdapter(
-                  child: _ProgressHeader(
-                      totalLessons: contentProvider.lessons.length),
-                ),
-                _LessonsAndCheckpointsBuilder(
-                  lessons: contentProvider.lessons,
+                CustomScrollView(
+                  slivers: [
+                    const SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(16, 20, 16, 0),
+                        child: PeacockMascot(
+                          message: 'नमस्कारम्! इन्द्रु तमिऴ् कर्कलामा?'),
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: StreakWidget(),
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        child: _QuickActions(),
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: _ProgressHeader(
+                          totalLessons: contentProvider.lessons.length),
+                    ),
+                    _LessonsAndCheckpointsBuilder(
+                      lessons: contentProvider.lessons,
+                    ),
+                  ],
                 ),
               ],
             ),
+    );
+  }
+}
+
+class _OrnamentCircle extends StatelessWidget {
+  final double size;
+  final Color color;
+  const _OrnamentCircle({required this.size, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: color,
+        ),
+      ),
+    );
+  }
+}
+
+class _QuickActions extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        gradient: LinearGradient(
+          colors: [
+            PeacockTheme.peacockBlue.withAlpha(22),
+            PeacockTheme.peacockGreen.withAlpha(26),
+          ],
+        ),
+        border: Border.all(color: PeacockTheme.peacockBlue.withAlpha(50)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: FilledButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ReviewScreen()),
+                );
+              },
+              icon: const Icon(Icons.auto_awesome),
+              label: const Text('Quick Review'),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: () => Navigator.pushNamed(context, '/leaderboard'),
+              icon: const Icon(Icons.leaderboard),
+              label: const Text('Leaderboard'),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -227,124 +325,6 @@ class _LessonTile extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontSize: 12)),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _ReviewButton extends StatelessWidget {
-  // ignore: prefer_const_constructors_in_immutables
-  _ReviewButton();
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<ReviewProvider>(
-      builder: (context, reviewProvider, child) {
-        final dueCount = reviewProvider.dueCardCount;
-        final streak = reviewProvider.currentStreak;
-
-        if (dueCount == 0 && reviewProvider.allCards.isEmpty) {
-          // No cards created yet - don't show anything
-          return const SizedBox.shrink();
-        }
-
-        return Card(
-          elevation: 4,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          color: dueCount > 0
-              ? (Theme.of(context).brightness == Brightness.dark
-                  ? Colors.purple.shade900
-                  : Colors.purple.shade50)
-              : Theme.of(context).cardColor,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(16),
-            onTap: dueCount > 0
-                ? () {
-                    reviewProvider.startReviewSession();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ReviewScreen()),
-                    );
-                  }
-                : null,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 28,
-                    backgroundColor: dueCount > 0 ? Colors.purple : Colors.grey,
-                    child: Icon(
-                      dueCount > 0 ? Icons.auto_awesome : Icons.check_circle,
-                      color: Colors.white,
-                      size: 28,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          dueCount > 0 ? 'Review Cards' : 'All Caught Up!',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          dueCount > 0
-                              ? '$dueCount card${dueCount != 1 ? 's' : ''} due for review'
-                              : 'Come back later for more reviews',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (streak > 0) ...[
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.orange,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            '🔥',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '$streak',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                  if (dueCount > 0) ...[
-                    const SizedBox(width: 8),
-                    const Icon(Icons.arrow_forward_ios, size: 16),
-                  ],
                 ],
               ),
             ),
