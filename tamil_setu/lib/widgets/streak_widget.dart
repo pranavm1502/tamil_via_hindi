@@ -3,17 +3,22 @@ import 'package:animate_do/animate_do.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+
 class StreakWidget extends StatelessWidget {
-  const StreakWidget({Key? key}) : super(key: key);
+  final FirebaseAuth auth;
+  final FirebaseFirestore firestore;
+  StreakWidget({super.key, FirebaseAuth? auth, FirebaseFirestore? firestore})
+      : auth = auth ?? FirebaseAuth.instance,
+        firestore = firestore ?? FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
+    final user = auth.currentUser;
     if (user == null) {
       return const SizedBox.shrink();
     }
     return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance
+      stream: firestore
           .collection('users')
           .doc(user.uid)
           .snapshots(),

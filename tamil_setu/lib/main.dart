@@ -6,6 +6,7 @@ import 'providers/content_provider.dart';
 import 'providers/review_provider.dart';
 import 'screens/dashboard_screen.dart';
 import 'theme.dart'; // 1. Import your newly created theme file
+import 'screens/leaderboard_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter/foundation.dart'; // For kDebugMode
@@ -74,18 +75,13 @@ class TamilSetuApp extends StatelessWidget {
         return MaterialApp(
           title: 'Tamil Setu',
           debugShowCheckedModeBanner: false,
-
-          // 2. Apply your custom Peacock-inspired light theme
           theme: PeacockTheme.lightTheme,
-
-          // 3. Apply your custom Peacock-inspired dark theme
           darkTheme: PeacockTheme.darkTheme,
-
-          // 4. Use the state from your ThemeProvider to decide which theme to show
-          themeMode:
-              themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-
+          themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
           home: const DashboardScreen(),
+          routes: {
+            '/leaderboard': (context) => const LeaderboardScreen(),
+          },
         );
       },
     );

@@ -9,6 +9,7 @@ import '../providers/progress_provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/review_provider.dart';
 import '../widgets/peacock_mascot.dart';
+import '../widgets/streak_widget.dart';
 import 'lesson_screen.dart';
 import 'review_screen.dart';
 import 'checkpoint_quiz_screen.dart';
@@ -26,15 +27,19 @@ class DashboardScreen extends StatelessWidget {
         centerTitle: true,
         elevation: 2,
         actions: [
-          // ADD THIS LOGIN BUTTON
+          IconButton(
+            icon: const Icon(Icons.leaderboard),
+            tooltip: 'Leaderboard',
+            onPressed: () {
+              Navigator.pushNamed(context, '/leaderboard');
+            },
+          ),
           StreamBuilder<User?>(
-            // FIX: Use the service instead of direct Firebase access
             stream: context.read<AuthService>().userStream,
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return IconButton(
                   icon: const Icon(Icons.login),
-                  // FIX: Call sign-in through the service
                   onPressed: () =>
                       context.read<AuthService>().signInWithGoogle(),
                 );
@@ -64,6 +69,13 @@ class DashboardScreen extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(16, 20, 16, 0),
                     child: PeacockMascot(message: 'नमस्ते! आज तमिल सीखते हैं?'),
+                  ),
+                ),
+                // StreakWidget integration
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: StreakWidget(),
                   ),
                 ),
                 SliverToBoxAdapter(
