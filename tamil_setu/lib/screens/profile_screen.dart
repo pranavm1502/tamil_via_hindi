@@ -65,7 +65,7 @@ class ProfileScreen extends StatelessWidget {
                 photoUrl: user.photoURL,
               ),
               const SizedBox(height: 16),
-              _SectionTitle(title: 'Learning Stats'),
+              const _SectionTitle(title: 'Learning Stats'),
               const SizedBox(height: 8),
               _StatsGrid(
                 items: [
@@ -82,11 +82,11 @@ class ProfileScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              _SectionTitle(title: 'Daily Goal & Reminders'),
+              const _SectionTitle(title: 'Daily Goal & Reminders'),
               const SizedBox(height: 8),
               _DailyGoalSettings(review: review),
               const SizedBox(height: 16),
-              _SectionTitle(title: 'Achievements'),
+              const _SectionTitle(title: 'Achievements'),
               const SizedBox(height: 8),
               _AchievementsPanel(
                 totalXp: totalXp,
@@ -95,7 +95,7 @@ class ProfileScreen extends StatelessWidget {
                 totalReviews: reviewStats['totalReviews'] ?? 0,
               ),
               const SizedBox(height: 16),
-              _SectionTitle(title: 'Review Performance'),
+              const _SectionTitle(title: 'Review Performance'),
               const SizedBox(height: 8),
               _StatsGrid(
                 items: [
