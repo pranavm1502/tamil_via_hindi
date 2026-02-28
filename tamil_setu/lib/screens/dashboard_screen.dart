@@ -82,11 +82,17 @@ class DashboardScreen extends StatelessWidget {
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: [
-                          PeacockTheme.softCream,
-                          PeacockTheme.softCream.withAlpha(230),
-                          PeacockTheme.peacockGreen.withAlpha(22),
-                        ],
+                        colors: Theme.of(context).brightness == Brightness.dark
+                            ? [
+                                const Color(0xFF0F1A1F),
+                                const Color(0xFF0B1418),
+                                PeacockTheme.peacockBlue.withAlpha(18),
+                              ]
+                            : [
+                                PeacockTheme.softCream,
+                                PeacockTheme.softCream.withAlpha(230),
+                                PeacockTheme.peacockGreen.withAlpha(22),
+                              ],
                       ),
                     ),
                   ),
