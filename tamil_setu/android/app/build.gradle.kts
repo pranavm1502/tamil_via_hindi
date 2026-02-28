@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.tamil_setu"
+    namespace = "com.boldesi.tamil_via_hindi"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
