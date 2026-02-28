@@ -50,6 +50,9 @@ jobs:
       - name: Analyze Code
         run: flutter analyze
 
+      - name: Validate Curriculum
+        run: python3 scripts/validate_curriculum.py
+
       - name: Check for Outdated Dependencies
         run: flutter pub outdated
         continue-on-error: true  # Informational only
@@ -93,6 +96,9 @@ jobs:
 
       - name: Get Dependencies
         run: flutter pub get
+
+      - name: Validate Curriculum
+        run: python3 scripts/validate_curriculum.py
 
       - name: Decode Keystore
         run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks

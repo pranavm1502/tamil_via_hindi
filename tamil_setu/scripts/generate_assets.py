@@ -2,6 +2,7 @@ import os
 import json
 import time
 import re
+import argparse
 from pathlib import Path
 from gtts import gTTS
 from aksharamukha import transliterate
@@ -15,7 +16,7 @@ DATA_FILE = ASSETS_DIR / "data" / "curriculum.json"
 print(f"📂 Project Root: {PROJECT_ROOT}")
 
 # --- 2. GENERATION ENGINE ---
-def generate_assets():
+def generate_assets(overwrite_audio: bool):
     audio_dir = ASSETS_DIR / "audio"
     data_dir = ASSETS_DIR / "data"
     os.makedirs(audio_dir, exist_ok=True)
@@ -57,8 +58,7 @@ def generate_assets():
             audio_filename = f"{file_id}.mp3"
             audio_path = audio_dir / audio_filename
 
-            # Only generate if file doesn't exist
-            if not audio_path.exists():
+            if overwrite_audio or not audio_path.exists():
                 try:
                     tts = gTTS(text=clean_tamil, lang='ta', slow=False)
                     tts.save(str(audio_path))
@@ -88,4 +88,11 @@ def generate_assets():
     print(f"\n🎉 Success! Assets generated in: {ASSETS_DIR}")
 
 if __name__ == "__main__":
-    generate_assets()
+    parser = argparse.ArgumentParser(description="Generate curriculum assets.")
+    parser.add_argument(
+        "--overwrite-audio",
+        action="store_true",
+        help="Regenerate audio files even if they already exist.",
+    )
+    args = parser.parse_args()
+    generate_assets(overwrite_audio=args.overwrite_audio)

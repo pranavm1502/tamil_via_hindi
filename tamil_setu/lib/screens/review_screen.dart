@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:audioplayers/audioplayers.dart';
+import '../models/word_pair.dart';
 import '../providers/review_provider.dart';
 import '../providers/content_provider.dart';
 import '../services/srs_service.dart';
 import '../widgets/peacock_mascot.dart';
 import 'lesson_screen.dart';
+import '../services/tts_service.dart';
 
 class ReviewScreen extends StatefulWidget {
   const ReviewScreen({super.key});
@@ -39,15 +41,26 @@ class _ReviewScreenState extends State<ReviewScreen> {
     });
   }
 
-  void _playAudio(String path) async {
+  void _playAudio(WordPair pair) async {
     try {
-      final cleanPath = path.replaceFirst('assets/', '');
+      final colloquial = _colloquialTamil(pair.tamil);
+      if (pair.tamil.contains('/') && colloquial.isNotEmpty) {
+        final spoke = await TtsService().speak(colloquial);
+        if (spoke) return;
+      }
+
+      if (pair.audioPath.isEmpty) return;
+      final cleanPath = pair.audioPath.replaceFirst('assets/', '');
       // Set speed slightly faster for quick revision
       await _audioPlayer.setPlaybackRate(1.2);
       await _audioPlayer.play(AssetSource(cleanPath));
     } catch (e) {
       debugPrint('Audio Error: $e');
     }
+  }
+
+  String _colloquialTamil(String value) {
+    return value.split('/').last.trim();
   }
 
   void _handleReview(BuildContext context, ReviewQuality quality) async {
@@ -214,7 +227,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                     onTap: () {
                       if (!_showAnswer) {
                         setState(() => _showAnswer = true);
-                        _playAudio(wordPair.audioPath);
+                        _playAudio(wordPair);
                       }
                     },
                     child: Card(
@@ -275,7 +288,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                                       color: Colors.blue,
                                     ),
                                     onPressed: () =>
-                                        _playAudio(wordPair.audioPath),
+                                        _playAudio(wordPair),
                                   ),
                                 ],
                               ),
@@ -405,7 +418,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                     FilledButton(
                       onPressed: () {
                         setState(() => _showAnswer = true);
-                        _playAudio(wordPair.audioPath);
+                        _playAudio(wordPair);
                       },
                       style: FilledButton.styleFrom(
                         padding: const EdgeInsets.all(18),

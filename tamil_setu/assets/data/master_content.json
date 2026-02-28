@@ -103,14 +103,14 @@
             },
             {
                 "hindi": "यह (This person/thing)",
-                "tamil": "இவன்/இது",
-                "pronunciation": "इवऩ्/इतु",
+                "tamil": "இவன் / இது",
+                "pronunciation": "इवऩ् / इतु",
                 "audio_path": "assets/audio/l2_this.mp3"
             },
             {
                 "hindi": "वह (That person/thing)",
-                "tamil": "அவன்/அது",
-                "pronunciation": "अवऩ्/अतु",
+                "tamil": "அவன் / அது",
+                "pronunciation": "अवऩ् / अतु",
                 "audio_path": "assets/audio/l2_that.mp3"
             }
         ]
@@ -1634,8 +1634,8 @@
             },
             {
                 "hindi": "WhatsApp करो",
-                "tamil": "WhatsApp பண்ணுங்க",
-                "pronunciation": "WhatsApp पण्णुङ्क",
+                "tamil": "வாட்ஸ்அப் பண்ணுங்க",
+                "pronunciation": "वाट्स्अप् पण्णुङ्क",
                 "audio_path": "assets/audio/l27_whatsapp.mp3"
             },
             {
@@ -1670,8 +1670,8 @@
             },
             {
                 "hindi": "WiFi पासवर्ड क्या है?",
-                "tamil": "WiFi பாஸ்வர்ட் என்ன?",
-                "pronunciation": "WiFi पास्वर्ट् ऎऩ्ऩ?",
+                "tamil": "வைஃபை பாஸ்வர்ட் என்ன?",
+                "pronunciation": "वैफ़ै पास्वर्ट् ऎऩ्ऩ?",
                 "audio_path": "assets/audio/l27_wifi_password.mp3"
             }
         ]
@@ -2261,8 +2261,8 @@
             },
             {
                 "hindi": "ATM",
-                "tamil": "ATM",
-                "pronunciation": "ATM",
+                "tamil": "ஏடிஎம்",
+                "pronunciation": "एटिऎम्",
                 "audio_path": "assets/audio/l36_atm.mp3"
             },
             {
@@ -2848,8 +2848,8 @@
             },
             {
                 "hindi": "UPI से भेजो",
-                "tamil": "UPI-ல அனுப்புங்க",
-                "pronunciation": "UPI-ल अऩुप्पुङ्क",
+                "tamil": "யூபிஐ-ல அனுப்புங்க",
+                "pronunciation": "यूपिऐ-ल अऩुप्पुङ्क",
                 "audio_path": "assets/audio/l47_upi_transfer.mp3"
             },
             {

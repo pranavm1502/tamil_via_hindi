@@ -14,7 +14,11 @@ class SyncService {
   }
 
   /// Update XP and streak based on last activity, creating a user on first sync.
-  Future<void> updateStreakAndXP(String uid, int xpGained) async {
+  Future<void> updateStreakAndXP(
+    String uid,
+    int xpGained, {
+    String? displayName,
+  }) async {
     final userRef = _db.collection('users').doc(uid);
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -28,7 +32,10 @@ class SyncService {
           'total_xp': xpGained,
           'streak_count': 1,
           'last_activity': Timestamp.fromDate(today),
-          'display_name': 'Learner',
+          'display_name':
+              (displayName == null || displayName.isEmpty)
+                  ? 'Learner'
+                  : displayName,
         });
         return;
       }
@@ -46,11 +53,29 @@ class SyncService {
         newStreak = 1; // Streak broken
       }
 
-      transaction.update(userRef, {
+      final updateData = <String, dynamic>{
         'total_xp': currentXP + xpGained,
         'streak_count': newStreak,
         'last_activity': Timestamp.fromDate(today),
-      });
+      };
+
+      if (displayName != null && displayName.isNotEmpty) {
+        final existingName = data['display_name'] as String?;
+        if (existingName == null || existingName != displayName) {
+          updateData['display_name'] = displayName;
+        }
+      }
+
+      transaction.update(userRef, updateData);
     });
+  }
+
+  /// Update display name without touching streak or XP.
+  Future<void> upsertDisplayName(String uid, String displayName) async {
+    if (displayName.isEmpty) return;
+    await _db.collection('users').doc(uid).set(
+      {'display_name': displayName},
+      SetOptions(merge: true),
+    );
   }
 }

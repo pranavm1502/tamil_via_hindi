@@ -3,8 +3,10 @@ import 'package:flutter/foundation.dart'; // Required for kIsWeb
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../models/lesson.dart';
+import '../models/word_pair.dart';
 import 'quiz_view.dart';
 import 'multiple_choice_quiz.dart';
+import '../services/tts_service.dart';
 
 class LessonScreen extends StatefulWidget {
   final Lesson lesson;
@@ -40,7 +42,7 @@ class _LessonScreenState extends State<LessonScreen>
     return !kIsWeb && Platform.environment.containsKey('FLUTTER_TEST');
   }
 
-  Future<void> _playAudio(String path) async {
+  Future<void> _playAudio(WordPair pair) async {
     // 3. Early return if player wasn't initialized (e.g., during tests)
     if (_audioPlayer == null) {
       debugPrint('Audio playback skipped: Test environment detected.');
@@ -48,11 +50,22 @@ class _LessonScreenState extends State<LessonScreen>
     }
 
     try {
-      final cleanPath = path.replaceFirst('assets/', '');
+      final colloquial = _colloquialTamil(pair.tamil);
+      if (pair.tamil.contains('/') && colloquial.isNotEmpty) {
+        final spoke = await TtsService().speak(colloquial);
+        if (spoke) return;
+      }
+
+      if (pair.audioPath.isEmpty) return;
+      final cleanPath = pair.audioPath.replaceFirst('assets/', '');
       await _audioPlayer!.play(AssetSource(cleanPath));
     } catch (e) {
       debugPrint('Audio Error: $e');
     }
+  }
+
+  String _colloquialTamil(String value) {
+    return value.split('/').last.trim();
   }
 
   @override
@@ -157,7 +170,7 @@ class _LessonScreenState extends State<LessonScreen>
                     IconButton(
                       icon: const Icon(Icons.volume_up_rounded,
                           size: 36, color: Colors.blue),
-                      onPressed: () => _playAudio(pair.audioPath),
+                      onPressed: () => _playAudio(pair),
                     ),
                   ],
                 ),

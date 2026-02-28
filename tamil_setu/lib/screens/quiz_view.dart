@@ -8,6 +8,7 @@ import '../providers/review_provider.dart';
 import '../widgets/peacock_mascot.dart';
 import 'package:tamil_setu/services/auth_service.dart';
 import '../services/sync_service.dart';
+import '../services/tts_service.dart';
 
 class QuizView extends StatefulWidget {
   final List<WordPair> words;
@@ -43,14 +44,25 @@ class _QuizViewState extends State<QuizView> {
     super.dispose();
   }
 
-  void _playAudio(String path) async {
+  void _playAudio(WordPair pair) async {
     try {
-      final cleanPath = path.replaceFirst('assets/', '');
+      final colloquial = _colloquialTamil(pair.tamil);
+      if (pair.tamil.contains('/') && colloquial.isNotEmpty) {
+        final spoke = await TtsService().speak(colloquial);
+        if (spoke) return;
+      }
+
+      if (pair.audioPath.isEmpty) return;
+      final cleanPath = pair.audioPath.replaceFirst('assets/', '');
       await _audioPlayer.setPlaybackRate(1.20); // Faster rate
       await _audioPlayer.play(AssetSource(cleanPath));
     } catch (e) {
       debugPrint('Audio Error: $e');
     }
+  }
+
+  String _colloquialTamil(String value) {
+    return value.split('/').last.trim();
   }
 
   // This method was previously unused; now it's called by the "Retry" button
@@ -90,7 +102,11 @@ class _QuizViewState extends State<QuizView> {
     // 2. ADD THE CLOUD SYNC HERE
     final user = AuthService().currentUser;
     if (user != null && percentage >= 80) {
-      SyncService().updateStreakAndXP(user.uid, 50);
+      SyncService().updateStreakAndXP(
+        user.uid,
+        50,
+        displayName: user.displayName ?? user.email,
+      );
     }
     // Create review cards for this lesson (if not already created)
     Provider.of<ReviewProvider>(context, listen: false)
@@ -227,8 +243,7 @@ class _QuizViewState extends State<QuizView> {
                           IconButton(
                               icon: const Icon(Icons.volume_up,
                                   color: Colors.blue),
-                              onPressed: () =>
-                                  _playAudio(currentWord.audioPath)),
+                                onPressed: () => _playAudio(currentWord)),
                         ],
                       )
                     else
@@ -243,7 +258,7 @@ class _QuizViewState extends State<QuizView> {
               FilledButton(
                   onPressed: () {
                     setState(() => showAnswer = true);
-                    _playAudio(currentWord.audioPath);
+                    _playAudio(currentWord);
                   },
                   child: const Text('Show Answer'))
             else
