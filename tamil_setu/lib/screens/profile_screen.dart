@@ -133,7 +133,7 @@ class ProfileScreen extends StatelessWidget {
               const SizedBox(height: 16),
               const _SectionTitle(title: 'Invite Friends'),
               const SizedBox(height: 8),
-              _InviteFriendsCard(
+              const _InviteFriendsCard(
                 message:
                     'Learn Tamil with me on Tamil Setu!\n'
                     'https://play.google.com/store/apps/details?id=com.boldesi.tamil_via_hindi',
