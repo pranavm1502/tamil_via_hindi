@@ -1,0 +1,33 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function validUserStats() {
+      return request.resource.data.keys().hasOnly([
+          'total_xp',
+          'streak_count',
+          'last_activity',
+          'display_name'
+        ])
+        && request.resource.data.total_xp is int
+        && request.resource.data.streak_count is int
+        && request.resource.data.last_activity is timestamp
+        && (!('display_name' in request.resource.data)
+            || request.resource.data.display_name is string);
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create, update: if isOwner(userId) && validUserStats();
+      allow delete: if false;
+    }
+  }
+}
