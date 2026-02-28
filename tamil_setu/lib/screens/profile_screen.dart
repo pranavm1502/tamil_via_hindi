@@ -8,7 +8,8 @@ import '../services/sync_service.dart';
 import '../theme.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  final SyncService? syncService;
+  const ProfileScreen({super.key, this.syncService});
 
   @override
   Widget build(BuildContext context) {
@@ -43,12 +44,12 @@ class ProfileScreen extends StatelessWidget {
 
     final reviewStats = review.statistics;
     final accuracy = (reviewStats['accuracy'] as double?) ?? 0.0;
-    final syncService = SyncService();
+    final statsService = syncService ?? SyncService();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
       body: StreamBuilder<Map<String, dynamic>>(
-        stream: syncService.userStatsStream(user.uid),
+        stream: statsService.userStatsStream(user.uid),
         builder: (context, snapshot) {
           final data = snapshot.data;
           final displayName =

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart';
 
+/// Wraps Google Sign-In + Firebase Auth with test-friendly injection points.
 class AuthService {
   // 1. Nullable fields to allow truly silent mocks in tests
   final FirebaseAuth? _auth;
@@ -33,6 +34,7 @@ class AuthService {
     }
   }
 
+  /// Sign in via Google and return the Firebase user, or null on failure.
   Future<User?> signInWithGoogle() async {
     try {
       await _ensureInitialized();
@@ -64,6 +66,7 @@ class AuthService {
     }
   }
 
+  /// Sign out from Google and Firebase sessions.
   Future<void> signOut() async {
     try {
       await googleSignIn.signOut();

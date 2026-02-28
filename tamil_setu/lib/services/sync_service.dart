@@ -1,14 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+/// Reads and writes user stats to Firestore, with optional test injection.
 class SyncService {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore _db;
 
+  SyncService({FirebaseFirestore? db}) : _db = db ?? FirebaseFirestore.instance;
+
+  /// Stream the user stats document, defaulting to an empty map if missing.
   Stream<Map<String, dynamic>> userStatsStream(String uid) {
     return _db.collection('users').doc(uid).snapshots().map(
           (doc) => doc.data() ?? <String, dynamic>{},
         );
   }
 
+  /// Update XP and streak based on last activity, creating a user on first sync.
   Future<void> updateStreakAndXP(String uid, int xpGained) async {
     final userRef = _db.collection('users').doc(uid);
     final now = DateTime.now();

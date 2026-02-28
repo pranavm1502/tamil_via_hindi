@@ -3,6 +3,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tzdata;
 
+/// Handles daily reminder scheduling via local notifications.
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
   factory NotificationService() => _instance;
@@ -13,6 +14,7 @@ class NotificationService {
 
   static const int _dailyReminderId = 1001;
 
+  /// Initialize timezone data and the notifications plugin.
   Future<void> initialize() async {
     tzdata.initializeTimeZones();
 
@@ -23,12 +25,14 @@ class NotificationService {
     await _plugin.initialize(settings: initializationSettings);
   }
 
+  /// Request runtime notification permission on supported platforms.
   Future<void> requestPermissions() async {
     final android = _plugin.resolvePlatformSpecificImplementation<
         AndroidFlutterLocalNotificationsPlugin>();
     await android?.requestNotificationsPermission();
   }
 
+  /// Schedule a daily reminder at the given local time.
   Future<void> scheduleDailyReminder(TimeOfDay time) async {
     await requestPermissions();
 
@@ -52,6 +56,7 @@ class NotificationService {
     );
   }
 
+  /// Cancel the scheduled daily reminder.
   Future<void> cancelDailyReminder() async {
     await _plugin.cancel(id: _dailyReminderId);
   }
