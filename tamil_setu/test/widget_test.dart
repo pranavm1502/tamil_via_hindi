@@ -66,7 +66,7 @@ void main() {
 
     // This will now find 1 widget because we provided testLessons
     expect(find.text('Tamil Setu (हिंदी ➡️ தமிழ்)'), findsOneWidget);
-    expect(find.byType(Card), findsAtLeastNWidgets(1));
+    expect(find.text('Quick Review'), findsOneWidget);
   });
 
   testWidgets('Dashboard shows correct lesson titles and icons',
@@ -76,6 +76,11 @@ void main() {
     await waitForLoader(tester);
 
     // This will now find the play icons on our test lesson tile
+    await tester.scrollUntilVisible(
+      find.byIcon(Icons.play_arrow),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
     expect(find.byIcon(Icons.play_arrow), findsAtLeastNWidgets(1));
   });
 
@@ -84,9 +89,16 @@ void main() {
 
     await waitForLoader(tester);
 
-    // Tap the first lesson card found
-    final lessonFinder = find.byType(Card).first;
-    await tester.tap(lessonFinder);
+    // Tap the lesson tile by title (ensures we hit the correct card)
+    final lessonTitleFinder = find.text('Basics (Greet)');
+    final lessonTileFinder = find.ancestor(
+      of: lessonTitleFinder,
+      matching: find.byType(InkWell),
+    );
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, -800));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(lessonTitleFinder);
+    await tester.tap(lessonTileFinder);
 
     // Wait for navigation animation
     await tester.pumpAndSettle();

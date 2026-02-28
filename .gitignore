@@ -8,6 +8,7 @@
 .buildlog/
 .history
 .svn/
+.vscode/
 
 # Flutter/Dart/Pub
 .dart_tool/

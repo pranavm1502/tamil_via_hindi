@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+/// Visual states for the mascot illustration.
 enum MascotState { guide, celebrate, confused }
 
+/// Speech bubble + mascot illustration with a gentle entrance animation.
 class PeacockMascot extends StatelessWidget {
   final String message;
   final MascotState state;
@@ -24,7 +26,10 @@ class PeacockMascot extends StatelessWidget {
     }
 
     // TweenAnimationBuilder handles the "Pop-in" animation automatically
-    return TweenAnimationBuilder<double>(
+    return Semantics(
+      container: true,
+      label: 'Mascot message: $message',
+      child: TweenAnimationBuilder<double>(
       tween: Tween<double>(begin: 0.0, end: 1.0),
       duration: const Duration(milliseconds: 600),
       curve: Curves.easeOutBack, // Gives it a little "bounce"
@@ -75,11 +80,13 @@ class PeacockMascot extends StatelessWidget {
           Image.asset(
             assetPath,
             height: 90,
+            semanticLabel: 'Peacock mascot',
             // Fallback icon if the image fails to load
             errorBuilder: (context, error, stackTrace) =>
                 const Icon(Icons.star, size: 50, color: Colors.orange),
           ),
         ],
+      ),
       ),
     );
   }
