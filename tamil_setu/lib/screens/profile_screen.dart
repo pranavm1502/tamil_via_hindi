@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 import '../providers/progress_provider.dart';
 import '../providers/review_provider.dart';
 import '../services/auth_service.dart';
@@ -129,6 +130,14 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 16),
+              const _SectionTitle(title: 'Invite Friends'),
+              const SizedBox(height: 8),
+              _InviteFriendsCard(
+                message:
+                    'Learn Tamil with me on Tamil Setu!\n'
+                    'https://play.google.com/store/apps/details?id=com.boldesi.tamil_via_hindi',
+              ),
               const SizedBox(height: 24),
               FilledButton.icon(
                 onPressed: () => context.read<AuthService>().signOut(),
@@ -207,6 +216,50 @@ class _DailyGoalSettings extends StatelessWidget {
                 ],
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InviteFriendsCard extends StatelessWidget {
+  final String message;
+  const _InviteFriendsCard({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: Theme.of(context).cardColor,
+        border: Border.all(color: PeacockTheme.peacockBlue.withAlpha(40)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Invite a friend to join your streaks',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Copy your invite message and share it anywhere.',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const SizedBox(height: 12),
+          FilledButton.icon(
+            onPressed: () async {
+              await Clipboard.setData(ClipboardData(text: message));
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Invite copied to clipboard.')),
+                );
+              }
+            },
+            icon: const Icon(Icons.share),
+            label: const Text('Copy Invite'),
           ),
         ],
       ),

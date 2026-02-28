@@ -90,7 +90,11 @@ class _QuizViewState extends State<QuizView> {
     // 2. ADD THE CLOUD SYNC HERE
     final user = AuthService().currentUser;
     if (user != null && percentage >= 80) {
-      SyncService().updateStreakAndXP(user.uid, 50);
+      SyncService().updateStreakAndXP(
+        user.uid,
+        50,
+        displayName: user.displayName ?? user.email,
+      );
     }
     // Create review cards for this lesson (if not already created)
     Provider.of<ReviewProvider>(context, listen: false)
