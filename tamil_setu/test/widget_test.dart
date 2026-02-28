@@ -10,6 +10,7 @@ import 'package:tamil_setu/providers/progress_provider.dart';
 import 'package:tamil_setu/providers/theme_provider.dart';
 import 'package:tamil_setu/providers/content_provider.dart';
 import 'package:tamil_setu/providers/review_provider.dart';
+import 'package:tamil_setu/providers/mistake_provider.dart';
 import 'test_helpers.dart';
 import 'firebase_mock.dart';
 
@@ -54,6 +55,7 @@ void main() {
             create: (_) =>
                 ContentProvider()..setLessonsForTesting(testLessons)),
         ChangeNotifierProvider(create: (_) => ReviewProvider()),
+        ChangeNotifierProvider(create: (_) => MistakeProvider()),
       ],
       child: const TamilSetuApp(),
     );
@@ -66,7 +68,12 @@ void main() {
     await waitForLoader(tester);
 
     // This will now find 1 widget because we provided testLessons
-    expect(find.text('Tamil Setu (हिंदी ➡️ தமிழ்)'), findsOneWidget);
+    expect(find.text('Tamil Setu (Hindi -> Tamil)'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('Quick Review'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
     expect(find.text('Quick Review'), findsOneWidget);
   });
 

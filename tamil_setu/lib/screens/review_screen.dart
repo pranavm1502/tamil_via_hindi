@@ -10,6 +10,9 @@ import '../services/srs_service.dart';
 import '../widgets/peacock_mascot.dart';
 import 'lesson_screen.dart';
 import '../services/tts_service.dart';
+import '../services/auth_service.dart';
+import '../services/sync_service.dart';
+import '../services/xp_rules.dart';
 
 class ReviewScreen extends StatefulWidget {
   const ReviewScreen({super.key});
@@ -82,15 +85,43 @@ class _ReviewScreenState extends State<ReviewScreen> {
     });
 
     if (!reviewProvider.hasMoreCards) {
-      _showCompletionDialog();
+      await _showCompletionDialog();
     }
   }
 
-  void _showCompletionDialog() {
+  Future<void> _showCompletionDialog() async {
     final reviewProvider = context.read<ReviewProvider>();
     final cardsReviewed = reviewProvider.totalCardsInSession;
     final dailyGoal = reviewProvider.dailyGoalCards;
     final todayCount = reviewProvider.cardsReviewedToday;
+    final hitDailyGoal = todayCount >= dailyGoal;
+
+    if (cardsReviewed > 0) {
+      final user = AuthService().currentUser;
+      if (user != null) {
+        final xp = XpRules.xpForReviewSession(
+          cardsReviewed,
+          hitDailyGoal: hitDailyGoal,
+        );
+        final result = await SyncService().updateStreakAndXP(
+          user.uid,
+          xp,
+          displayName: user.displayName ?? user.email,
+        );
+        if (context.mounted) {
+          if (result.earnedFreeze) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Streak freeze earned!')),
+            );
+          } else if (result.consumedFreeze) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                  content: Text('Streak freeze used to keep your streak.')),
+            );
+          }
+        }
+      }
+    }
 
     showDialog(
       context: context,
@@ -101,7 +132,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const PeacockMascot(
-              message: 'Review Complete! बहुत अच्छा!',
+              message: 'Review complete! Great job!',
               state: MascotState.celebrate,
             ),
             const SizedBox(height: 24),

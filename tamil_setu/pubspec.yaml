@@ -38,6 +38,7 @@ dev_dependencies:
   plugin_platform_interface:
   fake_cloud_firestore: ^4.0.1
 
+  flutter_driver: any
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true

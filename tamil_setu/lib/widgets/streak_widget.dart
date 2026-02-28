@@ -30,6 +30,7 @@ class StreakWidget extends StatelessWidget {
         }
         final data = snapshot.data!.data() as Map<String, dynamic>?;
         final streak = data?['streak_count'] ?? 0;
+        final freezes = data?['streak_freezes'] ?? 0;
         return Semantics(
           container: true,
           label: 'Streak: $streak days',
@@ -65,9 +66,20 @@ class StreakWidget extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Chip(
-                      label: Text('$streak days'),
-                      backgroundColor: PeacockTheme.peacockGreen.withAlpha(60),
+                    Row(
+                      children: [
+                        Chip(
+                          label: Text('$streak days'),
+                          backgroundColor:
+                              PeacockTheme.peacockGreen.withAlpha(60),
+                        ),
+                        const SizedBox(width: 8),
+                        Chip(
+                          label: Text('Freezes: $freezes'),
+                          backgroundColor:
+                              PeacockTheme.peacockBlue.withAlpha(50),
+                        ),
+                      ],
                     ),
                   ],
                 ),

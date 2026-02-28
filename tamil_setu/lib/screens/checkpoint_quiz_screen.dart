@@ -9,8 +9,12 @@ import '../models/checkpoint.dart';
 import '../models/word_pair.dart';
 import '../providers/progress_provider.dart';
 import '../providers/content_provider.dart';
+import '../providers/mistake_provider.dart';
 import '../widgets/peacock_mascot.dart';
 import '../services/tts_service.dart';
+import '../services/auth_service.dart';
+import '../services/sync_service.dart';
+import '../services/xp_rules.dart';
 
 class CheckpointQuizScreen extends StatefulWidget {
   final Checkpoint checkpoint;
@@ -123,9 +127,25 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
       final currentWord = quizWords[currentIndex];
       if (answer == currentWord.tamil) {
         score++;
+      } else {
+        _recordMistake(currentWord);
       }
       _playAudio(currentWord);
     });
+  }
+
+  void _recordMistake(WordPair pair) {
+    final content = context.read<ContentProvider>();
+    for (int i = 0; i < content.lessons.length; i++) {
+      final lesson = content.lessons[i];
+      final index = lesson.words.indexWhere((word) {
+        return word.hindi == pair.hindi && word.tamil == pair.tamil;
+      });
+      if (index != -1) {
+        context.read<MistakeProvider>().addMistake(i, index);
+        return;
+      }
+    }
   }
 
   void _nextQuestion() {
@@ -151,6 +171,29 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
     Provider.of<ProgressProvider>(context, listen: false).saveCheckpointScore(
         widget.checkpoint.checkpointNumber, score, quizWords.length);
 
+    final user = AuthService().currentUser;
+    if (user != null && percentage >= 80) {
+      SyncService()
+          .updateStreakAndXP(
+            user.uid,
+            XpRules.checkpointPass,
+            displayName: user.displayName ?? user.email,
+          )
+          .then((result) {
+        if (!mounted) return;
+        if (result.earnedFreeze) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Streak freeze earned!')),
+          );
+        } else if (result.consumedFreeze) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Streak freeze used to keep your streak.')),
+          );
+        }
+      });
+    }
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -166,7 +209,7 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
                 PeacockMascot(
                   message: percentage >= 80
                       ? 'Checkpoint Passed! 🎉'
-                      : 'Keep practicing! थोड़ा और!',
+                      : 'Keep practicing! You are close.',
                   state: percentage >= 80
                       ? MascotState.celebrate
                       : MascotState.confused,

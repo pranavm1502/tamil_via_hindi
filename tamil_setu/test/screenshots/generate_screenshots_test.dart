@@ -20,9 +20,11 @@ import 'package:tamil_setu/providers/content_provider.dart';
 import 'package:tamil_setu/providers/progress_provider.dart';
 import 'package:tamil_setu/providers/theme_provider.dart';
 import 'package:tamil_setu/providers/review_provider.dart';
+import 'package:tamil_setu/providers/mistake_provider.dart';
 import 'package:tamil_setu/widgets/streak_widget.dart';
 import 'package:tamil_setu/widgets/peacock_mascot.dart';
 import 'package:tamil_setu/theme.dart';
+import 'package:tamil_setu/screens/mistakes_review_screen.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import '../firebase_mock.dart';
 
@@ -61,73 +63,90 @@ void main() {
     frameBuilder: ScreenshotFrame.androidTablet,
   );
 
-  const tablet10 = ScreenshotDevice(
-    platform: TargetPlatform.android,
-    resolution: Size(1600, 2560),
-    pixelRatio: 2.0,
-    goldenSubFolder: 'tenInchScreenshots/',
-    frameBuilder: ScreenshotFrame.androidTablet,
-  );
-
-  final deviceMap = {
-    'phone': GoldenScreenshotDevices.androidPhone.device,
-    'tablet7': tablet7,
-    'tablet10': tablet10,
-  };
-
-  // Mock Data to inject into ContentProvider
-  final mockLessons = [
-    Lesson(
-      level: 1,
-      title: 'Greetings',
-      description: 'Learn basic welcomes',
-      words: [
-        WordPair(
-            hindi: 'नमस्ते',
-            tamil: 'வணக்கம்',
-            pronunciation: 'Vanakkam',
-            audioPath: 'assets/audio/vanakkam.mp3'),
-        WordPair(
-            hindi: 'धन्यवाद',
-            tamil: 'நன்றி',
-            pronunciation: 'Nandri',
-            audioPath: 'assets/audio/nandri.mp3'),
-        WordPair(
-            hindi: 'कृपया',
-            tamil: 'தயவு செய்து',
-            pronunciation: 'Dayavu seidhu',
-            audioPath: 'assets/audio/please.mp3'),
-        WordPair(
-            hindi: 'क्षमा करें',
-            tamil: 'மன்னிக்கவும்',
-            pronunciation: 'Mannikkavum',
-            audioPath: 'assets/audio/sorry.mp3'),
-      ],
-    ),
-    Lesson(
-      level: 2,
-      title: 'Numbers',
-      description: 'Learn counting 1-10',
-      words: [
-        WordPair(
-            hindi: 'एक',
-            tamil: 'ஒன்று',
-            pronunciation: 'Ondru',
-            audioPath: 'assets/audio/one.mp3'),
-        WordPair(
-            hindi: 'दो',
-            tamil: 'இரண்டு',
-            pronunciation: 'Irandu',
-            audioPath: 'assets/audio/two.mp3'),
-        WordPair(
-            hindi: 'तीन',
-            tamil: 'மூன்று',
-            pronunciation: 'Moondru',
-            audioPath: 'assets/audio/three.mp3'),
-        WordPair(
-            hindi: 'चार',
-            tamil: 'நான்கு',
-            pronunciation: 'Naangu',
+                CustomScrollView(
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                PeacockTheme.peacockBlue.withAlpha(18),
+                                PeacockTheme.peacockGreen.withAlpha(18),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(
+                              color: PeacockTheme.peacockBlue.withAlpha(50),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withAlpha(14),
+                                blurRadius: 12,
+                                offset: const Offset(0, 6),
+                              ),
+                            ],
+                          ),
+                          child: const PeacockMascot(
+                            message: 'Hello! Ready to learn Tamil today?',
+                            imageSize: 150,
+                            fontSize: 17,
+                            bubblePadding: EdgeInsets.symmetric(
+                              horizontal: 18,
+                              vertical: 14,
+                            ),
+                            layout: MascotLayout.overlap,
+                            overlapInset: 140,
+                            imageOffset: Offset(14, 10),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: StreakWidget(auth: auth, firestore: firestore),
+                      ),
+                    ),
+                    const SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: _TodayPlanCard(),
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: _DailyGoalCard(),
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        child: _QuickActions(),
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: _ProgressHeader(
+                          totalLessons: contentProvider.lessons.length),
+                    ),
+                    const SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(16, 12, 16, 4),
+                        child: _SectionHeader(
+                          title: 'Lessons',
+                          subtitle: 'Start where you left off',
+                        ),
+                      ),
+                    ),
+                    _LessonsAndCheckpointsBuilder(
+                      lessons: contentProvider.lessons,
+                    ),
+                  ],
+                ),
             audioPath: 'assets/audio/four.mp3'),
       ],
     ),
@@ -158,7 +177,7 @@ void main() {
             audioPath: 'assets/audio/yellow.mp3'),
       ],
     ),
-  ];
+  ]
 
   final checkpoint = Checkpoint(
     checkpointNumber: 1,
@@ -231,6 +250,9 @@ Future<void> _takeAppScreenshot(WidgetTester tester, ScreenshotDevice device,
       ChangeNotifierProvider(create: (_) => ProgressProvider()),
       ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider.value(value: reviewProvider),
+      ChangeNotifierProvider(
+        create: (_) => MistakeProvider()..loadMistakes(),
+      ),
     ],
     child: Theme(
       data: ThemeData(
@@ -276,7 +298,7 @@ class DashboardScreenWithInjectedStreak extends StatelessWidget {
     final contentProvider = context.watch<ContentProvider>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tamil Setu (हिंदी ➡️ தமிழ்)'),
+        title: const Text('Tamil Setu (Hindi -> Tamil)'),
         centerTitle: true,
         elevation: 2,
         actions: const [
@@ -351,7 +373,7 @@ class DashboardScreenWithInjectedStreak extends StatelessWidget {
                             ],
                           ),
                           child: const PeacockMascot(
-                            message: 'नमस्कारम्! इन्द्रु तमिऴ् कर्कलामा?',
+                            message: 'Hello! Ready to learn Tamil today?',
                             imageSize: 150,
                             fontSize: 17,
                             bubblePadding: EdgeInsets.symmetric(
@@ -369,6 +391,12 @@ class DashboardScreenWithInjectedStreak extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         child: StreakWidget(auth: auth, firestore: firestore),
+                      ),
+                    ),
+                    const SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: _TodayPlanCard(),
                       ),
                     ),
                     SliverToBoxAdapter(
@@ -435,6 +463,7 @@ class _QuickActions extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = context.watch<User?>();
     final isSignedIn = user != null;
+    final mistakeCount = context.watch<MistakeProvider>().mistakeCount;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -468,21 +497,40 @@ class _QuickActions extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: isSignedIn
-                      ? () => Navigator.pushNamed(context, '/leaderboard')
+                  onPressed: mistakeCount == 0
+                      ? null
                       : () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                  'Sign in to view the leaderboard.'),
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const MistakesReviewScreen(),
                             ),
                           );
                         },
-                  icon: const Icon(Icons.leaderboard),
-                  label: const Text('Leaderboard'),
+                  icon: const Icon(Icons.refresh),
+                  label: Text(
+                    mistakeCount == 0
+                        ? 'Mistakes'
+                        : 'Mistakes ($mistakeCount)',
+                  ),
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            onPressed: isSignedIn
+                ? () => Navigator.pushNamed(context, '/leaderboard')
+                : () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Sign in to view the leaderboard.'),
+                      ),
+                    );
+                  },
+            icon: const Icon(Icons.leaderboard),
+            label: const Text('Leaderboard'),
           ),
           if (!isSignedIn) ...[
             const SizedBox(height: 8),
@@ -598,6 +646,175 @@ class _DailyGoalCard extends StatelessWidget {
       return 'in ${diff.inHours} hr';
     }
     return 'on ${dateTime.month}/${dateTime.day}';
+  }
+}
+
+class _TodayPlanCard extends StatelessWidget {
+  const _TodayPlanCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final review = context.watch<ReviewProvider>();
+    final mistakes = context.watch<MistakeProvider>();
+    final content = context.watch<ContentProvider>();
+    final progress = context.watch<ProgressProvider>();
+
+    final dueNow = review.dueCardCount;
+    final mistakeCount = mistakes.mistakeCount;
+    final nextLessonIndex = _findNextLesson(content.lessons, progress);
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: Theme.of(context).cardColor,
+        border: Border.all(color: PeacockTheme.peacockBlue.withAlpha(40)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("Today's Plan",
+                  style: Theme.of(context).textTheme.titleMedium),
+              Text('3 tasks', style: Theme.of(context).textTheme.bodySmall),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Finish one task to keep momentum.',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const SizedBox(height: 12),
+          _PlanRow(
+            icon: Icons.auto_awesome,
+            title: 'Review due cards',
+            subtitle: dueNow == 0
+                ? 'No cards due right now'
+                : '$dueNow card${dueNow == 1 ? '' : 's'} due now',
+            actionLabel: 'Review',
+            enabled: dueNow > 0,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ReviewScreen()),
+              );
+            },
+          ),
+          const SizedBox(height: 8),
+          _PlanRow(
+            icon: Icons.refresh,
+            title: 'Fix mistakes',
+            subtitle: mistakeCount == 0
+                ? 'No mistakes to revisit'
+                : '$mistakeCount to review',
+            actionLabel: 'Practice',
+            enabled: mistakeCount > 0,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MistakesReviewScreen(),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 8),
+          _PlanRow(
+            icon: Icons.play_arrow,
+            title: 'Continue lesson',
+            subtitle: nextLessonIndex == null
+                ? 'All lessons completed'
+                : content.lessons[nextLessonIndex].title,
+            actionLabel: 'Start',
+            enabled: nextLessonIndex != null,
+            onPressed: () {
+              if (nextLessonIndex == null) return;
+              final lesson = content.lessons[nextLessonIndex];
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LessonScreen(
+                    lesson: lesson,
+                    lessonIndex: nextLessonIndex,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  int? _findNextLesson(List<Lesson> lessons, ProgressProvider progress) {
+    for (var i = 0; i < lessons.length; i++) {
+      if (!progress.isLessonLocked(i) && !progress.isLessonCompleted(i)) {
+        return i;
+      }
+    }
+    return null;
+  }
+}
+
+class _PlanRow extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final String actionLabel;
+  final bool enabled;
+  final VoidCallback onPressed;
+
+  const _PlanRow({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.actionLabel,
+    required this.enabled,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: PeacockTheme.peacockBlue.withAlpha(12),
+        border: Border.all(color: PeacockTheme.peacockBlue.withAlpha(30)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: PeacockTheme.peacockBlue),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: Theme.of(context).textTheme.titleSmall),
+                const SizedBox(height: 2),
+                Text(subtitle, style: Theme.of(context).textTheme.bodySmall),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          SizedBox(
+            height: 36,
+            child: enabled
+                ? FilledButton(
+                    onPressed: onPressed,
+                    child: Text(actionLabel),
+                  )
+                : OutlinedButton(
+                    onPressed: null,
+                    child: Text(actionLabel),
+                  ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

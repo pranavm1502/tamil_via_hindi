@@ -124,6 +124,9 @@ class ReviewStorageService {
           'cardsReviewedToday': 0,
           'dailyGoalCards': 10,
           'reminderTime': null,
+          'streakFreezes': 2,
+          'lastFreezeDate': null,
+          'lastFreezeAwardStreak': 0,
         };
       }
 
@@ -140,6 +143,9 @@ class ReviewStorageService {
         'cardsReviewedToday': 0,
         'dailyGoalCards': 10,
         'reminderTime': null,
+        'streakFreezes': 2,
+        'lastFreezeDate': null,
+        'lastFreezeAwardStreak': 0,
       };
     }
   }
@@ -171,14 +177,38 @@ class ReviewStorageService {
         stats['currentStreak'] = (stats['currentStreak'] ?? 0) + 1;
         stats['lastReviewDate'] = today.toIso8601String();
 
+        final lastAwardStreak = (stats['lastFreezeAwardStreak'] ?? 0) as int;
+        if (stats['currentStreak'] == 3 && lastAwardStreak != 3) {
+          stats['streakFreezes'] = (stats['streakFreezes'] ?? 0) + 1;
+          stats['lastFreezeAwardStreak'] = 3;
+        }
+
         // Update longest streak if needed
         if (stats['currentStreak'] > (stats['longestStreak'] ?? 0)) {
           stats['longestStreak'] = stats['currentStreak'];
         }
       } else {
-        // Streak broken - reset to 1
-        stats['currentStreak'] = 1;
-        stats['lastReviewDate'] = today.toIso8601String();
+        final freezes = (stats['streakFreezes'] ?? 0) as int;
+        final lastFreezeStr = stats['lastFreezeDate'] as String?;
+        final lastFreezeDay = lastFreezeStr == null
+            ? null
+            : DateTime.parse(lastFreezeStr);
+        final usedFreezeToday = lastFreezeDay != null &&
+            lastFreezeDay.year == today.year &&
+            lastFreezeDay.month == today.month &&
+            lastFreezeDay.day == today.day;
+
+        if (freezes > 0 && !usedFreezeToday) {
+          // Consume a freeze to preserve the current streak.
+          stats['streakFreezes'] = freezes - 1;
+          stats['lastFreezeDate'] = today.toIso8601String();
+          stats['lastReviewDate'] = today.toIso8601String();
+        } else {
+          // Streak broken - reset to 1
+          stats['currentStreak'] = 1;
+          stats['lastReviewDate'] = today.toIso8601String();
+          stats['lastFreezeAwardStreak'] = 0;
+        }
       }
     }
 

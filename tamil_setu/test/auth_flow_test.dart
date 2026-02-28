@@ -7,6 +7,7 @@ import 'package:tamil_setu/providers/content_provider.dart';
 import 'package:tamil_setu/providers/progress_provider.dart';
 import 'package:tamil_setu/providers/theme_provider.dart';
 import 'package:tamil_setu/providers/review_provider.dart';
+import 'package:tamil_setu/providers/mistake_provider.dart';
 import 'package:tamil_setu/services/auth_service.dart';
 import 'firebase_mock.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -61,6 +62,7 @@ void main() {
             ChangeNotifierProvider(create: (_) => ProgressProvider()),
             ChangeNotifierProvider(create: (_) => ThemeProvider()),
             ChangeNotifierProvider(create: (_) => ReviewProvider()),
+            ChangeNotifierProvider(create: (_) => MistakeProvider()),
           ],
           child: const MaterialApp(home: DashboardScreen()),
         ),
@@ -92,6 +94,7 @@ void main() {
             ChangeNotifierProvider(create: (_) => ProgressProvider()),
             ChangeNotifierProvider(create: (_) => ThemeProvider()),
             ChangeNotifierProvider(create: (_) => ReviewProvider()),
+            ChangeNotifierProvider(create: (_) => MistakeProvider()),
           ],
           child: const MaterialApp(home: DashboardScreen()),
         ),
