@@ -20,6 +20,9 @@ class AuthService {
   FirebaseAuth get auth => _auth ?? FirebaseAuth.instance;
   GoogleSignIn get googleSignIn => _googleSignIn ?? GoogleSignIn.instance;
 
+  // Expose the current user for centralized access
+  User? get currentUser => _auth?.currentUser;
+
   // FIX: Return an empty stream if _auth is null (during tests)
   // This prevents the native Pigeon channel crashes
   Stream<User?> get userStream =>
