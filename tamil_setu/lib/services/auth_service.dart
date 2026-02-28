@@ -78,10 +78,16 @@ class AuthService {
       return SignInResult(
         errorMessage: 'Google sign-in failed (${e.code}).',
       );
+    } on FirebaseAuthException catch (e) {
+      debugPrint('Firebase Auth Exception: ${e.code}');
+      final details = e.message?.isNotEmpty == true ? ' ${e.message}' : '';
+      return SignInResult(
+        errorMessage: 'Firebase auth failed (${e.code}).$details',
+      );
     } catch (e) {
       debugPrint('General Sign-in Error: $e');
-      return const SignInResult(
-        errorMessage: 'Sign-in failed. Please try again.',
+      return SignInResult(
+        errorMessage: 'Sign-in failed. ${e.toString()}',
       );
     }
   }
