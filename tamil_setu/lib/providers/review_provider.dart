@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/review_card.dart';
 import '../services/srs_service.dart';
 import '../services/review_storage_service.dart';
+import '../services/notification_service.dart';
 
 /// Provider for managing spaced repetition review state.
 class ReviewProvider with ChangeNotifier {
@@ -142,6 +143,53 @@ class ReviewProvider with ChangeNotifier {
   /// Get streak information
   int get currentStreak => _stats['currentStreak'] ?? 0;
   int get longestStreak => _stats['longestStreak'] ?? 0;
+
+  /// Daily goal settings
+  int get dailyGoalCards => _stats['dailyGoalCards'] ?? 10;
+  int get cardsReviewedToday => _stats['cardsReviewedToday'] ?? 0;
+  String? get reminderTime => _stats['reminderTime'] as String?;
+  TimeOfDay? get reminderTimeOfDay {
+    final value = reminderTime;
+    if (value == null) return null;
+    final parts = value.split(':');
+    if (parts.length != 2) return null;
+    final hour = int.tryParse(parts[0]);
+    final minute = int.tryParse(parts[1]);
+    if (hour == null || minute == null) return null;
+    return TimeOfDay(hour: hour, minute: minute);
+  }
+
+  /// Earliest scheduled review time across all cards
+  DateTime? get nextReviewAt {
+    if (_allCards.isEmpty) return null;
+    DateTime next = _allCards.first.nextReview;
+    for (final card in _allCards) {
+      if (card.nextReview.isBefore(next)) {
+        next = card.nextReview;
+      }
+    }
+    return next;
+  }
+
+  Future<void> setDailyGoalCards(int value) async {
+    _stats['dailyGoalCards'] = value;
+    await _storageService.saveReviewStats(_stats);
+    notifyListeners();
+  }
+
+  Future<void> setReminderTime(TimeOfDay? value) async {
+    if (value == null) {
+      _stats['reminderTime'] = null;
+      await NotificationService().cancelDailyReminder();
+    } else {
+      final hours = value.hour.toString().padLeft(2, '0');
+      final minutes = value.minute.toString().padLeft(2, '0');
+      _stats['reminderTime'] = '$hours:$minutes';
+      await NotificationService().scheduleDailyReminder(value);
+    }
+    await _storageService.saveReviewStats(_stats);
+    notifyListeners();
+  }
 
   /// Predict when a card would be due after a given quality rating
   DateTime predictNextReview(ReviewCard card, ReviewQuality quality) {
