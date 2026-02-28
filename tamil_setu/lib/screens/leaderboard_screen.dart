@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../theme.dart';
 
+/// Displays ranked learners by XP from Firestore.
 class LeaderboardScreen extends StatelessWidget {
   const LeaderboardScreen({super.key});
 
@@ -93,6 +94,7 @@ class LeaderboardScreen extends StatelessWidget {
   }
 }
 
+/// Decorative header summarizing the leaderboard count.
 class _LeaderboardHeader extends StatelessWidget {
   final int count;
   const _LeaderboardHeader({required this.count});

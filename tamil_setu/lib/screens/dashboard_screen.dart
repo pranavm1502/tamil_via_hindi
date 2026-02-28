@@ -14,6 +14,7 @@ import 'lesson_screen.dart';
 import 'review_screen.dart';
 import 'checkpoint_quiz_screen.dart';
 
+/// Main entry screen showing progress, streak, and lesson list.
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
@@ -167,6 +168,7 @@ class DashboardScreen extends StatelessWidget {
   }
 }
 
+/// Decorative background circle used in the dashboard backdrop.
 class _OrnamentCircle extends StatelessWidget {
   final double size;
   final Color color;
@@ -187,6 +189,7 @@ class _OrnamentCircle extends StatelessWidget {
   }
 }
 
+/// High-priority actions for review and leaderboard access.
 class _QuickActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -230,6 +233,7 @@ class _QuickActions extends StatelessWidget {
   }
 }
 
+/// Section label with a subtle visual accent bar.
 class _SectionHeader extends StatelessWidget {
   final String title;
   final String subtitle;
@@ -262,6 +266,7 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
+/// Call-to-action card to encourage sign-in for progress sync.
 class _SignInCard extends StatelessWidget {
   const _SignInCard();
 

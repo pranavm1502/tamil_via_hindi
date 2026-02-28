@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+/// Visual states for the mascot illustration.
 enum MascotState { guide, celebrate, confused }
 
+/// Speech bubble + mascot illustration with a gentle entrance animation.
 class PeacockMascot extends StatelessWidget {
   final String message;
   final MascotState state;

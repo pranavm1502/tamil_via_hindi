@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../theme.dart';
 
 
+/// Shows the signed-in user's streak with a subtle animated card.
 class StreakWidget extends StatelessWidget {
   final FirebaseAuth auth;
   final FirebaseFirestore firestore;
