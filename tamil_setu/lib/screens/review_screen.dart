@@ -16,11 +16,26 @@ class ReviewScreen extends StatefulWidget {
 class _ReviewScreenState extends State<ReviewScreen> {
   bool _showAnswer = false;
   final AudioPlayer _audioPlayer = AudioPlayer();
+  bool _sessionInitialized = false;
 
   @override
   void dispose() {
     _audioPlayer.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted || _sessionInitialized) return;
+      _sessionInitialized = true;
+      final reviewProvider = context.read<ReviewProvider>();
+      await reviewProvider.loadReviewCards();
+      if (reviewProvider.allCards.isNotEmpty) {
+        reviewProvider.startReviewSession();
+      }
+    });
   }
 
   void _playAudio(String path) async {
