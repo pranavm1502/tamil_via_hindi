@@ -146,7 +146,12 @@ class ReviewProvider with ChangeNotifier {
 
   /// Daily goal settings
   int get dailyGoalCards => _stats['dailyGoalCards'] ?? 10;
-  int get cardsReviewedToday => _stats['cardsReviewedToday'] ?? 0;
+  int get cardsReviewedToday {
+    final base = _stats['cardsReviewedToday'] ?? 0;
+    final lastReviewStr = _stats['lastReviewDate'] as String?;
+    final baseToday = _isSameDay(lastReviewStr) ? base : 0;
+    return hasMoreCards ? baseToday + _currentCardIndex : baseToday;
+  }
   String? get reminderTime => _stats['reminderTime'] as String?;
   TimeOfDay? get reminderTimeOfDay {
     final value = reminderTime;
@@ -233,6 +238,15 @@ class ReviewProvider with ChangeNotifier {
     final lastReview = DateTime.parse(lastReviewStr);
     final today = DateTime.now();
 
+    return lastReview.year == today.year &&
+        lastReview.month == today.month &&
+        lastReview.day == today.day;
+  }
+
+  bool _isSameDay(String? lastReviewStr) {
+    if (lastReviewStr == null) return false;
+    final lastReview = DateTime.parse(lastReviewStr);
+    final today = DateTime.now();
     return lastReview.year == today.year &&
         lastReview.month == today.month &&
         lastReview.day == today.day;

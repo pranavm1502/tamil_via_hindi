@@ -5,6 +5,7 @@ import '../providers/review_provider.dart';
 import '../providers/content_provider.dart';
 import '../services/srs_service.dart';
 import '../widgets/peacock_mascot.dart';
+import 'lesson_screen.dart';
 
 class ReviewScreen extends StatefulWidget {
   const ReviewScreen({super.key});
@@ -16,11 +17,26 @@ class ReviewScreen extends StatefulWidget {
 class _ReviewScreenState extends State<ReviewScreen> {
   bool _showAnswer = false;
   final AudioPlayer _audioPlayer = AudioPlayer();
+  bool _sessionInitialized = false;
 
   @override
   void dispose() {
     _audioPlayer.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted || _sessionInitialized) return;
+      _sessionInitialized = true;
+      final reviewProvider = context.read<ReviewProvider>();
+      await reviewProvider.loadReviewCards();
+      if (reviewProvider.allCards.isNotEmpty) {
+        reviewProvider.startReviewSession();
+      }
+    });
   }
 
   void _playAudio(String path) async {
@@ -50,6 +66,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
   void _showCompletionDialog() {
     final reviewProvider = context.read<ReviewProvider>();
     final cardsReviewed = reviewProvider.totalCardsInSession;
+    final dailyGoal = reviewProvider.dailyGoalCards;
+    final todayCount = reviewProvider.cardsReviewedToday;
 
     showDialog(
       context: context,
@@ -79,6 +97,11 @@ class _ReviewScreenState extends State<ReviewScreen> {
                   color: Colors.orange,
                 ),
               ),
+            const SizedBox(height: 8),
+            Text(
+              'Daily goal: $todayCount / $dailyGoal',
+              style: const TextStyle(fontSize: 16, color: Colors.black54),
+            ),
           ],
         ),
         actions: [
@@ -105,6 +128,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
       body: Consumer2<ReviewProvider, ContentProvider>(
         builder: (context, reviewProvider, contentProvider, child) {
           if (!reviewProvider.hasMoreCards) {
+            final lessons = contentProvider.lessons;
+            final hasLessons = lessons.isNotEmpty;
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -115,14 +140,31 @@ class _ReviewScreenState extends State<ReviewScreen> {
                   ),
                   const SizedBox(height: 20),
                   const Text(
-                    'Come back later for more reviews.',
+                    'Finish a lesson quiz to create review cards.',
                     style: TextStyle(fontSize: 16),
+                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 20),
-                  FilledButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Back to Dashboard'),
-                  ),
+                  if (hasLessons)
+                    FilledButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LessonScreen(
+                              lesson: lessons.first,
+                              lessonIndex: 0,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Text('Start ${lessons.first.title}'),
+                    ),
+                  if (!hasLessons)
+                    FilledButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Back to Dashboard'),
+                    ),
                 ],
               ),
             );
@@ -267,68 +309,97 @@ class _ReviewScreenState extends State<ReviewScreen> {
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _RatingButton(
-                            label: 'Again',
-                            color: Colors.red,
-                            interval: '10m',
-                            onPressed: () =>
-                                _handleReview(context, ReviewQuality.again),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: _RatingButton(
-                            label: 'Hard',
-                            color: Colors.orange,
-                            interval: _getIntervalText(
-                              reviewProvider.predictNextReview(
-                                currentCard,
-                                ReviewQuality.hard,
-                              ),
-                            ),
-                            onPressed: () =>
-                                _handleReview(context, ReviewQuality.hard),
-                          ),
-                        ),
-                      ],
+                    const SizedBox(height: 12),
+                    Text(
+                      'Pick the closest match',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall
+                          ?.copyWith(color: Colors.black54),
                     ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _RatingButton(
-                            label: 'Good',
-                            color: Colors.green,
-                            interval: _getIntervalText(
-                              reviewProvider.predictNextReview(
-                                currentCard,
-                                ReviewQuality.good,
+                    const SizedBox(height: 16),
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final buttonWidth =
+                            (constraints.maxWidth - 12) / 2;
+                        return Wrap(
+                          spacing: 12,
+                          runSpacing: 12,
+                          children: [
+                            SizedBox(
+                              width: buttonWidth,
+                              child: _RatingButton(
+                                label: 'Again',
+                                icon: Icons.refresh,
+                                color: Colors.red,
+                                interval: 'Next: 10m',
+                                onPressed: () => _handleReview(
+                                  context,
+                                  ReviewQuality.again,
+                                ),
                               ),
                             ),
-                            onPressed: () =>
-                                _handleReview(context, ReviewQuality.good),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: _RatingButton(
-                            label: 'Easy',
-                            color: Colors.blue,
-                            interval: _getIntervalText(
-                              reviewProvider.predictNextReview(
-                                currentCard,
-                                ReviewQuality.easy,
+                            SizedBox(
+                              width: buttonWidth,
+                              child: _RatingButton(
+                                label: 'Hard',
+                                icon: Icons.whatshot,
+                                color: Colors.orange,
+                                interval: _getIntervalText(
+                                  reviewProvider.predictNextReview(
+                                    currentCard,
+                                    ReviewQuality.hard,
+                                  ),
+                                  prefix: 'Next: ',
+                                ),
+                                onPressed: () => _handleReview(
+                                  context,
+                                  ReviewQuality.hard,
+                                ),
                               ),
                             ),
-                            onPressed: () =>
-                                _handleReview(context, ReviewQuality.easy),
-                          ),
-                        ),
-                      ],
+                            SizedBox(
+                              width: buttonWidth,
+                              child: _RatingButton(
+                                label: 'Good',
+                                icon: Icons.check_circle,
+                                color: Colors.green,
+                                interval: _getIntervalText(
+                                  reviewProvider.predictNextReview(
+                                    currentCard,
+                                    ReviewQuality.good,
+                                  ),
+                                  prefix: 'Next: ',
+                                ),
+                                onPressed: () => _handleReview(
+                                  context,
+                                  ReviewQuality.good,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: buttonWidth,
+                              child: _RatingButton(
+                                label: 'Easy',
+                                icon: Icons.star,
+                                color: Colors.blue,
+                                interval: _getIntervalText(
+                                  reviewProvider.predictNextReview(
+                                    currentCard,
+                                    ReviewQuality.easy,
+                                  ),
+                                  prefix: 'Next: ',
+                                ),
+                                onPressed: () => _handleReview(
+                                  context,
+                                  ReviewQuality.easy,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
                   ] else ...[
                     FilledButton(
@@ -354,30 +425,32 @@ class _ReviewScreenState extends State<ReviewScreen> {
     );
   }
 
-  String _getIntervalText(DateTime nextReview) {
+  String _getIntervalText(DateTime nextReview, {String prefix = ''}) {
     final now = DateTime.now();
     final difference = nextReview.difference(now);
 
     if (difference.inDays > 0) {
-      return '${difference.inDays}d';
+      return '$prefix${difference.inDays}d';
     } else if (difference.inHours > 0) {
-      return '${difference.inHours}h';
+      return '$prefix${difference.inHours}h';
     } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes}m';
+      return '$prefix${difference.inMinutes}m';
     } else {
-      return 'now';
+      return '${prefix}now';
     }
   }
 }
 
 class _RatingButton extends StatelessWidget {
   final String label;
+  final IconData icon;
   final Color color;
   final String interval;
   final VoidCallback onPressed;
 
   const _RatingButton({
     required this.label,
+    required this.icon,
     required this.color,
     required this.interval,
     required this.onPressed,
@@ -385,30 +458,39 @@ class _RatingButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OutlinedButton(
+    return FilledButton.tonal(
       onPressed: onPressed,
-      style: OutlinedButton.styleFrom(
-        side: BorderSide(color: color, width: 2),
-        padding: const EdgeInsets.symmetric(vertical: 16),
+      style: FilledButton.styleFrom(
+        backgroundColor: color.withAlpha(28),
+        foregroundColor: color,
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+        shape: const StadiumBorder(),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: color,
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            interval,
-            style: TextStyle(
-              color: color.withAlpha(179),
-              fontSize: 12,
-            ),
+          Icon(icon, size: 18),
+          const SizedBox(width: 8),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                interval,
+                style: TextStyle(
+                  color: color.withAlpha(179),
+                  fontSize: 12,
+                ),
+              ),
+            ],
           ),
         ],
       ),
