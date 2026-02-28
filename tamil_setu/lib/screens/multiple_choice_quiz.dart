@@ -73,6 +73,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
       final cleanPath = path.replaceFirst('assets/', '');
       // Set speed to 20% faster
       await _audioPlayer!.setPlaybackRate(1.20);
+      await _audioPlayer!.stop();
       await _audioPlayer!.play(AssetSource(cleanPath));
     } catch (e) {
       debugPrint('Audio Error: $e');
