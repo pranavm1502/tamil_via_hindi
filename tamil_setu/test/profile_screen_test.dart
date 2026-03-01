@@ -8,6 +8,7 @@ import 'package:tamil_setu/providers/review_provider.dart';
 import 'package:tamil_setu/services/auth_service.dart';
 import 'package:tamil_setu/services/review_storage_service.dart';
 import 'package:tamil_setu/services/sync_service.dart';
+import 'package:tamil_setu/providers/privacy_provider.dart';
 import 'firebase_mock.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -45,6 +46,14 @@ void main() {
     final review = ReviewProvider();
     await review.loadReviewCards();
 
+    final privacy = PrivacyProvider();
+    await privacy.completeOnboarding(birthYear: 2000);
+    await privacy.completeAdultConsent(
+      trackingAllowed: true,
+      socialEnabled: true,
+      notificationsEnabled: true,
+    );
+
     final user = MockUser();
     final auth = AuthService(auth: MockFirebaseAuth(user));
 
@@ -57,6 +66,7 @@ void main() {
             Provider<AuthService>.value(value: auth),
             ChangeNotifierProvider.value(value: progress),
             ChangeNotifierProvider.value(value: review),
+            ChangeNotifierProvider.value(value: privacy),
           ],
           child: MaterialApp(
             home: ProfileScreen(syncService: sync),

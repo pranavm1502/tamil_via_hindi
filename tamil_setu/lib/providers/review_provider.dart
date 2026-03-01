@@ -216,6 +216,13 @@ class ReviewProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> disableReminders() async {
+    _stats['reminderTime'] = null;
+    await NotificationService().cancelDailyReminder();
+    await _storageService.saveReviewStats(_stats);
+    notifyListeners();
+  }
+
   /// Predict when a card would be due after a given quality rating
   DateTime predictNextReview(ReviewCard card, ReviewQuality quality) {
     return _srsService.predictNextReview(card, quality);

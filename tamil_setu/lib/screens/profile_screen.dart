@@ -8,6 +8,7 @@ import '../services/auth_service.dart';
 import '../services/avatar_service.dart';
 import '../services/local_name_service.dart';
 import '../services/sync_service.dart';
+import '../providers/privacy_provider.dart';
 import '../theme.dart';
 
 const List<String> _tagAdjectives = [
@@ -97,6 +98,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final user = context.watch<User?>();
     final progress = context.watch<ProgressProvider>();
     final review = context.watch<ReviewProvider>();
+    final privacy = context.watch<PrivacyProvider>();
 
     if (user == null) {
       return Scaffold(
@@ -248,7 +250,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 16),
               const _SectionTitle(title: 'Daily Goal & Reminders'),
               const SizedBox(height: 8),
-              _DailyGoalSettings(review: review),
+              _DailyGoalSettings(
+                review: review,
+                notificationsEnabled: privacy.notificationsEnabled,
+              ),
               const SizedBox(height: 16),
               const _SectionTitle(title: 'Achievements'),
               const SizedBox(height: 8),
@@ -305,7 +310,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 class _DailyGoalSettings extends StatelessWidget {
   final ReviewProvider review;
-  const _DailyGoalSettings({required this.review});
+  final bool notificationsEnabled;
+  const _DailyGoalSettings({
+    required this.review,
+    required this.notificationsEnabled,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -346,28 +355,37 @@ class _DailyGoalSettings extends StatelessWidget {
               Row(
                 children: [
                   TextButton(
-                    onPressed: reminder == null
+                    onPressed: !notificationsEnabled || reminder == null
                       ? null
                       : () => review.setReminderTime(null),
                     child: const Text('Clear'),
                   ),
                   TextButton(
-                    onPressed: () async {
-                      final now = TimeOfDay.now();
-                      final picked = await showTimePicker(
-                        context: context,
-                        initialTime: now,
-                      );
-                      if (picked != null) {
-                        await review.setReminderTime(picked);
-                      }
-                    },
+                    onPressed: !notificationsEnabled
+                        ? null
+                        : () async {
+                            final now = TimeOfDay.now();
+                            final picked = await showTimePicker(
+                              context: context,
+                              initialTime: now,
+                            );
+                            if (picked != null) {
+                              await review.setReminderTime(picked);
+                            }
+                          },
                     child: const Text('Set time'),
                   ),
                 ],
               ),
             ],
           ),
+          if (!notificationsEnabled) ...[
+            const SizedBox(height: 6),
+            Text(
+              'Reminders are disabled by privacy settings.',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
         ],
       ),
     );

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
+import '../providers/privacy_provider.dart';
 import '../theme.dart';
 
 /// Displays ranked learners by XP from Firestore.
@@ -9,6 +11,22 @@ class LeaderboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final privacy = context.watch<PrivacyProvider>();
+    if (!privacy.socialEnabled) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Leaderboard')),
+        body: const Center(
+          child: Padding(
+            padding: EdgeInsets.all(24),
+            child: Text(
+              'Leaderboard is unavailable in Child Mode.',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      );
+    }
+
     final resolvedFirestore = firestore ?? FirebaseFirestore.instance;
 
     return DefaultTabController(

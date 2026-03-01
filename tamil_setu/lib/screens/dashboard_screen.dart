@@ -9,6 +9,7 @@ import '../providers/progress_provider.dart';
 import '../providers/review_provider.dart';
 import '../providers/mistake_provider.dart';
 import '../providers/theme_provider.dart';
+import '../providers/privacy_provider.dart';
 import '../widgets/peacock_mascot.dart';
 import '../widgets/streak_widget.dart';
 import '../services/avatar_service.dart';
@@ -48,6 +49,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     final contentProvider = context.watch<ContentProvider>();
     final user = context.watch<User?>();
+    final privacy = context.watch<PrivacyProvider>();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -60,13 +62,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
         centerTitle: true,
         elevation: 2,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.leaderboard),
-            tooltip: 'Leaderboard',
-            onPressed: () {
-              Navigator.pushNamed(context, '/leaderboard');
-            },
-          ),
+          if (privacy.socialEnabled)
+            IconButton(
+              icon: const Icon(Icons.leaderboard),
+              tooltip: 'Leaderboard',
+              onPressed: () {
+                Navigator.pushNamed(context, '/leaderboard');
+              },
+            ),
           if (user != null) ...[
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
