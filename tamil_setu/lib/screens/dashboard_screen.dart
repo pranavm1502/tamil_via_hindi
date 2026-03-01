@@ -164,9 +164,9 @@ class DashboardScreen extends StatelessWidget {
                           child: _SignInCard(),
                         ),
                       ),
-                    SliverToBoxAdapter(
+                    const SliverToBoxAdapter(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        padding: EdgeInsets.symmetric(vertical: 8),
                         child: StreakWidget(),
                       ),
                     ),

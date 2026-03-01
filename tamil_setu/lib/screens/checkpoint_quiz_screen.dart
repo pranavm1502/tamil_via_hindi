@@ -329,15 +329,24 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              'Question ${currentIndex + 1} / ${quizWords.length}',
-                              style: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            Expanded(
+                              child: Text(
+                                'Question ${currentIndex + 1} / ${quizWords.length}',
+                                style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                            Text(
-                              widget.checkpoint.lessonRange,
-                              style: const TextStyle(
-                                  fontSize: 14, color: Colors.grey),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                widget.checkpoint.lessonRange,
+                                style: const TextStyle(
+                                    fontSize: 14, color: Colors.grey),
+                                textAlign: TextAlign.right,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ],
                         ),

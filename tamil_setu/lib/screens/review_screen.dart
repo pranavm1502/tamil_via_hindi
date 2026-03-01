@@ -108,20 +108,21 @@ class _ReviewScreenState extends State<ReviewScreen> {
           xp,
           displayName: user.displayName ?? user.email,
         );
-        if (context.mounted) {
-          if (result.earnedFreeze) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Streak freeze earned!')),
-            );
-          } else if (result.consumedFreeze) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                  content: Text('Streak freeze used to keep your streak.')),
-            );
-          }
+        if (!mounted) return;
+        if (result.earnedFreeze) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Streak freeze earned!')),
+          );
+        } else if (result.consumedFreeze) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Streak freeze used to keep your streak.')),
+          );
         }
       }
     }
+
+    if (!context.mounted) return;
 
     showDialog(
       context: context,

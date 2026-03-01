@@ -38,7 +38,6 @@ dev_dependencies:
   plugin_platform_interface:
   fake_cloud_firestore: ^4.0.1
 
-  flutter_driver: any
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
@@ -51,6 +50,8 @@ flutter:
   assets:
     - assets/audio/
     - assets/data/master_content.json
+    - assets/data/sentences.json
+    - assets/data/sentences.schema.json
     - assets/images/
   fonts:
     - family: NotoSansHindi

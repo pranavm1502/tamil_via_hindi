@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tamil Setu sentence dataset",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["hindi", "tamil", "pronunciation", "audio_path", "tags"],
+    "properties": {
+      "hindi": { "type": "string" },
+      "tamil": { "type": "string" },
+      "pronunciation": { "type": "string" },
+      "audio_path": { "type": "string" },
+      "tags": {
+        "type": "array",
+        "items": { "type": "string" }
+      }
+    }
+  }
+}

@@ -11,6 +11,7 @@ import 'package:tamil_setu/providers/theme_provider.dart';
 import 'package:tamil_setu/providers/content_provider.dart';
 import 'package:tamil_setu/providers/review_provider.dart';
 import 'package:tamil_setu/providers/mistake_provider.dart';
+import 'package:tamil_setu/providers/sentence_provider.dart';
 import 'test_helpers.dart';
 import 'firebase_mock.dart';
 
@@ -56,6 +57,7 @@ void main() {
                 ContentProvider()..setLessonsForTesting(testLessons)),
         ChangeNotifierProvider(create: (_) => ReviewProvider()),
         ChangeNotifierProvider(create: (_) => MistakeProvider()),
+        ChangeNotifierProvider(create: (_) => SentenceProvider()),
       ],
       child: const TamilSetuApp(),
     );
@@ -114,5 +116,6 @@ void main() {
     expect(find.text('Learn'), findsOneWidget);
     expect(find.text('Flashcards'), findsOneWidget);
     expect(find.text('MCQ'), findsOneWidget);
+    expect(find.text('Build'), findsOneWidget);
   });
 }

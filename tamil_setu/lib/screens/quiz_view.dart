@@ -131,13 +131,14 @@ class _QuizViewState extends State<QuizView> {
         XpRules.lessonPass,
         displayName: user.displayName ?? user.email,
       );
-      if (mounted) {
-        _showFreezeToast(context, result);
-      }
+      if (!mounted) return;
+      _showFreezeToast(context, result);
     }
     // Create review cards for this lesson (if not already created)
     Provider.of<ReviewProvider>(context, listen: false)
         .createCardsForLesson(widget.lessonIndex, widget.words.length);
+
+    if (!mounted) return;
 
     showDialog(
       context: context,

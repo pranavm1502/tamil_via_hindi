@@ -5,6 +5,7 @@ import 'package:tamil_setu/providers/progress_provider.dart';
 import 'package:tamil_setu/providers/content_provider.dart';
 import 'package:tamil_setu/providers/review_provider.dart';
 import 'package:tamil_setu/providers/mistake_provider.dart';
+import 'package:tamil_setu/providers/sentence_provider.dart';
 import 'package:tamil_setu/models/lesson.dart';
 import 'package:tamil_setu/models/word_pair.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -82,6 +83,9 @@ Widget makeTestableWidget({required Widget child}) {
       ),
       ChangeNotifierProvider(
         create: (_) => MistakeProvider()..loadMistakes(),
+      ),
+      ChangeNotifierProvider(
+        create: (_) => SentenceProvider()..loadSentences(),
       ),
     ],
     child: child,
