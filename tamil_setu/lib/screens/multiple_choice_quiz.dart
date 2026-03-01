@@ -8,10 +8,12 @@ import 'package:confetti/confetti.dart';
 import '../models/word_pair.dart';
 import '../providers/progress_provider.dart';
 import '../providers/review_provider.dart';
+import '../providers/mistake_provider.dart';
 import '../widgets/peacock_mascot.dart';
 import 'package:tamil_setu/services/auth_service.dart';
 import '../services/sync_service.dart';
 import '../services/tts_service.dart';
+import '../services/xp_rules.dart';
 
 class MultipleChoiceQuiz extends StatefulWidget {
   final List<WordPair> words;
@@ -119,6 +121,14 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
       final currentWord = shuffledWords[currentIndex];
       if (answer == currentWord.tamil) {
         score++;
+      } else {
+        final wordIndex = widget.words.indexOf(currentWord);
+        if (wordIndex != -1) {
+          context.read<MistakeProvider>().addMistake(
+                widget.lessonIndex,
+                wordIndex,
+              );
+        }
       }
       _playAudio(currentWord);
     });
@@ -153,8 +163,21 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
     // 2. ADD THE CLOUD SYNC HERE
     final user = AuthService().currentUser;
     if (user != null && percentage >= 80) {
-      // Award 50 XP for passing a lesson
-      SyncService().updateStreakAndXP(user.uid, 50);
+      SyncService()
+          .updateStreakAndXP(user.uid, XpRules.lessonPass)
+          .then((result) {
+        if (!mounted) return;
+        if (result.earnedFreeze) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Streak freeze earned!')),
+          );
+        } else if (result.consumedFreeze) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Streak freeze used to keep your streak.')),
+          );
+        }
+      });
     }
     // Create review cards for this lesson (if not already created)
     Provider.of<ReviewProvider>(context, listen: false)
@@ -175,8 +198,8 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
                 children: [
                   PeacockMascot(
                     message: percentage >= 80
-                        ? 'Quiz Complete! शानदार!'
-                        : 'Good attempt! और अभ्यास करें!',
+                        ? 'Quiz complete! Great job!'
+                        : 'Good attempt! Try again.',
                     state: percentage >= 80
                         ? MascotState.celebrate
                         : MascotState.confused,

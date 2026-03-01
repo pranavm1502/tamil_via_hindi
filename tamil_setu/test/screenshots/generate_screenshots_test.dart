@@ -1,38 +1,35 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_screenshot/golden_screenshot.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tamil_setu/services/auth_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tamil_setu/models/checkpoint.dart';
-
-// Ensure these match your project structure
-import 'package:tamil_setu/screens/dashboard_screen.dart';
-import 'package:tamil_setu/screens/checkpoint_quiz_screen.dart';
-import 'package:tamil_setu/screens/lesson_screen.dart';
-import 'package:tamil_setu/screens/multiple_choice_quiz.dart';
-import 'package:tamil_setu/screens/review_screen.dart';
 import 'package:tamil_setu/models/lesson.dart';
 import 'package:tamil_setu/models/word_pair.dart';
 import 'package:tamil_setu/providers/content_provider.dart';
+import 'package:tamil_setu/providers/mistake_provider.dart';
 import 'package:tamil_setu/providers/progress_provider.dart';
-import 'package:tamil_setu/providers/theme_provider.dart';
 import 'package:tamil_setu/providers/review_provider.dart';
-import 'package:tamil_setu/widgets/streak_widget.dart';
-import 'package:tamil_setu/widgets/peacock_mascot.dart';
+import 'package:tamil_setu/providers/sentence_provider.dart';
+import 'package:tamil_setu/providers/theme_provider.dart';
+import 'package:tamil_setu/screens/checkpoint_quiz_screen.dart';
+import 'package:tamil_setu/screens/dashboard_screen.dart';
+import 'package:tamil_setu/screens/lesson_screen.dart';
+import 'package:tamil_setu/screens/mistakes_review_screen.dart';
+import 'package:tamil_setu/screens/review_screen.dart';
+import 'package:tamil_setu/services/auth_service.dart';
 import 'package:tamil_setu/theme.dart';
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:tamil_setu/widgets/peacock_mascot.dart';
+import 'package:tamil_setu/widgets/streak_widget.dart';
 import '../firebase_mock.dart';
 
 void main() {
   setUpAll(() async {
-    // 1. Initialize Firebase Mocks first
     setupFirebaseMocks();
     SharedPreferences.setMockInitialValues({});
 
-    // 2. Load Fonts for rendering Hindi and Tamil correctly
     final hindiFont =
         rootBundle.load('assets/fonts/NotoSansDevanagari-Regular.ttf');
     final hindiLoader = FontLoader('NotoSansDevanagari')..addFont(hindiFont);
@@ -42,7 +39,6 @@ void main() {
     final tamilLoader = FontLoader('NotoSansTamil')..addFont(tamilFont);
     await tamilLoader.load();
 
-    // 3. Mock Audio and Binary Messaging
     final messenger =
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
     messenger.setMockMethodCallHandler(
@@ -75,60 +71,49 @@ void main() {
     'tablet10': tablet10,
   };
 
-  // Mock Data to inject into ContentProvider
   final mockLessons = [
     Lesson(
       level: 1,
-      title: 'Greetings',
+      title: 'Basics (Greet)',
       description: 'Learn basic welcomes',
       words: [
         WordPair(
             hindi: 'नमस्ते',
             tamil: 'வணக்கம்',
             pronunciation: 'Vanakkam',
-            audioPath: 'assets/audio/vanakkam.mp3'),
+            audioPath: 'assets/audio/one.mp3'),
         WordPair(
             hindi: 'धन्यवाद',
             tamil: 'நன்றி',
             pronunciation: 'Nandri',
-            audioPath: 'assets/audio/nandri.mp3'),
+            audioPath: 'assets/audio/two.mp3'),
         WordPair(
-            hindi: 'कृपया',
-            tamil: 'தயவு செய்து',
-            pronunciation: 'Dayavu seidhu',
-            audioPath: 'assets/audio/please.mp3'),
+            hindi: 'कहाँ',
+            tamil: 'எங்கே',
+            pronunciation: 'Engae',
+            audioPath: 'assets/audio/three.mp3'),
         WordPair(
-            hindi: 'क्षमा करें',
-            tamil: 'மன்னிக்கவும்',
-            pronunciation: 'Mannikkavum',
-            audioPath: 'assets/audio/sorry.mp3'),
+            hindi: 'कब',
+            tamil: 'எப்போது',
+            pronunciation: 'Eppodhu',
+            audioPath: 'assets/audio/four.mp3'),
       ],
     ),
     Lesson(
       level: 2,
-      title: 'Numbers',
-      description: 'Learn counting 1-10',
+      title: 'Pronouns',
+      description: 'Me, You, We',
       words: [
         WordPair(
-            hindi: 'एक',
-            tamil: 'ஒன்று',
-            pronunciation: 'Ondru',
-            audioPath: 'assets/audio/one.mp3'),
+            hindi: 'मैं',
+            tamil: 'நான்',
+            pronunciation: 'Naan',
+            audioPath: 'assets/audio/main.mp3'),
         WordPair(
-            hindi: 'दो',
-            tamil: 'இரண்டு',
-            pronunciation: 'Irandu',
-            audioPath: 'assets/audio/two.mp3'),
-        WordPair(
-            hindi: 'तीन',
-            tamil: 'மூன்று',
-            pronunciation: 'Moondru',
-            audioPath: 'assets/audio/three.mp3'),
-        WordPair(
-            hindi: 'चार',
-            tamil: 'நான்கு',
-            pronunciation: 'Naangu',
-            audioPath: 'assets/audio/four.mp3'),
+            hindi: 'तुम',
+            tamil: 'நீ',
+            pronunciation: 'Nee',
+            audioPath: 'assets/audio/tum.mp3'),
       ],
     ),
     Lesson(
@@ -178,110 +163,129 @@ void main() {
       });
 
       testGoldens('2_Review', (tester) async {
-        await _takeAppScreenshot(tester, device, '2_review',
-            const ReviewScreen(), mockLessons);
+        await _takeAppScreenshot(
+            tester, device, '2_review', const ReviewScreen(), mockLessons);
       });
 
       testGoldens('3_Quiz', (tester) async {
+        final lesson = mockLessons.first;
         await _takeAppScreenshot(
-            tester,
-            device,
-            '3_quiz',
-            MultipleChoiceQuiz(words: mockLessons[0].words, lessonIndex: 0),
-            mockLessons);
+          tester,
+          device,
+          '3_quiz',
+          LessonScreen(lesson: lesson, lessonIndex: 0),
+          mockLessons,
+        );
       });
 
       testGoldens('4_Checkpoint', (tester) async {
-        await _takeAppScreenshot(tester, device, '4_checkpoint',
-            CheckpointQuizScreen(checkpoint: checkpoint), mockLessons);
+        await _takeAppScreenshot(
+          tester,
+          device,
+          '4_checkpoint',
+          CheckpointQuizScreen(checkpoint: checkpoint),
+          mockLessons,
+        );
       });
-
-      // ... (Rest of your celebration/thinking tests)
     });
   });
 }
 
-Future<void> _takeAppScreenshot(WidgetTester tester, ScreenshotDevice device,
-    String fileName, Widget screen, List<Lesson> mockLessons) async {
+Future<ReviewProvider> _prepareReviewProvider(
+  List<Lesson> mockLessons, {
+  bool startSession = false,
+}) async {
+  final provider = ReviewProvider();
+  await provider.clearAllReviewData();
+  await provider.loadReviewCards();
+  if (mockLessons.isNotEmpty) {
+    await provider.createCardsForLesson(0, mockLessons.first.words.length);
+    await provider.loadReviewCards();
+    if (startSession) {
+      provider.startReviewSession();
+    }
+  }
+  return provider;
+}
+
+Future<void> _takeAppScreenshot(
+  WidgetTester tester,
+  ScreenshotDevice device,
+  String fileName,
+  Widget screen,
+  List<Lesson> mockLessons,
+) async {
   final reviewProvider = await _prepareReviewProvider(
     mockLessons,
     startSession: screen is ReviewScreen,
   );
 
-  // 3. Initialize Providers with pre-loaded data to bypass "isLoading" states
   final contentProvider = ContentProvider();
-  contentProvider.setLessonsForTesting(mockLessons); // Bypass loading loop
+  contentProvider.setLessonsForTesting(mockLessons);
 
   final mockUser = MockUser();
   final mockAuth = MockFirebaseAuth(mockUser);
 
-  final fakeFirestore = FakeFirebaseFirestore();
-  await fakeFirestore.collection('users').doc(mockUser.uid).set({
-    'streak_count': 3,
-    'total_xp': 120,
-    'display_name': 'Learner',
-  });
-
-  final wrappedWidget = MultiProvider(
-    providers: [
-      Provider<AuthService>.value(
-          value: AuthService(auth: mockAuth, googleSignIn: null)),
-      Provider<User?>.value(value: mockUser),
-      ChangeNotifierProvider.value(value: contentProvider),
-      ChangeNotifierProvider(create: (_) => ProgressProvider()),
-      ChangeNotifierProvider(create: (_) => ThemeProvider()),
+  final wrappedWidget = StreamProvider<User?>.value(
+    value: Stream.value(mockUser),
+    initialData: mockUser,
+    child: MultiProvider(
+      providers: [
+        Provider<AuthService>.value(
+            value: AuthService(auth: mockAuth, googleSignIn: null)),
+        ChangeNotifierProvider.value(value: contentProvider),
+        ChangeNotifierProvider(create: (_) => ProgressProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider.value(value: reviewProvider),
-    ],
-    child: Theme(
-      data: ThemeData(
-        primaryColor: Colors.orange,
-        // Match your font names exactly as registered in FontLoader
-        fontFamilyFallback: const ['NotoSansDevanagari', 'NotoSansTamil'],
-        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.orange),
+        ChangeNotifierProvider(create: (_) => MistakeProvider()..loadMistakes()),
+        ChangeNotifierProvider(
+          create: (_) => SentenceProvider()..loadSentences(),
+        ),
+      ],
+      child: Theme(
+        data: ThemeData(
+          primaryColor: Colors.orange,
+          fontFamily: 'NotoSansDevanagari',
+          fontFamilyFallback: const ['NotoSansTamil'],
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.orange),
+        ),
+        child: Material(
+          child: _injectStreakWidget(screen),
+        ),
       ),
-      child: Material(child: _injectStreakWidget(screen, mockAuth, fakeFirestore)),
     ),
   );
 
   await tester.pumpWidget(ScreenshotApp(device: device, home: wrappedWidget));
-
   await _waitForStableFrame(tester);
-
   await tester.expectScreenshot(device, fileName);
 }
 
-Widget _injectStreakWidget(
-    Widget screen, FirebaseAuth mockAuth, FakeFirebaseFirestore firestore) {
-  // If the screen is DashboardScreen, inject the mockAuth into StreakWidget
+Widget _injectStreakWidget(Widget screen) {
   if (screen is DashboardScreen) {
-    return DashboardScreenWithInjectedStreak(
-      auth: mockAuth,
-      firestore: firestore,
-    );
+    return const DashboardScreenWithInjectedStreak();
   }
   return screen;
 }
 
+Future<void> _waitForStableFrame(WidgetTester tester) async {
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 800));
+  await tester.pump(const Duration(milliseconds: 400));
+}
+
 class DashboardScreenWithInjectedStreak extends StatelessWidget {
-  final FirebaseAuth auth;
-  final FakeFirebaseFirestore firestore;
-  const DashboardScreenWithInjectedStreak({
-    super.key,
-    required this.auth,
-    required this.firestore,
-  });
+  const DashboardScreenWithInjectedStreak({super.key});
 
   @override
   Widget build(BuildContext context) {
     final contentProvider = context.watch<ContentProvider>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tamil Setu (हिंदी ➡️ தமிழ்)'),
+        title: const Text('Tamil Setu (Hindi -> Tamil)'),
         centerTitle: true,
         elevation: 2,
-        actions: const [
-          // ...copy from DashboardScreen...
-        ],
+        actions: const [],
       ),
       body: contentProvider.isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -351,7 +355,7 @@ class DashboardScreenWithInjectedStreak extends StatelessWidget {
                             ],
                           ),
                           child: const PeacockMascot(
-                            message: 'नमस्कारम्! इन्द्रु तमिऴ् कर्कलामा?',
+                            message: 'Hello! Ready to learn Tamil today?',
                             imageSize: 150,
                             fontSize: 17,
                             bubblePadding: EdgeInsets.symmetric(
@@ -365,10 +369,19 @@ class DashboardScreenWithInjectedStreak extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SliverToBoxAdapter(
+                    const SliverToBoxAdapter(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: StreakWidget(auth: auth, firestore: firestore),
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        child: StreakWidget(
+                          streakOverride: 3,
+                          freezesOverride: 1,
+                        ),
+                      ),
+                    ),
+                    const SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: _TodayPlanCard(),
                       ),
                     ),
                     SliverToBoxAdapter(
@@ -408,7 +421,6 @@ class DashboardScreenWithInjectedStreak extends StatelessWidget {
   }
 }
 
-/// Decorative background circle used in the dashboard backdrop.
 class _OrnamentCircle extends StatelessWidget {
   final double size;
   final Color color;
@@ -429,12 +441,12 @@ class _OrnamentCircle extends StatelessWidget {
   }
 }
 
-/// High-priority actions for review and leaderboard access.
 class _QuickActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = context.watch<User?>();
     final isSignedIn = user != null;
+    final mistakeCount = context.watch<MistakeProvider>().mistakeCount;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -468,21 +480,40 @@ class _QuickActions extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: isSignedIn
-                      ? () => Navigator.pushNamed(context, '/leaderboard')
+                  onPressed: mistakeCount == 0
+                      ? null
                       : () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                  'Sign in to view the leaderboard.'),
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const MistakesReviewScreen(),
                             ),
                           );
                         },
-                  icon: const Icon(Icons.leaderboard),
-                  label: const Text('Leaderboard'),
+                  icon: const Icon(Icons.refresh),
+                  label: Text(
+                    mistakeCount == 0
+                        ? 'Mistakes'
+                        : 'Mistakes ($mistakeCount)',
+                  ),
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            onPressed: isSignedIn
+                ? () => Navigator.pushNamed(context, '/leaderboard')
+                : () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Sign in to view the leaderboard.'),
+                      ),
+                    );
+                  },
+            icon: const Icon(Icons.leaderboard),
+            label: const Text('Leaderboard'),
           ),
           if (!isSignedIn) ...[
             const SizedBox(height: 8),
@@ -497,7 +528,6 @@ class _QuickActions extends StatelessWidget {
   }
 }
 
-/// Section label with a subtle visual accent bar.
 class _SectionHeader extends StatelessWidget {
   final String title;
   final String subtitle;
@@ -526,6 +556,175 @@ class _SectionHeader extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _TodayPlanCard extends StatelessWidget {
+  const _TodayPlanCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final review = context.watch<ReviewProvider>();
+    final mistakes = context.watch<MistakeProvider>();
+    final content = context.watch<ContentProvider>();
+    final progress = context.watch<ProgressProvider>();
+
+    final dueNow = review.dueCardCount;
+    final mistakeCount = mistakes.mistakeCount;
+    final nextLessonIndex = _findNextLesson(content.lessons, progress);
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: Theme.of(context).cardColor,
+        border: Border.all(color: PeacockTheme.peacockBlue.withAlpha(40)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("Today's Plan",
+                  style: Theme.of(context).textTheme.titleMedium),
+              Text('3 tasks', style: Theme.of(context).textTheme.bodySmall),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Finish one task to keep momentum.',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const SizedBox(height: 12),
+          _PlanRow(
+            icon: Icons.auto_awesome,
+            title: 'Review due cards',
+            subtitle: dueNow == 0
+                ? 'No cards due right now'
+                : '$dueNow card${dueNow == 1 ? '' : 's'} due now',
+            actionLabel: 'Review',
+            enabled: dueNow > 0,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ReviewScreen()),
+              );
+            },
+          ),
+          const SizedBox(height: 8),
+          _PlanRow(
+            icon: Icons.refresh,
+            title: 'Fix mistakes',
+            subtitle: mistakeCount == 0
+                ? 'No mistakes to revisit'
+                : '$mistakeCount to review',
+            actionLabel: 'Practice',
+            enabled: mistakeCount > 0,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MistakesReviewScreen(),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 8),
+          _PlanRow(
+            icon: Icons.play_arrow,
+            title: 'Continue lesson',
+            subtitle: nextLessonIndex == null
+                ? 'All lessons completed'
+                : content.lessons[nextLessonIndex].title,
+            actionLabel: 'Start',
+            enabled: nextLessonIndex != null,
+            onPressed: () {
+              if (nextLessonIndex == null) return;
+              final lesson = content.lessons[nextLessonIndex];
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LessonScreen(
+                    lesson: lesson,
+                    lessonIndex: nextLessonIndex,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  int? _findNextLesson(List<Lesson> lessons, ProgressProvider progress) {
+    for (var i = 0; i < lessons.length; i++) {
+      if (!progress.isLessonLocked(i) && !progress.isLessonCompleted(i)) {
+        return i;
+      }
+    }
+    return null;
+  }
+}
+
+class _PlanRow extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final String actionLabel;
+  final bool enabled;
+  final VoidCallback onPressed;
+
+  const _PlanRow({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.actionLabel,
+    required this.enabled,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: PeacockTheme.peacockBlue.withAlpha(12),
+        border: Border.all(color: PeacockTheme.peacockBlue.withAlpha(30)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: PeacockTheme.peacockBlue),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: Theme.of(context).textTheme.titleSmall),
+                const SizedBox(height: 2),
+                Text(subtitle, style: Theme.of(context).textTheme.bodySmall),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          SizedBox(
+            height: 36,
+            child: enabled
+                ? FilledButton(
+                    onPressed: onPressed,
+                    child: Text(actionLabel),
+                  )
+                : OutlinedButton(
+                    onPressed: null,
+                    child: Text(actionLabel),
+                  ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -923,38 +1122,4 @@ class _CheckpointTile extends StatelessWidget {
       },
     );
   }
-}
-
-Future<void> _waitForStableFrame(WidgetTester tester) async {
-  await tester.loadAssets();
-
-  for (int i = 0; i < 10; i++) {
-    await tester.pump(const Duration(milliseconds: 100));
-  }
-
-  for (int i = 0; i < 20; i++) {
-    if (find.byType(CircularProgressIndicator).evaluate().isEmpty) {
-      break;
-    }
-    await tester.pump(const Duration(milliseconds: 100));
-  }
-
-  await tester.pumpFrames(find.byType(ScreenshotApp).evaluate().first.widget,
-      const Duration(seconds: 1));
-}
-
-Future<ReviewProvider> _prepareReviewProvider(
-  List<Lesson> mockLessons, {
-  required bool startSession,
-}) async {
-  final reviewProvider = ReviewProvider();
-  await reviewProvider.clearAllReviewData();
-  if (mockLessons.isNotEmpty) {
-    await reviewProvider
-        .createCardsForLesson(0, mockLessons.first.words.length);
-  }
-  if (startSession) {
-    reviewProvider.startReviewSession();
-  }
-  return reviewProvider;
 }

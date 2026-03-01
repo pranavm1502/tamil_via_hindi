@@ -1,0 +1,2157 @@
+[
+  {
+    "hindi": "नमस्ते।",
+    "tamil": "வணக்கம்.",
+    "pronunciation": "वणक्कम्.",
+    "audio_path": "assets/audio/l1_hello.mp3",
+    "tags": [
+      "lesson:1",
+      "topic:survival_basics",
+      "grammar:greeting"
+    ]
+  },
+  {
+    "hindi": "हाँ, ठीक है।",
+    "tamil": "ஆமா, சரி.",
+    "pronunciation": "आमा, चरि.",
+    "audio_path": "assets/audio/l1_yes_okay.mp3",
+    "tags": [
+      "lesson:1",
+      "topic:survival_basics",
+      "grammar:affirmative"
+    ]
+  },
+  {
+    "hindi": "मुझे नहीं पता।",
+    "tamil": "எனக்குத் தெரியாது.",
+    "pronunciation": "ऎऩक्कुत् तॆरियातु.",
+    "audio_path": "assets/audio/l1_dont_know.mp3",
+    "tags": [
+      "lesson:1",
+      "topic:survival_basics",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "जल्दी चलो।",
+    "tamil": "சீக்கிரம் போலாம்.",
+    "pronunciation": "चीक्किरम् पोलाम्.",
+    "audio_path": "assets/audio/l1_go_fast.mp3",
+    "tags": [
+      "lesson:1",
+      "topic:survival_basics",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "मैं जाता हूँ।",
+    "tamil": "நான் போறேன்.",
+    "pronunciation": "नाऩ् पोऱेऩ्.",
+    "audio_path": "assets/audio/l2_i_go.mp3",
+    "tags": [
+      "lesson:2",
+      "topic:pronouns",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "आप कैसे हैं?",
+    "tamil": "நீங்க எப்டி இருக்கீங்க?",
+    "pronunciation": "नीङ्क ऎप्टि इरुक्कीङ्क?",
+    "audio_path": "assets/audio/l2_how_are_you.mp3",
+    "tags": [
+      "lesson:2",
+      "topic:pronouns",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "यह मेरा है।",
+    "tamil": "இது என்னோடது.",
+    "pronunciation": "इतु ऎऩ्ऩोटतु.",
+    "audio_path": "assets/audio/l2_this_is_mine.mp3",
+    "tags": [
+      "grammar:present",
+      "lesson:2",
+      "lesson:26",
+      "topic:possessives",
+      "topic:pronouns"
+    ]
+  },
+  {
+    "hindi": "वह क्या है?",
+    "tamil": "அது என்ன?",
+    "pronunciation": "अतु ऎऩ्ऩ?",
+    "audio_path": "assets/audio/l2_what_is_that.mp3",
+    "tags": [
+      "lesson:2",
+      "topic:pronouns",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "यहाँ आओ।",
+    "tamil": "இங்க வாங்க.",
+    "pronunciation": "इङ्क वाङ्क.",
+    "audio_path": "assets/audio/l3_come_here.mp3",
+    "tags": [
+      "lesson:3",
+      "topic:important_verbs",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "वहाँ जाओ।",
+    "tamil": "அங்க போங்க.",
+    "pronunciation": "अङ्क पोङ्क.",
+    "audio_path": "assets/audio/l3_go_there.mp3",
+    "tags": [
+      "lesson:3",
+      "topic:important_verbs",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "खाना खाओ।",
+    "tamil": "சாப்பாடு சாப்பிடுங்க.",
+    "pronunciation": "चाप्पाटु चाप्पिटुङ्क.",
+    "audio_path": "assets/audio/l3_eat_food.mp3",
+    "tags": [
+      "lesson:3",
+      "topic:important_verbs",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "यहाँ बैठो।",
+    "tamil": "இங்க உக்காருங்க.",
+    "pronunciation": "इङ्क उक्कारुङ्क.",
+    "audio_path": "assets/audio/l3_sit_here.mp3",
+    "tags": [
+      "lesson:3",
+      "topic:important_verbs",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "तुम्हारा नाम क्या है?",
+    "tamil": "உன் பேரு என்ன?",
+    "pronunciation": "उऩ् पेरु ऎऩ्ऩ?",
+    "audio_path": "assets/audio/l4_whats_your_name.mp3",
+    "tags": [
+      "lesson:4",
+      "topic:common_questions",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "तुम कहाँ हो?",
+    "tamil": "நீங்க எங்க இருக்கீங்க?",
+    "pronunciation": "नीङ्क ऎङ्क इरुक्कीङ्क?",
+    "audio_path": "assets/audio/l4_where_are_you.mp3",
+    "tags": [
+      "lesson:4",
+      "topic:common_questions",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "यह कितना है?",
+    "tamil": "இது எவ்ளோ?",
+    "pronunciation": "इतु ऎव्ळो?",
+    "audio_path": "assets/audio/l4_how_much_is_this.mp3",
+    "tags": [
+      "lesson:4",
+      "topic:common_questions",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "खाना खाया?",
+    "tamil": "சாப்டாச்சா?",
+    "pronunciation": "चाप्टाच्चा?",
+    "audio_path": "assets/audio/l4_did_you_eat.mp3",
+    "tags": [
+      "lesson:4",
+      "topic:common_questions",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "अभी आओ।",
+    "tamil": "இப்போ வாங்க.",
+    "pronunciation": "इप्पो वाङ्क.",
+    "audio_path": "assets/audio/l5_come_now.mp3",
+    "tags": [
+      "lesson:5",
+      "topic:connecting_words",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "बाद में जाओ।",
+    "tamil": "அப்புறம் போங்க.",
+    "pronunciation": "अप्पुऱम् पोङ्क.",
+    "audio_path": "assets/audio/l5_go_later.mp3",
+    "tags": [
+      "lesson:5",
+      "topic:connecting_words",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "यहाँ और वहाँ।",
+    "tamil": "இங்க அப்புறம் அங்க.",
+    "pronunciation": "इङ्क अप्पुऱम् अङ्क.",
+    "audio_path": "assets/audio/l5_here_and_there.mp3",
+    "tags": [
+      "lesson:5",
+      "topic:connecting_words",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "लेकिन क्यों?",
+    "tamil": "ஆனா ஏன்?",
+    "pronunciation": "आऩा एऩ्?",
+    "audio_path": "assets/audio/l5_but_why.mp3",
+    "tags": [
+      "lesson:5",
+      "topic:connecting_words",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "मुझे दो।",
+    "tamil": "எனக்கு குடுங்க.",
+    "pronunciation": "ऎऩक्कु कुटुङ्क.",
+    "audio_path": "assets/audio/l6_give_me.mp3",
+    "tags": [
+      "lesson:6",
+      "topic:magic_ku",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "आपको क्या चाहिए?",
+    "tamil": "உங்களுக்கு என்ன வேணும்?",
+    "pronunciation": "उङ्कळुक्कु ऎऩ्ऩ वेणुम्?",
+    "audio_path": "assets/audio/l6_what_do_you_want.mp3",
+    "tags": [
+      "lesson:6",
+      "topic:magic_ku",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "घर को जाओ।",
+    "tamil": "வீட்டுக்கு போங்க.",
+    "pronunciation": "वीट्टुक्कु पोङ्क.",
+    "audio_path": "assets/audio/l6_go_to_house.mp3",
+    "tags": [
+      "lesson:6",
+      "topic:magic_ku",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "दुकान को चलो।",
+    "tamil": "கடைக்கு போலாம்.",
+    "pronunciation": "कटैक्कु पोलाम्.",
+    "audio_path": "assets/audio/l6_lets_go_shop.mp3",
+    "tags": [
+      "lesson:6",
+      "topic:magic_ku",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "मैं घर में हूँ।",
+    "tamil": "நான் வீட்ல இருக்கேன்.",
+    "pronunciation": "नाऩ् वीट्ल इरुक्केऩ्.",
+    "audio_path": "assets/audio/l7_in_house.mp3",
+    "tags": [
+      "lesson:7",
+      "topic:magic_la",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "रास्ते में हूँ।",
+    "tamil": "வழியில இருக்கேன்.",
+    "pronunciation": "वऴियिल इरुक्केऩ्.",
+    "audio_path": "assets/audio/l7_on_the_way.mp3",
+    "tags": [
+      "lesson:7",
+      "topic:magic_la",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "गाड़ी में बैठो।",
+    "tamil": "வண்டில உக்காருங்க.",
+    "pronunciation": "वण्टिल उक्कारुङ्क.",
+    "audio_path": "assets/audio/l7_sit_in_car.mp3",
+    "tags": [
+      "lesson:7",
+      "topic:magic_la",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "हाथ में क्या है?",
+    "tamil": "கைல என்ன இருக்கு?",
+    "pronunciation": "कैल ऎऩ्ऩ इरुक्कु?",
+    "audio_path": "assets/audio/l7_what_in_hand.mp3",
+    "tags": [
+      "lesson:7",
+      "topic:magic_la",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "मैं गया।",
+    "tamil": "நான் போனேன்.",
+    "pronunciation": "नाऩ् पोऩेऩ्.",
+    "audio_path": "assets/audio/l8_i_went.mp3",
+    "tags": [
+      "lesson:8",
+      "topic:past_tense",
+      "grammar:past"
+    ]
+  },
+  {
+    "hindi": "मैं आया।",
+    "tamil": "நான் வந்தேன்.",
+    "pronunciation": "नाऩ् वन्तेऩ्.",
+    "audio_path": "assets/audio/l8_i_came.mp3",
+    "tags": [
+      "lesson:8",
+      "topic:past_tense",
+      "grammar:past"
+    ]
+  },
+  {
+    "hindi": "मैंने देखा।",
+    "tamil": "நான் பாத்தேன்.",
+    "pronunciation": "नाऩ् पात्तेऩ्.",
+    "audio_path": "assets/audio/l8_i_saw.mp3",
+    "tags": [
+      "lesson:8",
+      "topic:past_tense",
+      "grammar:past"
+    ]
+  },
+  {
+    "hindi": "काम खत्म हो गया।",
+    "tamil": "வேல முடிஞ்சுது.",
+    "pronunciation": "वेल मुटिञ्चुतु.",
+    "audio_path": "assets/audio/l8_work_finished.mp3",
+    "tags": [
+      "lesson:8",
+      "topic:past_tense",
+      "grammar:past"
+    ]
+  },
+  {
+    "hindi": "मैं जा रहा हूँ।",
+    "tamil": "நான் போறேன்.",
+    "pronunciation": "नाऩ् पोऱेऩ्.",
+    "audio_path": "assets/audio/l9_im_going.mp3",
+    "tags": [
+      "lesson:9",
+      "topic:present_continuous",
+      "grammar:present_continuous"
+    ]
+  },
+  {
+    "hindi": "मैं आ रहा हूँ।",
+    "tamil": "நான் வர்றேன்.",
+    "pronunciation": "नाऩ् वर्ऱेऩ्.",
+    "audio_path": "assets/audio/l9_im_coming.mp3",
+    "tags": [
+      "lesson:9",
+      "topic:present_continuous",
+      "grammar:present_continuous"
+    ]
+  },
+  {
+    "hindi": "बारिश हो रही है।",
+    "tamil": "மழை பெய்யுது.",
+    "pronunciation": "मऴै पॆय्युतु.",
+    "audio_path": "assets/audio/l9_raining.mp3",
+    "tags": [
+      "grammar:present_continuous",
+      "lesson:34",
+      "lesson:9",
+      "topic:present_continuous",
+      "topic:weather"
+    ]
+  },
+  {
+    "hindi": "क्या कर रहे हो?",
+    "tamil": "என்ன பண்றீங்க?",
+    "pronunciation": "ऎऩ्ऩ पण्ऱीङ्क?",
+    "audio_path": "assets/audio/l9_what_doing.mp3",
+    "tags": [
+      "lesson:9",
+      "topic:present_continuous",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "मुझे नहीं चाहिए।",
+    "tamil": "எனக்கு வேணாம்.",
+    "pronunciation": "ऎऩक्कु वेणाम्.",
+    "audio_path": "assets/audio/l10_i_dont_want.mp3",
+    "tags": [
+      "grammar:negative",
+      "lesson:10",
+      "lesson:23",
+      "topic:negation",
+      "topic:wants_and_needs"
+    ]
+  },
+  {
+    "hindi": "मुझे पसंद नहीं है।",
+    "tamil": "எனக்கு பிடிக்கல.",
+    "pronunciation": "ऎऩक्कु पिटिक्कल.",
+    "audio_path": "assets/audio/l10_i_dont_like.mp3",
+    "tags": [
+      "lesson:10",
+      "topic:negation",
+      "grammar:negative"
+    ]
+  },
+  {
+    "hindi": "मेरे पास नहीं है।",
+    "tamil": "என்கிட்ட இல்ல.",
+    "pronunciation": "ऎऩ्किट्ट इल्ल.",
+    "audio_path": "assets/audio/l10_i_dont_have.mp3",
+    "tags": [
+      "lesson:10",
+      "topic:negation",
+      "grammar:negative"
+    ]
+  },
+  {
+    "hindi": "कुछ नहीं।",
+    "tamil": "ஒன்னும் இல்ல.",
+    "pronunciation": "ऒऩ्ऩुम् इल्ल.",
+    "audio_path": "assets/audio/l10_nothing.mp3",
+    "tags": [
+      "lesson:10",
+      "topic:negation",
+      "grammar:negative"
+    ]
+  },
+  {
+    "hindi": "सीधा जाओ।",
+    "tamil": "நேரா போங்க.",
+    "pronunciation": "नेरा पोङ्क.",
+    "audio_path": "assets/audio/l11_go_straight.mp3",
+    "tags": [
+      "lesson:11",
+      "topic:auto_cab",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "बाएं मुड़ो।",
+    "tamil": "லெப்ட்ல திரும்புங்க.",
+    "pronunciation": "लॆप्ट्ल तिरुम्पुङ्क.",
+    "audio_path": "assets/audio/l11_turn_left.mp3",
+    "tags": [
+      "lesson:11",
+      "topic:auto_cab",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "मीटर डालो।",
+    "tamil": "மீட்டர் போடுங்க.",
+    "pronunciation": "मीट्टर् पोटुङ्क.",
+    "audio_path": "assets/audio/l11_put_meter.mp3",
+    "tags": [
+      "lesson:11",
+      "topic:auto_cab",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "कितना हुआ?",
+    "tamil": "எவ்ளோ ஆச்சு?",
+    "pronunciation": "ऎव्ळो आच्चु?",
+    "audio_path": "assets/audio/l11_how_much_total.mp3",
+    "tags": [
+      "lesson:11",
+      "topic:auto_cab",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "अगर तुम आओगे तो...",
+    "tamil": "நீங்க வந்தா...",
+    "pronunciation": "नीङ्क वन्ता...",
+    "audio_path": "assets/audio/l12_if_you_come.mp3",
+    "tags": [
+      "lesson:12",
+      "topic:complex_sentences",
+      "grammar:conditional"
+    ]
+  },
+  {
+    "hindi": "जाने के बाद।",
+    "tamil": "போன அப்புறம்.",
+    "pronunciation": "पोऩ अप्पुऱम्.",
+    "audio_path": "assets/audio/l12_after_going.mp3",
+    "tags": [
+      "lesson:12",
+      "topic:complex_sentences",
+      "grammar:conditional"
+    ]
+  },
+  {
+    "hindi": "क्योंकि मैं यहाँ हूँ।",
+    "tamil": "ஏன்னா நான் இங்க இருக்கேன்.",
+    "pronunciation": "एऩ्ऩा नाऩ् इङ्क इरुक्केऩ्.",
+    "audio_path": "assets/audio/l12_because_i_am_here.mp3",
+    "tags": [
+      "lesson:12",
+      "topic:complex_sentences",
+      "grammar:conditional"
+    ]
+  },
+  {
+    "hindi": "इसलिए जाओ।",
+    "tamil": "அதனால போங்க.",
+    "pronunciation": "अतऩाल पोङ्क.",
+    "audio_path": "assets/audio/l12_therefore_go.mp3",
+    "tags": [
+      "lesson:12",
+      "topic:complex_sentences",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "एक चाय दो।",
+    "tamil": "ஒரு டீ குடுங்க.",
+    "pronunciation": "ऒरु टी कुटुङ्क.",
+    "audio_path": "assets/audio/l13_one_tea.mp3",
+    "tags": [
+      "lesson:13",
+      "topic:numbers",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "दो पानी दो।",
+    "tamil": "ரெண்டு தண்ணி குடுங்க.",
+    "pronunciation": "रॆण्टु तण्णि कुटुङ्क.",
+    "audio_path": "assets/audio/l13_two_water.mp3",
+    "tags": [
+      "lesson:13",
+      "topic:numbers",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "दस रुपये।",
+    "tamil": "பத்து ரூபா.",
+    "pronunciation": "पत्तु रूपा.",
+    "audio_path": "assets/audio/l13_ten_rupees.mp3",
+    "tags": [
+      "lesson:13",
+      "topic:numbers",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "सौ रुपये।",
+    "tamil": "நூறு ரூபா.",
+    "pronunciation": "नूऱु रूपा.",
+    "audio_path": "assets/audio/l13_hundred_rupees.mp3",
+    "tags": [
+      "grammar:present",
+      "lesson:13",
+      "lesson:47",
+      "topic:money",
+      "topic:numbers"
+    ]
+  },
+  {
+    "hindi": "आज आओ।",
+    "tamil": "இன்னிக்கு வாங்க.",
+    "pronunciation": "इऩ्ऩिक्कु वाङ्क.",
+    "audio_path": "assets/audio/l14_come_today.mp3",
+    "tags": [
+      "lesson:14",
+      "topic:time_expressions",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "कल मिलते हैं।",
+    "tamil": "நாளைக்கு பாக்கலாம்.",
+    "pronunciation": "नाळैक्कु पाक्कलाम्.",
+    "audio_path": "assets/audio/l14_meet_tomorrow.mp3",
+    "tags": [
+      "lesson:14",
+      "topic:time_expressions",
+      "grammar:future"
+    ]
+  },
+  {
+    "hindi": "सुबह जाओ।",
+    "tamil": "காலைல போங்க.",
+    "pronunciation": "कालैल पोङ्क.",
+    "audio_path": "assets/audio/l14_go_morning.mp3",
+    "tags": [
+      "lesson:14",
+      "topic:time_expressions",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "कितने बजे?",
+    "tamil": "எத்தன மணி?",
+    "pronunciation": "ऎत्तऩ मणि?",
+    "audio_path": "assets/audio/l14_what_time.mp3",
+    "tags": [
+      "lesson:14",
+      "topic:time_expressions",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "माँ कहाँ है?",
+    "tamil": "அம்மா எங்க?",
+    "pronunciation": "अम्मा ऎङ्क?",
+    "audio_path": "assets/audio/l15_where_is_mom.mp3",
+    "tags": [
+      "lesson:15",
+      "topic:family_terms",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "पापा आ रहे हैं।",
+    "tamil": "அப்பா வர்றாரு.",
+    "pronunciation": "अप्पा वर्ऱारु.",
+    "audio_path": "assets/audio/l15_dad_is_coming.mp3",
+    "tags": [
+      "lesson:15",
+      "topic:family_terms",
+      "grammar:present_continuous"
+    ]
+  },
+  {
+    "hindi": "बड़ा भाई यहाँ है।",
+    "tamil": "அண்ணா இங்க இருக்காரு.",
+    "pronunciation": "अण्णा इङ्क इरुक्कारु.",
+    "audio_path": "assets/audio/l15_elder_brother_here.mp3",
+    "tags": [
+      "lesson:15",
+      "topic:family_terms",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "छोटा भाई गया।",
+    "tamil": "தம்பி போனான்.",
+    "pronunciation": "तम्पि पोऩाऩ्.",
+    "audio_path": "assets/audio/l15_younger_brother_went.mp3",
+    "tags": [
+      "lesson:15",
+      "topic:family_terms",
+      "grammar:past"
+    ]
+  },
+  {
+    "hindi": "पानी चाहिए।",
+    "tamil": "தண்ணி வேணும்.",
+    "pronunciation": "तण्णि वेणुम्.",
+    "audio_path": "assets/audio/l16_need_water.mp3",
+    "tags": [
+      "lesson:16",
+      "topic:food_and_dining",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "खाना बहुत अच्छा है।",
+    "tamil": "சாப்பாடு ரொம்ப நல்லா இருக்கு.",
+    "pronunciation": "चाप्पाटु रॊम्प नल्ला इरुक्कु.",
+    "audio_path": "assets/audio/l16_food_is_good.mp3",
+    "tags": [
+      "lesson:16",
+      "topic:food_and_dining",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "चाय दो।",
+    "tamil": "டீ குடுங்க.",
+    "pronunciation": "टी कुटुङ्क.",
+    "audio_path": "assets/audio/l16_give_tea.mp3",
+    "tags": [
+      "lesson:16",
+      "topic:food_and_dining",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "थोड़ा मीठा है।",
+    "tamil": "கொஞ்சம் இனிப்பு.",
+    "pronunciation": "कॊञ्चम् इऩिप्पु.",
+    "audio_path": "assets/audio/l16_little_sweet.mp3",
+    "tags": [
+      "lesson:16",
+      "topic:food_and_dining",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "मेनू दीजिए।",
+    "tamil": "மெனு குடுங்க.",
+    "pronunciation": "मॆऩु कुटुङ्क.",
+    "audio_path": "assets/audio/l17_give_menu.mp3",
+    "tags": [
+      "lesson:17",
+      "topic:restaurant_phrases",
+      "grammar:polite_request"
+    ]
+  },
+  {
+    "hindi": "बिल लाओ।",
+    "tamil": "பில் குடுங்க.",
+    "pronunciation": "पिल् कुटुङ्क.",
+    "audio_path": "assets/audio/l17_bring_bill.mp3",
+    "tags": [
+      "lesson:17",
+      "topic:restaurant_phrases",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "बिना प्याज़ का चाहिए।",
+    "tamil": "வெங்காயம் வேணாம்.",
+    "pronunciation": "वॆङ्कायम् वेणाम्.",
+    "audio_path": "assets/audio/l17_no_onion.mp3",
+    "tags": [
+      "lesson:17",
+      "topic:restaurant_phrases",
+      "grammar:negative"
+    ]
+  },
+  {
+    "hindi": "पैक कर दो।",
+    "tamil": "பார்சல் பண்ணுங்க.",
+    "pronunciation": "पार्चल् पण्णुङ्क.",
+    "audio_path": "assets/audio/l17_pack_it.mp3",
+    "tags": [
+      "lesson:17",
+      "topic:restaurant_phrases",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "यह कितने का है?",
+    "tamil": "இது எவ்ளோ?",
+    "pronunciation": "इतु ऎव्ळो?",
+    "audio_path": "assets/audio/l18_how_much_is_this.mp3",
+    "tags": [
+      "lesson:18",
+      "topic:shopping_essentials",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "बहुत महँगा है।",
+    "tamil": "ரொம்ப ஜாஸ்தி.",
+    "pronunciation": "रॊम्प जास्ति.",
+    "audio_path": "assets/audio/l18_too_expensive.mp3",
+    "tags": [
+      "lesson:18",
+      "topic:shopping_essentials",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "कुछ कम करो।",
+    "tamil": "கொஞ்சம் கம்மி பண்ணுங்க.",
+    "pronunciation": "कॊञ्चम् कम्मि पण्णुङ्क.",
+    "audio_path": "assets/audio/l18_reduce_price.mp3",
+    "tags": [
+      "lesson:18",
+      "topic:shopping_essentials",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "थैला दो।",
+    "tamil": "கவர் குடுங்க.",
+    "pronunciation": "कवर् कुटुङ्क.",
+    "audio_path": "assets/audio/l18_give_bag.mp3",
+    "tags": [
+      "lesson:18",
+      "topic:shopping_essentials",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "शुभ प्रभात।",
+    "tamil": "காலை வணக்கம்.",
+    "pronunciation": "कालै वणक्कम्.",
+    "audio_path": "assets/audio/l19_good_morning.mp3",
+    "tags": [
+      "lesson:19",
+      "topic:greetings",
+      "grammar:greeting"
+    ]
+  },
+  {
+    "hindi": "शुभ रात्रि।",
+    "tamil": "குட் நைட்.",
+    "pronunciation": "कुट् नैट्.",
+    "audio_path": "assets/audio/l19_good_night.mp3",
+    "tags": [
+      "lesson:19",
+      "topic:greetings",
+      "grammar:greeting"
+    ]
+  },
+  {
+    "hindi": "क्षमा करें।",
+    "tamil": "சாரி.",
+    "pronunciation": "चारि.",
+    "audio_path": "assets/audio/l19_excuse_me.mp3",
+    "tags": [
+      "lesson:19",
+      "topic:greetings",
+      "grammar:polite_request"
+    ]
+  },
+  {
+    "hindi": "फिर मिलते हैं।",
+    "tamil": "அப்புறம் பாக்கலாம்.",
+    "pronunciation": "अप्पुऱम् पाक्कलाम्.",
+    "audio_path": "assets/audio/l19_see_you_later.mp3",
+    "tags": [
+      "lesson:19",
+      "topic:greetings",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "मैं खुश हूँ।",
+    "tamil": "நான் சந்தோஷமா இருக்கேன்.",
+    "pronunciation": "नाऩ् चन्तोषमा इरुक्केऩ्.",
+    "audio_path": "assets/audio/l20_i_am_happy.mp3",
+    "tags": [
+      "lesson:20",
+      "topic:emotions",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "मुझे गुस्सा आ रहा है।",
+    "tamil": "எனக்கு கோவம் வருது.",
+    "pronunciation": "ऎऩक्कु कोवम् वरुतु.",
+    "audio_path": "assets/audio/l20_i_am_angry.mp3",
+    "tags": [
+      "lesson:20",
+      "topic:emotions",
+      "grammar:present_continuous"
+    ]
+  },
+  {
+    "hindi": "मैं थका हुआ हूँ।",
+    "tamil": "நான் டயர்டா இருக்கேன்.",
+    "pronunciation": "नाऩ् टयर्टा इरुक्केऩ्.",
+    "audio_path": "assets/audio/l20_i_am_tired.mp3",
+    "tags": [
+      "lesson:20",
+      "topic:emotions",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "तबियत ठीक नहीं है।",
+    "tamil": "உடம்பு சரியில்ல.",
+    "pronunciation": "उटम्पु चरियिल्ल.",
+    "audio_path": "assets/audio/l20_not_feeling_well.mp3",
+    "tags": [
+      "lesson:20",
+      "topic:emotions",
+      "grammar:negative"
+    ]
+  },
+  {
+    "hindi": "मैं जाऊँगा।",
+    "tamil": "நான் போவேன்.",
+    "pronunciation": "नाऩ् पोवेऩ्.",
+    "audio_path": "assets/audio/l21_i_will_go.mp3",
+    "tags": [
+      "lesson:21",
+      "topic:future_tense",
+      "grammar:future"
+    ]
+  },
+  {
+    "hindi": "मैं आऊँगा।",
+    "tamil": "நான் வருவேன்.",
+    "pronunciation": "नाऩ् वरुवेऩ्.",
+    "audio_path": "assets/audio/l21_i_will_come.mp3",
+    "tags": [
+      "lesson:21",
+      "topic:future_tense",
+      "grammar:future"
+    ]
+  },
+  {
+    "hindi": "हम करेंगे।",
+    "tamil": "நாங்க பண்றோம்.",
+    "pronunciation": "नाङ्क पण्ऱोम्.",
+    "audio_path": "assets/audio/l21_we_will_do.mp3",
+    "tags": [
+      "lesson:21",
+      "topic:future_tense",
+      "grammar:future"
+    ]
+  },
+  {
+    "hindi": "हो जाएगा।",
+    "tamil": "ஆயிடும்.",
+    "pronunciation": "आयिटुम्.",
+    "audio_path": "assets/audio/l21_it_will_happen.mp3",
+    "tags": [
+      "lesson:21",
+      "topic:future_tense",
+      "grammar:future"
+    ]
+  },
+  {
+    "hindi": "मैं कर सकता हूँ।",
+    "tamil": "என்னால பண்ண முடியும்.",
+    "pronunciation": "ऎऩ्ऩाल पण्ण मुटियुम्.",
+    "audio_path": "assets/audio/l22_i_can_do.mp3",
+    "tags": [
+      "lesson:22",
+      "topic:ability",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "क्या मैं जा सकता हूँ?",
+    "tamil": "நான் போகலாமா?",
+    "pronunciation": "नाऩ् पोकलामा?",
+    "audio_path": "assets/audio/l22_can_i_go.mp3",
+    "tags": [
+      "lesson:22",
+      "topic:ability",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "आप कर सकते हैं।",
+    "tamil": "உங்களால பண்ண முடியும்.",
+    "pronunciation": "उङ्कळाल पण्ण मुटियुम्.",
+    "audio_path": "assets/audio/l22_you_can.mp3",
+    "tags": [
+      "lesson:22",
+      "topic:ability",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "मत करो।",
+    "tamil": "பண்ணாதீங்க.",
+    "pronunciation": "पण्णातीङ्क.",
+    "audio_path": "assets/audio/l22_dont_do.mp3",
+    "tags": [
+      "lesson:22",
+      "topic:ability",
+      "grammar:negative"
+    ]
+  },
+  {
+    "hindi": "मुझे चाहिए।",
+    "tamil": "எனக்கு வேணும்.",
+    "pronunciation": "ऎऩक्कु वेणुम्.",
+    "audio_path": "assets/audio/l23_i_want.mp3",
+    "tags": [
+      "lesson:23",
+      "topic:wants_and_needs",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "बस, काफी है।",
+    "tamil": "போதும்.",
+    "pronunciation": "पोतुम्.",
+    "audio_path": "assets/audio/l23_enough.mp3",
+    "tags": [
+      "lesson:23",
+      "topic:wants_and_needs",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "ज़रूरी है।",
+    "tamil": "அவசியம்.",
+    "pronunciation": "अवचियम्.",
+    "audio_path": "assets/audio/l23_necessary.mp3",
+    "tags": [
+      "lesson:23",
+      "topic:wants_and_needs",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "यह अच्छा है।",
+    "tamil": "இது நல்லா இருக்கு.",
+    "pronunciation": "इतु नल्ला इरुक्कु.",
+    "audio_path": "assets/audio/l24_this_is_good.mp3",
+    "tags": [
+      "lesson:24",
+      "topic:adjectives",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "वह बड़ा है।",
+    "tamil": "அது பெருசு.",
+    "pronunciation": "अतु पॆरुचु.",
+    "audio_path": "assets/audio/l24_that_is_big.mp3",
+    "tags": [
+      "lesson:24",
+      "topic:adjectives",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "यह आसान है।",
+    "tamil": "இது ஈஸி.",
+    "pronunciation": "इतु ईसि.",
+    "audio_path": "assets/audio/l24_this_is_easy.mp3",
+    "tags": [
+      "lesson:24",
+      "topic:adjectives",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "यह गलत है।",
+    "tamil": "இது ரோங்.",
+    "pronunciation": "इतु रोङ्.",
+    "audio_path": "assets/audio/l24_this_is_wrong.mp3",
+    "tags": [
+      "lesson:24",
+      "topic:adjectives",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "हमेशा आओ।",
+    "tamil": "எப்பவும் வாங்க.",
+    "pronunciation": "ऎप्पवुम् वाङ्क.",
+    "audio_path": "assets/audio/l25_always_come.mp3",
+    "tags": [
+      "lesson:25",
+      "topic:frequency",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "कभी नहीं।",
+    "tamil": "எப்பவும் இல்ல.",
+    "pronunciation": "ऎप्पवुम् इल्ल.",
+    "audio_path": "assets/audio/l25_never.mp3",
+    "tags": [
+      "lesson:25",
+      "topic:frequency",
+      "grammar:negative"
+    ]
+  },
+  {
+    "hindi": "रोज़ आओ।",
+    "tamil": "தினமும் வாங்க.",
+    "pronunciation": "तिऩमुम् वाङ्क.",
+    "audio_path": "assets/audio/l25_come_daily.mp3",
+    "tags": [
+      "lesson:25",
+      "topic:frequency",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "पहली बार।",
+    "tamil": "முதல் தடவ.",
+    "pronunciation": "मुतल् तटव.",
+    "audio_path": "assets/audio/l25_first_time.mp3",
+    "tags": [
+      "lesson:25",
+      "topic:frequency",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "आपका नाम।",
+    "tamil": "உங்க பேரு.",
+    "pronunciation": "उङ्क पेरु.",
+    "audio_path": "assets/audio/l26_your_name.mp3",
+    "tags": [
+      "lesson:26",
+      "topic:possessives",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "उसका घर।",
+    "tamil": "அவனோட வீடு.",
+    "pronunciation": "अवऩोट वीटु.",
+    "audio_path": "assets/audio/l26_his_house.mp3",
+    "tags": [
+      "lesson:26",
+      "topic:possessives",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "हमारा काम।",
+    "tamil": "எங்களோட வேல.",
+    "pronunciation": "ऎङ्कळोट वेल.",
+    "audio_path": "assets/audio/l26_our_work.mp3",
+    "tags": [
+      "lesson:26",
+      "topic:possessives",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "फ़ोन करो।",
+    "tamil": "போன் பண்ணுங்க.",
+    "pronunciation": "पोऩ् पण्णुङ्क.",
+    "audio_path": "assets/audio/l27_call_me.mp3",
+    "tags": [
+      "lesson:27",
+      "topic:phone_and_digital",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "मैसेज करो।",
+    "tamil": "மெசேஜ் பண்ணுங்க.",
+    "pronunciation": "मॆचेज् पण्णुङ्क.",
+    "audio_path": "assets/audio/l27_message_me.mp3",
+    "tags": [
+      "lesson:27",
+      "topic:phone_and_digital",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "नेटवर्क नहीं है।",
+    "tamil": "நெட்வொர்க் இல்ல.",
+    "pronunciation": "नॆट्वॊर्क् इल्ल.",
+    "audio_path": "assets/audio/l27_no_network.mp3",
+    "tags": [
+      "lesson:27",
+      "topic:phone_and_digital",
+      "grammar:negative"
+    ]
+  },
+  {
+    "hindi": "चार्जर दो।",
+    "tamil": "சார்ஜர் குடுங்க.",
+    "pronunciation": "चार्जर् कुटुङ्क.",
+    "audio_path": "assets/audio/l27_give_charger.mp3",
+    "tags": [
+      "lesson:27",
+      "topic:phone_and_digital",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "काम खत्म।",
+    "tamil": "வேல முடிஞ்சுது.",
+    "pronunciation": "वेल मुटिञ्चुतु.",
+    "audio_path": "assets/audio/l28_work_done.mp3",
+    "tags": [
+      "lesson:28",
+      "topic:office",
+      "grammar:past"
+    ]
+  },
+  {
+    "hindi": "मीटिंग है।",
+    "tamil": "மீட்டிங் இருக்கு.",
+    "pronunciation": "मीट्टिङ् इरुक्कु.",
+    "audio_path": "assets/audio/l28_there_is_meeting.mp3",
+    "tags": [
+      "lesson:28",
+      "topic:office",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "देर हो गई।",
+    "tamil": "லேட் ஆயிடுச்சு.",
+    "pronunciation": "लेट् आयिटुच्चु.",
+    "audio_path": "assets/audio/l28_got_late.mp3",
+    "tags": [
+      "lesson:28",
+      "topic:office",
+      "grammar:past"
+    ]
+  },
+  {
+    "hindi": "मुझे जाना है।",
+    "tamil": "நான் போகணும்.",
+    "pronunciation": "नाऩ् पोकणुम्.",
+    "audio_path": "assets/audio/l28_i_have_to_go.mp3",
+    "tags": [
+      "grammar:present",
+      "lesson:28",
+      "lesson:39",
+      "topic:obligation",
+      "topic:office"
+    ]
+  },
+  {
+    "hindi": "सिरदर्द है।",
+    "tamil": "தலவலிக்குது.",
+    "pronunciation": "तलवलिक्कुतु.",
+    "audio_path": "assets/audio/l29_headache.mp3",
+    "tags": [
+      "lesson:29",
+      "topic:health",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "पेट दर्द है।",
+    "tamil": "வயிறு வலிக்குது.",
+    "pronunciation": "वयिऱु वलिक्कुतु.",
+    "audio_path": "assets/audio/l29_stomachache.mp3",
+    "tags": [
+      "lesson:29",
+      "topic:health",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "बुख़ार है।",
+    "tamil": "ஜுரம்.",
+    "pronunciation": "जुरम्.",
+    "audio_path": "assets/audio/l29_fever.mp3",
+    "tags": [
+      "lesson:29",
+      "topic:health",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "दवाई दो।",
+    "tamil": "மருந்து குடுங்க.",
+    "pronunciation": "मरुन्तु कुटुङ्क.",
+    "audio_path": "assets/audio/l29_give_medicine.mp3",
+    "tags": [
+      "lesson:29",
+      "topic:health",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "मदद करो!",
+    "tamil": "ஹெல்ப் பண்ணுங்க!",
+    "pronunciation": "हॆल्प् पण्णुङ्क!",
+    "audio_path": "assets/audio/l30_help.mp3",
+    "tags": [
+      "lesson:30",
+      "topic:emergency",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "पुलिस बुलाओ।",
+    "tamil": "போலீஸ் கூப்பிடுங்க.",
+    "pronunciation": "पोलीस् कूप्पिटुङ्क.",
+    "audio_path": "assets/audio/l30_call_police.mp3",
+    "tags": [
+      "lesson:30",
+      "topic:emergency",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "एम्बुलेंस बुलाओ।",
+    "tamil": "ஆம்புலன்ஸ் கூப்பிடுங்க.",
+    "pronunciation": "आम्पुलऩ्स् कूप्पिटुङ्क.",
+    "audio_path": "assets/audio/l30_call_ambulance.mp3",
+    "tags": [
+      "lesson:30",
+      "topic:emergency",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "जल्दी करो!",
+    "tamil": "சீக்கிரம்!",
+    "pronunciation": "चीक्किरम्!",
+    "audio_path": "assets/audio/l30_hurry.mp3",
+    "tags": [
+      "lesson:30",
+      "topic:emergency",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "सही बात है।",
+    "tamil": "கரெக்ட்.",
+    "pronunciation": "करॆक्ट्.",
+    "audio_path": "assets/audio/l31_right.mp3",
+    "tags": [
+      "lesson:31",
+      "topic:agreement",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "मैं सहमत हूँ।",
+    "tamil": "நான் ஒத்துக்கறேன்.",
+    "pronunciation": "नाऩ् ऒत्तुक्कऱेऩ्.",
+    "audio_path": "assets/audio/l31_i_agree.mp3",
+    "tags": [
+      "lesson:31",
+      "topic:agreement",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "शायद।",
+    "tamil": "மேபி.",
+    "pronunciation": "मेपि.",
+    "audio_path": "assets/audio/l31_maybe.mp3",
+    "tags": [
+      "lesson:31",
+      "topic:agreement",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "मुझे नहीं पता।",
+    "tamil": "எனக்கு தெரியாது.",
+    "pronunciation": "ऎऩक्कु तॆरियातु.",
+    "audio_path": "assets/audio/l31_i_dont_know.mp3",
+    "tags": [
+      "lesson:31",
+      "topic:agreement",
+      "grammar:negative"
+    ]
+  },
+  {
+    "hindi": "इससे बड़ा।",
+    "tamil": "இதவிட பெருசு.",
+    "pronunciation": "इतविट पॆरुचु.",
+    "audio_path": "assets/audio/l32_bigger_than_this.mp3",
+    "tags": [
+      "lesson:32",
+      "topic:comparisons",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "ज़्यादा दो।",
+    "tamil": "ஜாஸ்தி குடுங்க.",
+    "pronunciation": "जास्ति कुटुङ्क.",
+    "audio_path": "assets/audio/l32_give_more.mp3",
+    "tags": [
+      "lesson:32",
+      "topic:comparisons",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "कम करो।",
+    "tamil": "கம்மி பண்ணுங்க.",
+    "pronunciation": "कम्मि पण्णुङ्क.",
+    "audio_path": "assets/audio/l32_reduce.mp3",
+    "tags": [
+      "lesson:32",
+      "topic:comparisons",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "सबसे अच्छा।",
+    "tamil": "பெஸ்ட்.",
+    "pronunciation": "पॆस्ट्.",
+    "audio_path": "assets/audio/l32_best.mp3",
+    "tags": [
+      "lesson:32",
+      "topic:comparisons",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "सोमवार को आओ।",
+    "tamil": "திங்கக்கிழமை வாங்க.",
+    "pronunciation": "तिङ्कक्किऴमै वाङ्क.",
+    "audio_path": "assets/audio/l33_come_monday.mp3",
+    "tags": [
+      "lesson:33",
+      "topic:days",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "आज रविवार है।",
+    "tamil": "இன்னிக்கு ஞாயிற்றுக்கிழமை.",
+    "pronunciation": "इऩ्ऩिक्कु ञायिऱ्‌ऱुक्किऴमै.",
+    "audio_path": "assets/audio/l33_today_is_sunday.mp3",
+    "tags": [
+      "lesson:33",
+      "topic:days",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "शुक्रवार को छुट्टी है।",
+    "tamil": "வெள்ளிக்கிழமை லீவ்.",
+    "pronunciation": "वॆळ्ळिक्किऴमै लीव्.",
+    "audio_path": "assets/audio/l33_friday_is_leave.mp3",
+    "tags": [
+      "lesson:33",
+      "topic:days",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "आज कौन सा दिन है?",
+    "tamil": "இன்னிக்கு என்ன கிழமை?",
+    "pronunciation": "इऩ्ऩिक्कु ऎऩ्ऩ किऴमै?",
+    "audio_path": "assets/audio/l33_what_day_today.mp3",
+    "tags": [
+      "lesson:33",
+      "topic:days",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "बहुत गर्मी है।",
+    "tamil": "ரொம்ப வெயில்.",
+    "pronunciation": "रॊम्प वॆयिल्.",
+    "audio_path": "assets/audio/l34_very_hot.mp3",
+    "tags": [
+      "lesson:34",
+      "topic:weather",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "ठंड है।",
+    "tamil": "குளிரா இருக்கு.",
+    "pronunciation": "कुळिरा इरुक्कु.",
+    "audio_path": "assets/audio/l34_cold.mp3",
+    "tags": [
+      "lesson:34",
+      "topic:weather",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "मौसम अच्छा है।",
+    "tamil": "வெதர் நல்லா இருக்கு.",
+    "pronunciation": "वॆतर् नल्ला इरुक्कु.",
+    "audio_path": "assets/audio/l34_weather_good.mp3",
+    "tags": [
+      "lesson:34",
+      "topic:weather",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "सच में?",
+    "tamil": "சீரியஸ்லியா?",
+    "pronunciation": "चीरियस्लिया?",
+    "audio_path": "assets/audio/l35_really.mp3",
+    "tags": [
+      "lesson:35",
+      "topic:small_talk",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "बहुत बढ़िया!",
+    "tamil": "சூப்பர்!",
+    "pronunciation": "चूप्पर्!",
+    "audio_path": "assets/audio/l35_great.mp3",
+    "tags": [
+      "lesson:35",
+      "topic:small_talk",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "एक मिनट रुको।",
+    "tamil": "ஒரு நிமிஷம் நில்லுங்க.",
+    "pronunciation": "ऒरु निमिषम् निल्लुङ्क.",
+    "audio_path": "assets/audio/l35_wait_a_minute.mp3",
+    "tags": [
+      "lesson:35",
+      "topic:small_talk",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "क्या करें?",
+    "tamil": "என்ன பண்றது?",
+    "pronunciation": "ऎऩ्ऩ पण्ऱतु?",
+    "audio_path": "assets/audio/l35_what_to_do.mp3",
+    "tags": [
+      "lesson:35",
+      "topic:small_talk",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "घर जाओ।",
+    "tamil": "வீட்டுக்கு போங்க.",
+    "pronunciation": "वीट्टुक्कु पोङ्क.",
+    "audio_path": "assets/audio/l36_go_home.mp3",
+    "tags": [
+      "lesson:36",
+      "topic:places",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "अस्पताल कहाँ है?",
+    "tamil": "ஹாஸ்பிடல் எங்க?",
+    "pronunciation": "हास्पिटल् ऎङ्क?",
+    "audio_path": "assets/audio/l36_where_is_hospital.mp3",
+    "tags": [
+      "lesson:36",
+      "topic:places",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "बैंक कहाँ है?",
+    "tamil": "பேங்க் எங்க இருக்கு?",
+    "pronunciation": "पेङ्क् ऎङ्क इरुक्कु?",
+    "audio_path": "assets/audio/l36_where_is_bank.mp3",
+    "tags": [
+      "lesson:36",
+      "topic:places",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "पार्क जाओ।",
+    "tamil": "பார்க்குக்கு போங்க.",
+    "pronunciation": "पार्क्कुक्कु पोङ्क.",
+    "audio_path": "assets/audio/l36_go_to_park.mp3",
+    "tags": [
+      "lesson:36",
+      "topic:places",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "लाल रंग।",
+    "tamil": "சிவப்பு கலர்.",
+    "pronunciation": "चिवप्पु कलर्.",
+    "audio_path": "assets/audio/l37_red_color.mp3",
+    "tags": [
+      "lesson:37",
+      "topic:colors",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "काला रंग।",
+    "tamil": "கருப்பு கலர்.",
+    "pronunciation": "करुप्पु कलर्.",
+    "audio_path": "assets/audio/l37_black_color.mp3",
+    "tags": [
+      "lesson:37",
+      "topic:colors",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "सफ़ेद रंग।",
+    "tamil": "வெள்ள கலர்.",
+    "pronunciation": "वॆळ्ळ कलर्.",
+    "audio_path": "assets/audio/l37_white_color.mp3",
+    "tags": [
+      "lesson:37",
+      "topic:colors",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "हरा रंग।",
+    "tamil": "பச்ச கலர்.",
+    "pronunciation": "पच्च कलर्.",
+    "audio_path": "assets/audio/l37_green_color.mp3",
+    "tags": [
+      "lesson:37",
+      "topic:colors",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "जल्दी उठो।",
+    "tamil": "சீக்கிரம் எழுந்திருங்க.",
+    "pronunciation": "चीक्किरम् ऎऴुन्तिरुङ्क.",
+    "audio_path": "assets/audio/l38_wake_up_early.mp3",
+    "tags": [
+      "lesson:38",
+      "topic:daily_routine",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "खाना बनाओ।",
+    "tamil": "சமையல் பண்ணுங்க.",
+    "pronunciation": "चमैयल् पण्णुङ्क.",
+    "audio_path": "assets/audio/l38_cook_food.mp3",
+    "tags": [
+      "lesson:38",
+      "topic:daily_routine",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "किताब पढ़ो।",
+    "tamil": "புக் படிங்க.",
+    "pronunciation": "पुक् पटिङ्क.",
+    "audio_path": "assets/audio/l38_read_book.mp3",
+    "tags": [
+      "lesson:38",
+      "topic:daily_routine",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "रोज़ दौड़ो।",
+    "tamil": "தினமும் ஓடுங்க.",
+    "pronunciation": "तिऩमुम् ओटुङ्क.",
+    "audio_path": "assets/audio/l38_run_daily.mp3",
+    "tags": [
+      "lesson:38",
+      "topic:daily_routine",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "मुझे करना है।",
+    "tamil": "நான் பண்ணணும்.",
+    "pronunciation": "नाऩ् पण्णणुम्.",
+    "audio_path": "assets/audio/l39_i_must_do.mp3",
+    "tags": [
+      "lesson:39",
+      "topic:obligation",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "आपको आना चाहिए।",
+    "tamil": "நீங்க வரணும்.",
+    "pronunciation": "नीङ्क वरणुम्.",
+    "audio_path": "assets/audio/l39_you_must_come.mp3",
+    "tags": [
+      "lesson:39",
+      "topic:obligation",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "देखना है।",
+    "tamil": "பாக்கணும்.",
+    "pronunciation": "पाक्कणुम्.",
+    "audio_path": "assets/audio/l39_must_see.mp3",
+    "tags": [
+      "lesson:39",
+      "topic:obligation",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "कृपया मदद कीजिए।",
+    "tamil": "ப்ளீஸ் ஹெல்ப் பண்ணுங்க.",
+    "pronunciation": "प्ळीस् हॆल्प् पण्णुङ्क.",
+    "audio_path": "assets/audio/l40_please_help.mp3",
+    "tags": [
+      "lesson:40",
+      "topic:requests",
+      "grammar:polite_request"
+    ]
+  },
+  {
+    "hindi": "क्या आप कर सकते हैं?",
+    "tamil": "நீங்க பண்ண முடியுமா?",
+    "pronunciation": "नीङ्क पण्ण मुटियुमा?",
+    "audio_path": "assets/audio/l40_can_you_do.mp3",
+    "tags": [
+      "lesson:40",
+      "topic:requests",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "थोड़ा इंतज़ार कीजिए।",
+    "tamil": "கொஞ்சம் வெயிட் பண்ணுங்க.",
+    "pronunciation": "कॊञ्चम् वॆयिट् पण्णुङ्क.",
+    "audio_path": "assets/audio/l40_please_wait.mp3",
+    "tags": [
+      "lesson:40",
+      "topic:requests",
+      "grammar:polite_request"
+    ]
+  },
+  {
+    "hindi": "यह ले लीजिए।",
+    "tamil": "இத எடுங்க.",
+    "pronunciation": "इत ऎटुङ्क.",
+    "audio_path": "assets/audio/l40_take_this.mp3",
+    "tags": [
+      "lesson:40",
+      "topic:requests",
+      "grammar:polite_request"
+    ]
+  },
+  {
+    "hindi": "काम करवाओ।",
+    "tamil": "வேல பண்ண சொல்லுங்க.",
+    "pronunciation": "वेल पण्ण चॊल्लुङ्क.",
+    "audio_path": "assets/audio/l41_get_work_done.mp3",
+    "tags": [
+      "lesson:41",
+      "topic:causatives",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "उसे बुलवाओ।",
+    "tamil": "அவர கூப்பிட சொல்லுங்க.",
+    "pronunciation": "अवर कूप्पिट चॊल्लुङ्क.",
+    "audio_path": "assets/audio/l41_get_him_called.mp3",
+    "tags": [
+      "lesson:41",
+      "topic:causatives",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "अंदर आने दो।",
+    "tamil": "உள்ள வர விடுங்க.",
+    "pronunciation": "उळ्ळ वर विटुङ्क.",
+    "audio_path": "assets/audio/l41_let_come_in.mp3",
+    "tags": [
+      "lesson:41",
+      "topic:causatives",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "बाहर जाने दो।",
+    "tamil": "வெளிய போக விடுங்க.",
+    "pronunciation": "वॆळिय पोक विटुङ्क.",
+    "audio_path": "assets/audio/l41_let_go_out.mp3",
+    "tags": [
+      "lesson:41",
+      "topic:causatives",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "अगर हो सके तो आओ।",
+    "tamil": "முடிஞ்சா வாங்க.",
+    "pronunciation": "मुटिञ्चा वाङ्क.",
+    "audio_path": "assets/audio/l42_come_if_possible.mp3",
+    "tags": [
+      "lesson:42",
+      "topic:conditionals",
+      "grammar:conditional"
+    ]
+  },
+  {
+    "hindi": "अगर समय हो तो।",
+    "tamil": "டைம் இருந்தா.",
+    "pronunciation": "टैम् इरुन्ता.",
+    "audio_path": "assets/audio/l42_if_there_is_time.mp3",
+    "tags": [
+      "lesson:42",
+      "topic:conditionals",
+      "grammar:conditional"
+    ]
+  },
+  {
+    "hindi": "मैं करता अगर...",
+    "tamil": "நான் பண்ணியிருப்பேன்...",
+    "pronunciation": "नाऩ् पण्णियिरुप्पेऩ्...",
+    "audio_path": "assets/audio/l42_i_would_have.mp3",
+    "tags": [
+      "lesson:42",
+      "topic:conditionals",
+      "grammar:conditional"
+    ]
+  },
+  {
+    "hindi": "नहीं करना चाहिए था।",
+    "tamil": "பண்ணியிருக்கக்கூடாது.",
+    "pronunciation": "पण्णियिरुक्कक्कूटातु.",
+    "audio_path": "assets/audio/l42_shouldnt_have_done.mp3",
+    "tags": [
+      "lesson:42",
+      "topic:conditionals",
+      "grammar:past"
+    ]
+  },
+  {
+    "hindi": "उसने कहा कि...",
+    "tamil": "அவரு சொன்னாரு...",
+    "pronunciation": "अवरु चॊऩ्ऩारु...",
+    "audio_path": "assets/audio/l43_he_said.mp3",
+    "tags": [
+      "lesson:43",
+      "topic:reported_speech",
+      "grammar:past"
+    ]
+  },
+  {
+    "hindi": "उसने पूछा कि...",
+    "tamil": "அவரு கேட்டாரு...",
+    "pronunciation": "अवरु केट्टारु...",
+    "audio_path": "assets/audio/l43_he_asked.mp3",
+    "tags": [
+      "lesson:43",
+      "topic:reported_speech",
+      "grammar:past"
+    ]
+  },
+  {
+    "hindi": "मैंने सुना कि...",
+    "tamil": "நான் கேள்விப்பட்டேன்...",
+    "pronunciation": "नाऩ् केळ्विप्पट्टेऩ्...",
+    "audio_path": "assets/audio/l43_i_heard.mp3",
+    "tags": [
+      "lesson:43",
+      "topic:reported_speech",
+      "grammar:past"
+    ]
+  },
+  {
+    "hindi": "लोग कहते हैं।",
+    "tamil": "எல்லாரும் சொல்றாங்க.",
+    "pronunciation": "ऎल्लारुम् चॊल्ऱाङ्क.",
+    "audio_path": "assets/audio/l43_people_say.mp3",
+    "tags": [
+      "lesson:43",
+      "topic:reported_speech",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "है ना?",
+    "tamil": "இல்லியா?",
+    "pronunciation": "इल्लिया?",
+    "audio_path": "assets/audio/l44_isnt_it.mp3",
+    "tags": [
+      "lesson:44",
+      "topic:question_tags",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "सही है ना?",
+    "tamil": "சரி தானே?",
+    "pronunciation": "चरि ताऩे?",
+    "audio_path": "assets/audio/l44_is_it_right.mp3",
+    "tags": [
+      "lesson:44",
+      "topic:question_tags",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "समझे?",
+    "tamil": "புரியுதா?",
+    "pronunciation": "पुरियुता?",
+    "audio_path": "assets/audio/l44_understood.mp3",
+    "tags": [
+      "lesson:44",
+      "topic:question_tags",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "आएंगे ना?",
+    "tamil": "வருவீங்களா?",
+    "pronunciation": "वरुवीङ्कळा?",
+    "audio_path": "assets/audio/l44_will_come_right.mp3",
+    "tags": [
+      "lesson:44",
+      "topic:question_tags",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "कितनी देर?",
+    "tamil": "எவ்ளோ நேரம்?",
+    "pronunciation": "ऎव्ळो नेरम्?",
+    "audio_path": "assets/audio/l45_how_long.mp3",
+    "tags": [
+      "lesson:45",
+      "topic:duration",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "पाँच मिनट में।",
+    "tamil": "ஐந்து நிமிஷத்துல.",
+    "pronunciation": "ऐन्तु निमिषत्तुल.",
+    "audio_path": "assets/audio/l45_in_five_mins.mp3",
+    "tags": [
+      "lesson:45",
+      "topic:duration",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "थोड़ी देर रुको।",
+    "tamil": "கொஞ்ச நேரம் நில்லுங்க.",
+    "pronunciation": "कॊञ्च नेरम् निल्लुङ्क.",
+    "audio_path": "assets/audio/l45_wait_a_while.mp3",
+    "tags": [
+      "lesson:45",
+      "topic:duration",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "पूरे दिन।",
+    "tamil": "முழு நாளும்.",
+    "pronunciation": "मुऴु नाळुम्.",
+    "audio_path": "assets/audio/l45_whole_day.mp3",
+    "tags": [
+      "lesson:45",
+      "topic:duration",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "शादी कब है?",
+    "tamil": "கல்யாணம் எப்போ?",
+    "pronunciation": "कल्याणम् ऎप्पो?",
+    "audio_path": "assets/audio/l46_when_wedding.mp3",
+    "tags": [
+      "lesson:46",
+      "topic:culture",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "पोंगल की शुभकामनाएं।",
+    "tamil": "பொங்கல் வாழ்த்துக்கள்.",
+    "pronunciation": "पॊङ्कल् वाऴ्त्तुक्कळ्.",
+    "audio_path": "assets/audio/l46_happy_pongal.mp3",
+    "tags": [
+      "lesson:46",
+      "topic:culture",
+      "grammar:greeting"
+    ]
+  },
+  {
+    "hindi": "जन्मदिन मुबारक।",
+    "tamil": "ஹேப்பி பர்த்டே.",
+    "pronunciation": "हेप्पि पर्त्टे.",
+    "audio_path": "assets/audio/l46_happy_birthday.mp3",
+    "tags": [
+      "lesson:46",
+      "topic:culture",
+      "grammar:greeting"
+    ]
+  },
+  {
+    "hindi": "पूजा हो गई?",
+    "tamil": "பூஜை முடிஞ்சுதா?",
+    "pronunciation": "पूजै मुटिञ्चुता?",
+    "audio_path": "assets/audio/l46_pooja_done.mp3",
+    "tags": [
+      "lesson:46",
+      "topic:culture",
+      "grammar:question"
+    ]
+  },
+  {
+    "hindi": "पैसे दो।",
+    "tamil": "பணம் குடுங்க.",
+    "pronunciation": "पणम् कुटुङ्क.",
+    "audio_path": "assets/audio/l47_give_money.mp3",
+    "tags": [
+      "lesson:47",
+      "topic:money",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "जमा करो।",
+    "tamil": "போடுங்க.",
+    "pronunciation": "पोटुङ्क.",
+    "audio_path": "assets/audio/l47_deposit.mp3",
+    "tags": [
+      "lesson:47",
+      "topic:money",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "बैलेंस चेक करो।",
+    "tamil": "பேலன்ஸ் செக் பண்ணுங்க.",
+    "pronunciation": "पेलऩ्स् चॆक् पण्णुङ्क.",
+    "audio_path": "assets/audio/l47_check_balance.mp3",
+    "tags": [
+      "lesson:47",
+      "topic:money",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "सामने देखो।",
+    "tamil": "முன்னாடி பாருங்க.",
+    "pronunciation": "मुऩ्ऩाटि पारुङ्क.",
+    "audio_path": "assets/audio/l48_look_front.mp3",
+    "tags": [
+      "lesson:48",
+      "topic:directions",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "पीछे जाओ।",
+    "tamil": "பின்னாடி போங்க.",
+    "pronunciation": "पिऩ्ऩाटि पोङ्क.",
+    "audio_path": "assets/audio/l48_go_back.mp3",
+    "tags": [
+      "lesson:48",
+      "topic:directions",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "बगल में है।",
+    "tamil": "பக்கத்துல இருக்கு.",
+    "pronunciation": "पक्कत्तुल इरुक्कु.",
+    "audio_path": "assets/audio/l48_it_is_beside.mp3",
+    "tags": [
+      "lesson:48",
+      "topic:directions",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "ऊपर देखो।",
+    "tamil": "மேல பாருங்க.",
+    "pronunciation": "मेल पारुङ्क.",
+    "audio_path": "assets/audio/l48_look_up.mp3",
+    "tags": [
+      "lesson:48",
+      "topic:directions",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "फ़िल्म अच्छी है।",
+    "tamil": "படம் நல்லா இருக்கு.",
+    "pronunciation": "पटम् नल्ला इरुक्कु.",
+    "audio_path": "assets/audio/l49_movie_is_good.mp3",
+    "tags": [
+      "lesson:49",
+      "topic:entertainment",
+      "grammar:present"
+    ]
+  },
+  {
+    "hindi": "गाना गाओ।",
+    "tamil": "பாட்டு பாடுங்க.",
+    "pronunciation": "पाट्टु पाटुङ्क.",
+    "audio_path": "assets/audio/l49_sing_song.mp3",
+    "tags": [
+      "lesson:49",
+      "topic:entertainment",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "खेल खेलो।",
+    "tamil": "கேம் விளையாடுங்க.",
+    "pronunciation": "केम् विळैयाटुङ्क.",
+    "audio_path": "assets/audio/l49_play_game.mp3",
+    "tags": [
+      "lesson:49",
+      "topic:entertainment",
+      "grammar:imperative"
+    ]
+  },
+  {
+    "hindi": "मज़ा आया।",
+    "tamil": "ஃபன்னா இருந்துச்சு.",
+    "pronunciation": "फ़ऩ्ऩा इरुन्तुच्चु.",
+    "audio_path": "assets/audio/l49_had_fun.mp3",
+    "tags": [
+      "lesson:49",
+      "topic:entertainment",
+      "grammar:past"
+    ]
+  },
+  {
+    "hindi": "हालांकि मैं गया...",
+    "tamil": "நான் போனாலும்...",
+    "pronunciation": "नाऩ् पोऩालुम्...",
+    "audio_path": "assets/audio/l50_although_i_went.mp3",
+    "tags": [
+      "lesson:50",
+      "topic:connectors",
+      "grammar:complex"
+    ]
+  },
+  {
+    "hindi": "इसके अलावा।",
+    "tamil": "இது தவிர.",
+    "pronunciation": "इतु तविर.",
+    "audio_path": "assets/audio/l50_besides.mp3",
+    "tags": [
+      "lesson:50",
+      "topic:connectors",
+      "grammar:complex"
+    ]
+  },
+  {
+    "hindi": "जैसे ही वो आए...",
+    "tamil": "அவரு வந்த உடனே...",
+    "pronunciation": "अवरु वन्त उटऩे...",
+    "audio_path": "assets/audio/l50_as_soon_as_he_came.mp3",
+    "tags": [
+      "lesson:50",
+      "topic:connectors",
+      "grammar:complex"
+    ]
+  },
+  {
+    "hindi": "जब तक मैं आऊँ...",
+    "tamil": "நான் வர்ற வரைக்கும்...",
+    "pronunciation": "नाऩ् वर्ऱ वरैक्कुम्...",
+    "audio_path": "assets/audio/l50_until_i_come.mp3",
+    "tags": [
+      "lesson:50",
+      "topic:connectors",
+      "grammar:complex"
+    ]
+  }
+]

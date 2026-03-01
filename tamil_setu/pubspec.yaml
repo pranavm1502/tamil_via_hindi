@@ -50,6 +50,8 @@ flutter:
   assets:
     - assets/audio/
     - assets/data/master_content.json
+    - assets/data/sentences.json
+    - assets/data/sentences.schema.json
     - assets/images/
   fonts:
     - family: NotoSansHindi

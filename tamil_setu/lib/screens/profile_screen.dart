@@ -68,6 +68,7 @@ class ProfileScreen extends StatelessWidget {
               (data?['display_name'] as String?) ?? user.displayName ?? 'Learner';
           final totalXp = (data?['total_xp'] as int?) ?? 0;
           final streak = (data?['streak_count'] as int?) ?? 0;
+            final streakFreezes = (data?['streak_freezes'] as int?) ?? 0;
 
           return ListView(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
@@ -84,6 +85,12 @@ class ProfileScreen extends StatelessWidget {
                 items: [
                   _StatItem(label: 'Total XP', value: '$totalXp'),
                   _StatItem(label: 'Streak', value: '$streak days'),
+                  _StatItem(
+                    label: 'Streak Freezes',
+                    value: '$streakFreezes',
+                    tooltip:
+                        'Freezes protect your streak if you miss a day. Earn one at a 3-day streak.',
+                  ),
                   _StatItem(
                     label: 'Lessons Completed',
                     value: '${progress.totalCompletedLessons}',
@@ -499,7 +506,21 @@ class _StatsGrid extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(item.label, style: Theme.of(context).textTheme.bodySmall),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          item.label,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
+                      if (item.tooltip != null)
+                        Tooltip(
+                          message: item.tooltip,
+                          child: const Icon(Icons.info_outline, size: 16),
+                        ),
+                    ],
+                  ),
                   const SizedBox(height: 6),
                   Text(item.value, style: Theme.of(context).textTheme.titleMedium),
                 ],
@@ -514,5 +535,6 @@ class _StatsGrid extends StatelessWidget {
 class _StatItem {
   final String label;
   final String value;
-  const _StatItem({required this.label, required this.value});
+  final String? tooltip;
+  const _StatItem({required this.label, required this.value, this.tooltip});
 }

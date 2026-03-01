@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// Visual states for the mascot illustration.
@@ -17,6 +19,7 @@ class PeacockMascot extends StatelessWidget {
   final MascotLayout layout;
   final double? overlapInset;
   final Offset imageOffset;
+  final bool enableTestAnimation;
 
   const PeacockMascot(
       {super.key,
@@ -31,7 +34,12 @@ class PeacockMascot extends StatelessWidget {
       this.bubbleColor,
       this.layout = MascotLayout.inline,
       this.overlapInset,
-      this.imageOffset = Offset.zero});
+      this.imageOffset = Offset.zero,
+      this.enableTestAnimation = false});
+
+  bool _isTestEnvironment() {
+    return !kIsWeb && Platform.environment.containsKey('FLUTTER_TEST');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,77 +55,15 @@ class PeacockMascot extends StatelessWidget {
         assetPath = 'assets/images/peacock_guide.png';
     }
 
-    // TweenAnimationBuilder handles the "Pop-in" animation automatically
-    return Semantics(
-      container: true,
-      label: 'Mascot message: $message',
-      child: TweenAnimationBuilder<double>(
-      tween: Tween<double>(begin: 0.0, end: 1.0),
-      duration: const Duration(milliseconds: 600),
-      curve: Curves.easeOutBack, // Gives it a little "bounce"
-      builder: (context, value, child) {
-        return Opacity(
-          // FIX: Clamp the value so it never goes above 1.0 or below 0.0
-          opacity: value.clamp(0.0, 1.0),
-          child: Transform.translate(
-            offset: Offset(0, 20 * (1 - value)),
-            child: child,
-          ),
-        );
-      },
-      child: layout == MascotLayout.inline
-          ? Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                // Dynamic Speech Bubble
-                Flexible(
-                  child: Container(
-                    padding: bubblePadding,
-                    decoration: BoxDecoration(
-                      color: bubbleColor ?? Theme.of(context).cardColor,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(18),
-                        topRight: Radius.circular(18),
-                        bottomLeft: Radius.circular(18),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withAlpha(20),
-                          blurRadius: 8,
-                          offset: const Offset(0, 3),
-                        )
-                      ],
-                    ),
-                    child: Text(
-                      message,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: fontSize,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                // Mascot Image
-                Image.asset(
-                  assetPath,
-                  height: imageSize,
-                  semanticLabel: 'Peacock mascot',
-                  // Fallback icon if the image fails to load
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.star, size: 50, color: Colors.orange),
-                ),
-              ],
-            )
-          : Stack(
-              alignment: Alignment.bottomRight,
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: bubblePadding.copyWith(
-                    right: (overlapInset ?? imageSize * 0.55),
-                  ),
+    final content = layout == MascotLayout.inline
+        ? Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              // Dynamic Speech Bubble
+              Flexible(
+                child: Container(
+                  padding: bubblePadding,
                   decoration: BoxDecoration(
                     color: bubbleColor ?? Theme.of(context).cardColor,
                     borderRadius: const BorderRadius.only(
@@ -141,18 +87,89 @@ class PeacockMascot extends StatelessWidget {
                     ),
                   ),
                 ),
-                Transform.translate(
-                  offset: imageOffset,
-                  child: Image.asset(
-                    assetPath,
-                    height: imageSize,
-                    semanticLabel: 'Peacock mascot',
-                    errorBuilder: (context, error, stackTrace) =>
-                        const Icon(Icons.star, size: 50, color: Colors.orange),
+              ),
+              const SizedBox(width: 8),
+              // Mascot Image
+              Image.asset(
+                assetPath,
+                height: imageSize,
+                semanticLabel: 'Peacock mascot',
+                // Fallback icon if the image fails to load
+                errorBuilder: (context, error, stackTrace) =>
+                    const Icon(Icons.star, size: 50, color: Colors.orange),
+              ),
+            ],
+          )
+        : Stack(
+            alignment: Alignment.bottomRight,
+            children: [
+              Container(
+                width: double.infinity,
+                padding: bubblePadding.copyWith(
+                  right: (overlapInset ?? imageSize * 0.55),
+                ),
+                decoration: BoxDecoration(
+                  color: bubbleColor ?? Theme.of(context).cardColor,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(18),
+                    topRight: Radius.circular(18),
+                    bottomLeft: Radius.circular(18),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(20),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    )
+                  ],
+                ),
+                child: Text(
+                  message,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: fontSize,
                   ),
                 ),
-              ],
+              ),
+              Transform.translate(
+                offset: imageOffset,
+                child: Image.asset(
+                  assetPath,
+                  height: imageSize,
+                  semanticLabel: 'Peacock mascot',
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Icon(Icons.star, size: 50, color: Colors.orange),
+                ),
+              ),
+            ],
+          );
+
+    // Skip animations in tests to avoid golden capture hangs.
+    if (_isTestEnvironment() && !enableTestAnimation) {
+      return Semantics(
+        container: true,
+        label: 'Mascot message: $message',
+        child: content,
+      );
+    }
+
+    return Semantics(
+      container: true,
+      label: 'Mascot message: $message',
+      child: TweenAnimationBuilder<double>(
+        tween: Tween<double>(begin: 0.0, end: 1.0),
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeOutBack,
+        builder: (context, value, child) {
+          return Opacity(
+            opacity: value.clamp(0.0, 1.0),
+            child: Transform.translate(
+              offset: Offset(0, 20 * (1 - value)),
+              child: child,
             ),
+          );
+        },
+        child: content,
       ),
     );
   }

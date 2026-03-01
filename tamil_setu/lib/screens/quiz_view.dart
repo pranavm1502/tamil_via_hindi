@@ -5,10 +5,12 @@ import 'package:confetti/confetti.dart'; // 1. Added Import
 import '../models/word_pair.dart';
 import '../providers/progress_provider.dart';
 import '../providers/review_provider.dart';
+import '../providers/mistake_provider.dart';
 import '../widgets/peacock_mascot.dart';
 import 'package:tamil_setu/services/auth_service.dart';
 import '../services/sync_service.dart';
 import '../services/tts_service.dart';
+import '../services/xp_rules.dart';
 
 class QuizView extends StatefulWidget {
   final List<WordPair> words;
@@ -76,7 +78,17 @@ class _QuizViewState extends State<QuizView> {
   }
 
   void _nextCard(bool knewIt) {
-    if (knewIt) score++;
+    if (knewIt) {
+      score++;
+    } else {
+      final wordIndex = widget.words.indexOf(shuffledWords[currentIndex]);
+      if (wordIndex != -1) {
+        context.read<MistakeProvider>().addMistake(
+              widget.lessonIndex,
+              wordIndex,
+            );
+      }
+    }
     setState(() {
       if (currentIndex < shuffledWords.length - 1) {
         currentIndex++;
@@ -87,7 +99,19 @@ class _QuizViewState extends State<QuizView> {
     });
   }
 
-  void _showResultDialog() {
+  void _showFreezeToast(BuildContext context, StreakUpdateResult result) {
+    if (result.earnedFreeze) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Streak freeze earned!')),
+      );
+    } else if (result.consumedFreeze) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Streak freeze used to keep your streak.')),
+      );
+    }
+  }
+
+  Future<void> _showResultDialog() async {
     // 1. Calculate percentage (Fixes 'unused variable' warning)
     final percentage = (score / shuffledWords.length * 100).round();
 
@@ -102,15 +126,19 @@ class _QuizViewState extends State<QuizView> {
     // 2. ADD THE CLOUD SYNC HERE
     final user = AuthService().currentUser;
     if (user != null && percentage >= 80) {
-      SyncService().updateStreakAndXP(
+      final result = await SyncService().updateStreakAndXP(
         user.uid,
-        50,
+        XpRules.lessonPass,
         displayName: user.displayName ?? user.email,
       );
+      if (!mounted) return;
+      _showFreezeToast(context, result);
     }
     // Create review cards for this lesson (if not already created)
     Provider.of<ReviewProvider>(context, listen: false)
         .createCardsForLesson(widget.lessonIndex, widget.words.length);
+
+    if (!mounted) return;
 
     showDialog(
       context: context,
@@ -127,8 +155,8 @@ class _QuizViewState extends State<QuizView> {
               children: [
                 PeacockMascot(
                   message: percentage >= 80
-                      ? 'Excellent! बहुत अच्छा!'
-                      : 'Keep practicing! अभ्यास करते रहो!',
+                      ? 'Excellent! Great job!'
+                      : 'Keep practicing! You are getting better.',
                   state: percentage >= 80
                       ? MascotState.celebrate
                       : MascotState.confused,

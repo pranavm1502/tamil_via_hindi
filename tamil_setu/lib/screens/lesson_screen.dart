@@ -1,11 +1,14 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart'; // Required for kIsWeb
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../models/lesson.dart';
 import '../models/word_pair.dart';
 import 'quiz_view.dart';
 import 'multiple_choice_quiz.dart';
+import 'sentence_builder_quiz.dart';
+import '../providers/sentence_provider.dart';
 import '../services/tts_service.dart';
 
 class LessonScreen extends StatefulWidget {
@@ -29,7 +32,7 @@ class _LessonScreenState extends State<LessonScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
 
     // 2. Safe Initialization: Only create player if NOT in a test
     if (!_isTestEnvironment()) {
@@ -78,6 +81,12 @@ class _LessonScreenState extends State<LessonScreen>
 
   @override
   Widget build(BuildContext context) {
+    final sentences = context
+        .watch<SentenceProvider>()
+        .sentencesForLesson(
+          lessonIndex: widget.lessonIndex,
+          lessonTitle: widget.lesson.title,
+        );
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.lesson.title),
@@ -92,6 +101,7 @@ class _LessonScreenState extends State<LessonScreen>
             Tab(icon: Icon(Icons.menu_book), text: 'Learn'),
             Tab(icon: Icon(Icons.flash_on), text: 'Flashcards'),
             Tab(icon: Icon(Icons.quiz), text: 'MCQ'),
+            Tab(icon: Icon(Icons.view_quilt), text: 'Build'),
           ],
         ),
       ),
@@ -102,6 +112,10 @@ class _LessonScreenState extends State<LessonScreen>
           QuizView(words: widget.lesson.words, lessonIndex: widget.lessonIndex),
           MultipleChoiceQuiz(
               words: widget.lesson.words, lessonIndex: widget.lessonIndex),
+          SentenceBuilderQuiz(
+            sentences: sentences,
+            lessonIndex: widget.lessonIndex,
+          ),
         ],
       ),
     );

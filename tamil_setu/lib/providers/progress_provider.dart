@@ -7,7 +7,7 @@ class ProgressProvider with ChangeNotifier {
 
   /// Testing mode flag: When true, all lessons and checkpoints are unlocked
   /// Set to false in production to enforce completion requirements
-  static const bool isTestingMode = true;
+  static const bool isTestingMode = false;
 
   /// Instance-level override for testing mode (used in unit tests)
   final bool? _testingModeOverride;
