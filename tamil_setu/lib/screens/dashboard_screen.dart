@@ -598,6 +598,10 @@ class _PlanRow extends StatelessWidget {
             child: enabled
                 ? FilledButton(
                     onPressed: onPressed,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: PeacockTheme.peacockBlue.withAlpha(180),
+                      foregroundColor: Colors.white,
+                    ),
                     child: Text(actionLabel),
                   )
                 : OutlinedButton(
