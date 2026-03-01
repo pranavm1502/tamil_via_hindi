@@ -24,6 +24,7 @@ void main() {
     await firestore.collection('users').doc('u1').set({
       'display_name': 'Learner One',
       'total_xp': 150,
+      'xp_weekly': 40,
       'streak_count': 3,
     });
 
@@ -33,6 +34,8 @@ void main() {
       ),
     );
 
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('All Time'));
     await tester.pumpAndSettle();
     expect(find.text('Top Learners'), findsOneWidget);
     expect(find.text('Learner One'), findsOneWidget);

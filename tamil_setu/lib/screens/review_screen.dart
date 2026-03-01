@@ -14,6 +14,7 @@ import '../services/auth_service.dart';
 import '../services/sync_service.dart';
 import '../services/xp_rules.dart';
 import '../services/analytics_service.dart';
+import '../services/xp_tracker_service.dart';
 
 class ReviewScreen extends StatefulWidget {
   const ReviewScreen({super.key});
@@ -61,21 +62,24 @@ class _ReviewScreenState extends State<ReviewScreen> {
     final lessonIndex =
         context.read<ReviewProvider>().currentCard?.lessonIndex;
     try {
+      await _audioPlayer!.stop();
+      await TtsService().stop();
+      if (pair.audioPath.isNotEmpty) {
+        final cleanPath = pair.audioPath.replaceFirst('assets/', '');
+        // Set speed slightly faster for quick revision
+        await _audioPlayer!.setPlaybackRate(1.2);
+        await _audioPlayer!.play(AssetSource(cleanPath));
+        return;
+      }
+
       final colloquial = _colloquialTamil(pair.tamil);
-      if (pair.tamil.contains('/') && colloquial.isNotEmpty) {
-        final spoke = await TtsService().speak(
+      if (colloquial.isNotEmpty) {
+        await TtsService().speak(
           colloquial,
           source: 'review',
           lessonIndex: lessonIndex,
         );
-        if (spoke) return;
       }
-
-      if (pair.audioPath.isEmpty) return;
-      final cleanPath = pair.audioPath.replaceFirst('assets/', '');
-      // Set speed slightly faster for quick revision
-      await _audioPlayer!.setPlaybackRate(1.2);
-      await _audioPlayer!.play(AssetSource(cleanPath));
     } catch (e) {
       debugPrint('Audio Error: $e');
       AnalyticsService().logAudioPlaybackError(
@@ -108,6 +112,10 @@ class _ReviewScreenState extends State<ReviewScreen> {
       // ignore: discarded_futures
       _playFeedbackSound(quality, lessonIndex: currentCard?.lessonIndex);
     }
+    if (quality != ReviewQuality.again && currentCard != null) {
+      // ignore: discarded_futures
+      _awardXpForReview(currentCard.lessonIndex, currentCard.wordIndex);
+    }
     await reviewProvider.reviewCurrentCard(quality);
 
     setState(() {
@@ -138,6 +146,23 @@ class _ReviewScreenState extends State<ReviewScreen> {
         lessonIndex: lessonIndex,
       );
     }
+  }
+
+  Future<void> _awardXpForReview(int lessonIndex, int wordIndex) async {
+    if (_isTestEnvironment()) return;
+    final xp = await XpTrackerService().awardDailyXpForItem(
+      'word:$lessonIndex:$wordIndex',
+    );
+    if (xp == 0) return;
+
+    final user = AuthService().currentUser;
+    if (user == null) return;
+    await SyncService().updateStreakAndXP(
+      user.uid,
+      xp,
+      displayName: user.displayName ?? user.email,
+      reason: 'item',
+    );
   }
 
   Future<void> _showCompletionDialog() async {

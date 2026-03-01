@@ -48,10 +48,20 @@ class SyncService {
       await _db.runTransaction((transaction) async {
         final snapshot = await transaction.get(userRef);
 
+        final weekKey = _weekKey(today);
+        final monthKey = '${today.year}-${today.month.toString().padLeft(2, '0')}';
+        final yearKey = '${today.year}';
+
       if (!snapshot.exists) {
         // New user initialization
         transaction.set(userRef, {
           'total_xp': xpGained,
+          'xp_weekly': xpGained,
+          'xp_monthly': xpGained,
+          'xp_yearly': xpGained,
+          'last_xp_week': weekKey,
+          'last_xp_month': monthKey,
+          'last_xp_year': yearKey,
           'streak_count': 1,
           'last_activity': Timestamp.fromDate(today),
           'streak_freezes': 2,
@@ -70,6 +80,12 @@ class SyncService {
 
       final data = snapshot.data()!;
       int currentXP = data['total_xp'] ?? 0;
+      int currentWeeklyXp = data['xp_weekly'] ?? 0;
+      int currentMonthlyXp = data['xp_monthly'] ?? 0;
+      int currentYearlyXp = data['xp_yearly'] ?? 0;
+      final lastXpWeek = data['last_xp_week'] as String?;
+      final lastXpMonth = data['last_xp_month'] as String?;
+      final lastXpYear = data['last_xp_year'] as String?;
       int currentStreak = data['streak_count'] ?? 0;
       int currentFreezes = data['streak_freezes'] ?? 0;
       DateTime lastActivity = (data['last_activity'] as Timestamp).toDate();
@@ -107,8 +123,28 @@ class SyncService {
         currentFreezes = 4;
       }
 
+      if (lastXpWeek != weekKey) {
+        currentWeeklyXp = 0;
+      }
+      if (lastXpMonth != monthKey) {
+        currentMonthlyXp = 0;
+      }
+      if (lastXpYear != yearKey) {
+        currentYearlyXp = 0;
+      }
+
+      currentWeeklyXp += xpGained;
+      currentMonthlyXp += xpGained;
+      currentYearlyXp += xpGained;
+
       final updateData = <String, dynamic>{
         'total_xp': currentXP + xpGained,
+        'xp_weekly': currentWeeklyXp,
+        'xp_monthly': currentMonthlyXp,
+        'xp_yearly': currentYearlyXp,
+        'last_xp_week': weekKey,
+        'last_xp_month': monthKey,
+        'last_xp_year': yearKey,
         'streak_count': newStreak,
         'last_activity': Timestamp.fromDate(today),
         'streak_freezes': currentFreezes,
@@ -158,6 +194,17 @@ class SyncService {
       {'display_name': displayName},
       SetOptions(merge: true),
     );
+  }
+
+  int _isoWeekNumber(DateTime date) {
+    final thursday = date.add(Duration(days: 3 - ((date.weekday + 6) % 7)));
+    final firstThursday = DateTime(thursday.year, 1, 4);
+    return 1 + ((thursday.difference(firstThursday).inDays) ~/ 7);
+  }
+
+  String _weekKey(DateTime date) {
+    final week = _isoWeekNumber(date).toString().padLeft(2, '0');
+    return '${date.year}-W$week';
   }
 
   /// Award one streak freeze per week for passing the build lesson.

@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +14,7 @@ import '../services/sync_service.dart';
 import '../services/tts_service.dart';
 import '../services/xp_rules.dart';
 import '../services/analytics_service.dart';
+import '../services/xp_tracker_service.dart';
 
 class QuizView extends StatefulWidget {
   final List<WordPair> words;
@@ -38,6 +41,10 @@ class _QuizViewState extends State<QuizView> {
   late ConfettiController _confettiController; // 2. Added Controller
   late DateTime _quizStartTime;
   late DateTime _questionStartTime;
+
+  bool _isTestEnvironment() {
+    return !kIsWeb && Platform.environment.containsKey('FLUTTER_TEST');
+  }
 
   @override
   void initState() {
@@ -111,6 +118,11 @@ class _QuizViewState extends State<QuizView> {
     );
     if (knewIt) {
       score++;
+      final wordIndex = widget.words.indexOf(shuffledWords[currentIndex]);
+      if (wordIndex != -1) {
+        // ignore: discarded_futures
+        _awardXpForWord(wordIndex);
+      }
     } else {
       final wordIndex = widget.words.indexOf(shuffledWords[currentIndex]);
       if (wordIndex != -1) {
@@ -129,6 +141,23 @@ class _QuizViewState extends State<QuizView> {
         _showResultDialog();
       }
     });
+  }
+
+  Future<void> _awardXpForWord(int wordIndex) async {
+    if (_isTestEnvironment()) return;
+    final xp = await XpTrackerService().awardDailyXpForItem(
+      'word:${widget.lessonIndex}:$wordIndex',
+    );
+    if (xp == 0) return;
+
+    final user = AuthService().currentUser;
+    if (user == null) return;
+    await SyncService().updateStreakAndXP(
+      user.uid,
+      xp,
+      displayName: user.displayName ?? user.email,
+      reason: 'item',
+    );
   }
 
   void _showFreezeToast(BuildContext context, StreakUpdateResult result) {

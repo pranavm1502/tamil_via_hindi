@@ -15,6 +15,7 @@ import '../services/sync_service.dart';
 import '../services/tts_service.dart';
 import '../services/xp_rules.dart';
 import '../services/analytics_service.dart';
+import '../services/xp_tracker_service.dart';
 
 class MultipleChoiceQuiz extends StatefulWidget {
   final List<WordPair> words;
@@ -144,6 +145,11 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
       final correct = answer == currentWord.tamil;
       if (answer == currentWord.tamil) {
         score++;
+        final wordIndex = widget.words.indexOf(currentWord);
+        if (wordIndex != -1) {
+          // ignore: discarded_futures
+          _awardXpForWord(wordIndex);
+        }
       } else {
         final wordIndex = widget.words.indexOf(currentWord);
         if (wordIndex != -1) {
@@ -161,6 +167,22 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
       );
       _playAudio(currentWord);
     });
+  }
+
+  Future<void> _awardXpForWord(int wordIndex) async {
+    if (_isTestEnvironment()) return;
+    final xp = await XpTrackerService().awardDailyXpForItem(
+      'word:${widget.lessonIndex}:$wordIndex',
+    );
+    if (xp == 0) return;
+
+    final user = AuthService().currentUser;
+    if (user == null) return;
+    await SyncService().updateStreakAndXP(
+      user.uid,
+      xp,
+      reason: 'item',
+    );
   }
 
   // ... (The rest of your logic: _nextQuestion, _showFinalResults, build method)

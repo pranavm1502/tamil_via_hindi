@@ -5,11 +5,14 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:confetti/confetti.dart';
 import 'package:provider/provider.dart';
 import '../models/sentence_item.dart';
+import '../providers/progress_provider.dart';
 import '../providers/review_provider.dart';
 import '../services/auth_service.dart';
 import '../services/tts_service.dart';
 import '../services/analytics_service.dart';
 import '../services/sync_service.dart';
+import '../services/xp_rules.dart';
+import '../services/xp_tracker_service.dart';
 import '../widgets/peacock_mascot.dart';
 
 class SentenceBuilderQuiz extends StatefulWidget {
@@ -223,6 +226,11 @@ class _SentenceBuilderQuizState extends State<SentenceBuilderQuiz> {
       await _playFeedbackSound(correct);
     }
 
+    if (correct) {
+      // ignore: discarded_futures
+      _awardXpForSentence();
+    }
+
     AnalyticsService().logQuizAnswer(
       lessonIndex: widget.lessonIndex,
       quizType: 'build',
@@ -237,6 +245,28 @@ class _SentenceBuilderQuizState extends State<SentenceBuilderQuiz> {
         _correctCount++;
       }
     });
+  }
+
+  Future<void> _awardXpForSentence() async {
+    if (_isTestEnvironment()) return;
+    final sentenceIndex = widget.sentences.indexOf(
+      _shuffledSentences[_currentIndex],
+    );
+    if (sentenceIndex == -1) return;
+
+    final xp = await XpTrackerService().awardDailyXpForItem(
+      'sentence:${widget.lessonIndex}:$sentenceIndex',
+    );
+    if (xp == 0) return;
+
+    final user = AuthService().currentUser;
+    if (user == null) return;
+    await SyncService().updateStreakAndXP(
+      user.uid,
+      xp,
+      displayName: user.displayName ?? user.email,
+      reason: 'item',
+    );
   }
 
   Future<void> _playFeedbackSound(bool correct) async {
@@ -276,10 +306,29 @@ class _SentenceBuilderQuizState extends State<SentenceBuilderQuiz> {
         durationSec: durationSec,
       );
       if (passed) {
+        await _awardBuildXp();
+      }
+      if (passed) {
         await _awardWeeklyLessonFreeze();
       }
       _showCompletionDialog(scorePercent, passed);
     }
+  }
+
+  Future<void> _awardBuildXp() async {
+    final progress = Provider.of<ProgressProvider>(context, listen: false);
+    final awarded = await progress.markBuildCompleted(widget.lessonIndex);
+    if (!awarded) return;
+
+    final user = AuthService().currentUser;
+    if (user == null) return;
+
+    await SyncService().updateStreakAndXP(
+      user.uid,
+      XpRules.buildPass,
+      displayName: user.displayName ?? user.email,
+      reason: 'build',
+    );
   }
 
   Future<void> _awardWeeklyLessonFreeze() async {

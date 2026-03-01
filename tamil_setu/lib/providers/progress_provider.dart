@@ -23,6 +23,9 @@ class ProgressProvider with ChangeNotifier {
   // Tracks exactly which lessons (by index) are completed
   final Set<int> _completedLessons = {};
 
+  // Tracks which lessons have awarded build XP
+  final Set<int> _buildCompletedLessons = {};
+
   // Tracks completed checkpoint numbers (0, 1, 2...)
   final Set<int> _completedCheckpoints = {};
 
@@ -56,6 +59,13 @@ class ProgressProvider with ChangeNotifier {
     if (completedList != null) {
       _completedLessons.clear();
       _completedLessons.addAll(completedList.map((e) => int.parse(e)));
+    }
+
+    final buildCompletedList = prefs.getStringList('buildCompletedLessons');
+    if (buildCompletedList != null) {
+      _buildCompletedLessons.clear();
+      _buildCompletedLessons
+          .addAll(buildCompletedList.map((e) => int.parse(e)));
     }
 
     // Load the list of completed checkpoint indices
@@ -133,6 +143,10 @@ class ProgressProvider with ChangeNotifier {
     return _completedLessons.contains(lessonIndex);
   }
 
+  bool isBuildCompleted(int lessonIndex) {
+    return _buildCompletedLessons.contains(lessonIndex);
+  }
+
   /// Calculates the overall progress percentage for the dashboard header.
   double getOverallProgress(int totalLessons) {
     if (totalLessons == 0) return 0.0;
@@ -190,12 +204,26 @@ class ProgressProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<bool> markBuildCompleted(int lessonIndex) async {
+    if (_buildCompletedLessons.contains(lessonIndex)) {
+      return false;
+    }
+
+    _buildCompletedLessons.add(lessonIndex);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('buildCompletedLessons',
+        _buildCompletedLessons.map((e) => e.toString()).toList());
+    notifyListeners();
+    return true;
+  }
+
   /// Debug utility to reset all progress.
   Future<void> clearAllProgress() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
     _unlockedLevel = 1;
     _completedLessons.clear();
+    _buildCompletedLessons.clear();
     _completedCheckpoints.clear();
     _lessonScores.clear();
     notifyListeners();

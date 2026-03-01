@@ -16,6 +16,7 @@ import '../services/auth_service.dart';
 import '../services/sync_service.dart';
 import '../services/xp_rules.dart';
 import '../services/analytics_service.dart';
+import '../services/xp_tracker_service.dart';
 
 class CheckpointQuizScreen extends StatefulWidget {
   final Checkpoint checkpoint;
@@ -148,6 +149,8 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
       final correct = answer == currentWord.tamil;
       if (answer == currentWord.tamil) {
         score++;
+        // ignore: discarded_futures
+        _awardXpForWord(currentWord);
       } else {
         _recordMistake(currentWord);
       }
@@ -173,6 +176,40 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
         return;
       }
     }
+  }
+
+  Future<void> _awardXpForWord(WordPair pair) async {
+    if (_isTestEnvironment()) return;
+    final indices = _findLessonWordIndex(pair);
+    if (indices == null) return;
+
+    final xp = await XpTrackerService().awardDailyXpForItem(
+      'word:${indices.lessonIndex}:${indices.wordIndex}',
+    );
+    if (xp == 0) return;
+
+    final user = AuthService().currentUser;
+    if (user == null) return;
+    await SyncService().updateStreakAndXP(
+      user.uid,
+      xp,
+      displayName: user.displayName ?? user.email,
+      reason: 'item',
+    );
+  }
+
+  _LessonWordIndex? _findLessonWordIndex(WordPair pair) {
+    final content = context.read<ContentProvider>();
+    for (int i = 0; i < content.lessons.length; i++) {
+      final lesson = content.lessons[i];
+      final index = lesson.words.indexWhere((word) {
+        return word.hindi == pair.hindi && word.tamil == pair.tamil;
+      });
+      if (index != -1) {
+        return _LessonWordIndex(i, index);
+      }
+    }
+    return null;
   }
 
   void _nextQuestion() {
@@ -545,4 +582,11 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
       ),
     );
   }
+}
+
+class _LessonWordIndex {
+  final int lessonIndex;
+  final int wordIndex;
+
+  const _LessonWordIndex(this.lessonIndex, this.wordIndex);
 }
