@@ -12,6 +12,7 @@ import 'package:tamil_setu/providers/content_provider.dart';
 import 'package:tamil_setu/providers/review_provider.dart';
 import 'package:tamil_setu/providers/mistake_provider.dart';
 import 'package:tamil_setu/providers/sentence_provider.dart';
+import 'package:tamil_setu/providers/privacy_provider.dart';
 import 'test_helpers.dart';
 import 'firebase_mock.dart';
 
@@ -43,8 +44,15 @@ void main() {
           const MethodChannel('plugins.flutter.io/path_provider'),
           (c) async => '.');
 
-  Widget createTestableApp() {
+  Future<Widget> createTestableApp() async {
     final mockAuth = MockFirebaseAuth();
+    final privacy = PrivacyProvider();
+    await privacy.completeOnboarding(birthYear: 2000);
+    await privacy.completeAdultConsent(
+      trackingAllowed: true,
+      socialEnabled: true,
+      notificationsEnabled: true,
+    );
     return MultiProvider(
       providers: [
         Provider<AuthService>.value(
@@ -58,6 +66,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => ReviewProvider()),
         ChangeNotifierProvider(create: (_) => MistakeProvider()),
         ChangeNotifierProvider(create: (_) => SentenceProvider()),
+        ChangeNotifierProvider.value(value: privacy),
       ],
       child: const TamilSetuApp(),
     );
@@ -65,7 +74,7 @@ void main() {
 
   testWidgets('Tamil Setu app launches and loads dashboard',
       (WidgetTester tester) async {
-    await tester.pumpWidget(createTestableApp());
+    await tester.pumpWidget(await createTestableApp());
 
     await waitForLoader(tester);
 
@@ -81,7 +90,7 @@ void main() {
 
   testWidgets('Dashboard shows correct lesson titles and icons',
       (WidgetTester tester) async {
-    await tester.pumpWidget(createTestableApp());
+    await tester.pumpWidget(await createTestableApp());
 
     await waitForLoader(tester);
 
@@ -95,7 +104,7 @@ void main() {
   });
 
   testWidgets('Can navigate to lesson screen', (WidgetTester tester) async {
-    await tester.pumpWidget(createTestableApp());
+    await tester.pumpWidget(await createTestableApp());
 
     await waitForLoader(tester);
 

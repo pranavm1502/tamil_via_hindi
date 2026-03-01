@@ -8,6 +8,7 @@ import 'package:tamil_setu/providers/progress_provider.dart';
 import 'package:tamil_setu/providers/theme_provider.dart';
 import 'package:tamil_setu/providers/review_provider.dart';
 import 'package:tamil_setu/providers/mistake_provider.dart';
+import 'package:tamil_setu/providers/privacy_provider.dart';
 import 'package:tamil_setu/services/auth_service.dart';
 import 'firebase_mock.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -50,6 +51,13 @@ void main() {
   testWidgets('Shows sign-in card when signed out', (tester) async {
     final controller = StreamController<User?>.broadcast();
     final auth = TestAuthService(controller: controller, user: MockUser());
+    final privacy = PrivacyProvider();
+    await privacy.completeOnboarding(birthYear: 2000);
+    await privacy.completeAdultConsent(
+      trackingAllowed: true,
+      socialEnabled: true,
+      notificationsEnabled: true,
+    );
 
     final content = ContentProvider()..setLessonsForTesting([]);
 
@@ -65,6 +73,7 @@ void main() {
             ChangeNotifierProvider(create: (_) => ThemeProvider()),
             ChangeNotifierProvider(create: (_) => ReviewProvider()),
             ChangeNotifierProvider(create: (_) => MistakeProvider()),
+            ChangeNotifierProvider.value(value: privacy),
           ],
           child: const MaterialApp(home: DashboardScreen()),
         ),
@@ -82,6 +91,13 @@ void main() {
     final controller = StreamController<User?>.broadcast();
     final user = MockUser();
     final auth = TestAuthService(controller: controller, user: user);
+    final privacy = PrivacyProvider();
+    await privacy.completeOnboarding(birthYear: 2000);
+    await privacy.completeAdultConsent(
+      trackingAllowed: true,
+      socialEnabled: true,
+      notificationsEnabled: true,
+    );
 
     final content = ContentProvider()..setLessonsForTesting([]);
 
@@ -97,6 +113,7 @@ void main() {
             ChangeNotifierProvider(create: (_) => ThemeProvider()),
             ChangeNotifierProvider(create: (_) => ReviewProvider()),
             ChangeNotifierProvider(create: (_) => MistakeProvider()),
+            ChangeNotifierProvider.value(value: privacy),
           ],
           child: const MaterialApp(home: DashboardScreen()),
         ),

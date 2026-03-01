@@ -193,7 +193,6 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
     await SyncService().updateStreakAndXP(
       user.uid,
       xp,
-      displayName: user.displayName ?? user.email,
       reason: 'item',
     );
   }
@@ -259,7 +258,6 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
           .updateStreakAndXP(
             user.uid,
             passed ? XpRules.checkpointPass : 0,
-            displayName: user.displayName ?? user.email,
             reason: 'checkpoint',
           )
           .then((result) {

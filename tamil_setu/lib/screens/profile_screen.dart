@@ -6,7 +6,9 @@ import '../providers/progress_provider.dart';
 import '../providers/review_provider.dart';
 import '../services/auth_service.dart';
 import '../services/avatar_service.dart';
+import '../services/local_name_service.dart';
 import '../services/sync_service.dart';
+import '../providers/privacy_provider.dart';
 import '../theme.dart';
 
 const List<String> _tagAdjectives = [
@@ -63,15 +65,40 @@ int _hashString(String value) {
   return hash;
 }
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   final SyncService? syncService;
   const ProfileScreen({super.key, this.syncService});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  String? _localName;
+  String? _loadedUid;
+
+  Future<void> _loadLocalName(String uid) async {
+    final name = await LocalNameService().getName(uid);
+    if (!mounted) return;
+    setState(() {
+      _localName = name;
+    });
+  }
+
+  Future<void> _saveLocalName(String uid, String name) async {
+    await LocalNameService().setName(uid, name);
+    if (!mounted) return;
+    setState(() {
+      _localName = name;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final user = context.watch<User?>();
     final progress = context.watch<ProgressProvider>();
     final review = context.watch<ReviewProvider>();
+    final privacy = context.watch<PrivacyProvider>();
 
     if (user == null) {
       return Scaffold(
@@ -109,9 +136,15 @@ class ProfileScreen extends StatelessWidget {
       );
     }
 
+    if (_loadedUid != user.uid) {
+      _loadedUid = user.uid;
+      // ignore: discarded_futures
+      _loadLocalName(user.uid);
+    }
+
     final reviewStats = review.statistics;
     final accuracy = (reviewStats['accuracy'] as double?) ?? 0.0;
-    final statsService = syncService ?? SyncService();
+    final statsService = widget.syncService ?? SyncService();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
@@ -119,17 +152,22 @@ class ProfileScreen extends StatelessWidget {
         stream: statsService.userStatsStream(user.uid),
         builder: (context, snapshot) {
           final data = snapshot.data;
-            final displayName =
-              (data?['display_name'] as String?) ?? user.displayName ?? 'Learner';
-            final displayTag = (data?['display_tag'] as String?) ?? _buildFunTag(user.uid);
+          final fallbackName = user.displayName?.trim().isNotEmpty == true
+              ? user.displayName!.trim()
+              : 'Learner';
+          final displayName = (_localName?.trim().isNotEmpty ?? false)
+              ? _localName!.trim()
+              : fallbackName;
+          final displayTag =
+              (data?['display_tag'] as String?) ?? _buildFunTag(user.uid);
           final totalXp = (data?['total_xp'] as int?) ?? 0;
           final streak = (data?['streak_count'] as int?) ?? 0;
-            final streakFreezes = (data?['streak_freezes'] as int?) ?? 0;
+          final streakFreezes = (data?['streak_freezes'] as int?) ?? 0;
 
-            if (data != null && data['display_tag'] == null) {
-              // ignore: discarded_futures
-              statsService.ensureDisplayTag(user.uid);
-            }
+          if (data != null && data['display_tag'] == null) {
+            // ignore: discarded_futures
+            statsService.ensureDisplayTag(user.uid);
+          }
 
           Future<void> updateDisplayName() async {
             final controller = TextEditingController(text: displayName);
@@ -166,8 +204,7 @@ class ProfileScreen extends StatelessWidget {
             final nextName = result?.trim();
             if (nextName == null || nextName.isEmpty) return;
 
-            await user.updateDisplayName(nextName);
-            await statsService.upsertDisplayName(user.uid, nextName);
+            await _saveLocalName(user.uid, nextName);
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Name updated.')),
@@ -213,7 +250,10 @@ class ProfileScreen extends StatelessWidget {
               const SizedBox(height: 16),
               const _SectionTitle(title: 'Daily Goal & Reminders'),
               const SizedBox(height: 8),
-              _DailyGoalSettings(review: review),
+              _DailyGoalSettings(
+                review: review,
+                notificationsEnabled: privacy.notificationsEnabled,
+              ),
               const SizedBox(height: 16),
               const _SectionTitle(title: 'Achievements'),
               const SizedBox(height: 8),
@@ -270,7 +310,11 @@ class ProfileScreen extends StatelessWidget {
 
 class _DailyGoalSettings extends StatelessWidget {
   final ReviewProvider review;
-  const _DailyGoalSettings({required this.review});
+  final bool notificationsEnabled;
+  const _DailyGoalSettings({
+    required this.review,
+    required this.notificationsEnabled,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -311,28 +355,37 @@ class _DailyGoalSettings extends StatelessWidget {
               Row(
                 children: [
                   TextButton(
-                    onPressed: reminder == null
+                    onPressed: !notificationsEnabled || reminder == null
                       ? null
                       : () => review.setReminderTime(null),
                     child: const Text('Clear'),
                   ),
                   TextButton(
-                    onPressed: () async {
-                      final now = TimeOfDay.now();
-                      final picked = await showTimePicker(
-                        context: context,
-                        initialTime: now,
-                      );
-                      if (picked != null) {
-                        await review.setReminderTime(picked);
-                      }
-                    },
+                    onPressed: !notificationsEnabled
+                        ? null
+                        : () async {
+                            final now = TimeOfDay.now();
+                            final picked = await showTimePicker(
+                              context: context,
+                              initialTime: now,
+                            );
+                            if (picked != null) {
+                              await review.setReminderTime(picked);
+                            }
+                          },
                     child: const Text('Set time'),
                   ),
                 ],
               ),
             ],
           ),
+          if (!notificationsEnabled) ...[
+            const SizedBox(height: 6),
+            Text(
+              'Reminders are disabled by privacy settings.',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
         ],
       ),
     );

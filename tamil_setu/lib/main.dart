@@ -6,10 +6,13 @@ import 'providers/content_provider.dart';
 import 'providers/review_provider.dart';
 import 'providers/mistake_provider.dart';
 import 'providers/sentence_provider.dart';
+import 'providers/privacy_provider.dart';
 import 'screens/dashboard_screen.dart';
 import 'theme.dart'; // 1. Import your newly created theme file
 import 'screens/leaderboard_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/privacy_onboarding_screen.dart';
+import 'screens/privacy_consent_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter/foundation.dart'; // For kDebugMode
@@ -46,6 +49,7 @@ void main() async {
     final reviewProvider = ReviewProvider();
     final mistakeProvider = MistakeProvider();
     final sentenceProvider = SentenceProvider();
+    final privacyProvider = PrivacyProvider();
     final authService = AuthService();
 
     AnalyticsService().bindUserStream(authService.userStream);
@@ -58,7 +62,17 @@ void main() async {
       reviewProvider.loadReviewCards(),
       mistakeProvider.loadMistakes(),
       sentenceProvider.loadSentences(),
+      privacyProvider.load(),
     ]);
+
+    AnalyticsService().setTrackingEnabled(privacyProvider.trackingAllowed);
+    privacyProvider.addListener(() {
+      AnalyticsService().setTrackingEnabled(privacyProvider.trackingAllowed);
+      if (!privacyProvider.notificationsEnabled) {
+        // ignore: discarded_futures
+        reviewProvider.disableReminders();
+      }
+    });
 
     runApp(
       StreamProvider<User?>.value(
@@ -73,6 +87,7 @@ void main() async {
             ChangeNotifierProvider.value(value: reviewProvider),
             ChangeNotifierProvider.value(value: mistakeProvider),
             ChangeNotifierProvider.value(value: sentenceProvider),
+            ChangeNotifierProvider.value(value: privacyProvider),
           ],
           child: const TamilSetuApp(),
         ),
@@ -138,7 +153,18 @@ class TamilSetuApp extends StatelessWidget {
           darkTheme: PeacockTheme.darkTheme,
           themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
           navigatorObservers: [AnalyticsService().observer],
-          home: const DashboardScreen(),
+          home: Consumer<PrivacyProvider>(
+            builder: (context, privacyProvider, child) {
+              if (!privacyProvider.onboardingComplete) {
+                return const PrivacyOnboardingScreen();
+              }
+              if (!privacyProvider.childMode &&
+                  !privacyProvider.consentComplete) {
+                return const PrivacyConsentScreen();
+              }
+              return const DashboardScreen();
+            },
+          ),
           routes: {
             '/leaderboard': (context) => const LeaderboardScreen(),
             '/profile': (context) => const ProfileScreen(),

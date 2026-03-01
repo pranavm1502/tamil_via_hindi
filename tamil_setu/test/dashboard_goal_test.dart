@@ -7,6 +7,7 @@ import 'package:tamil_setu/providers/progress_provider.dart';
 import 'package:tamil_setu/providers/review_provider.dart';
 import 'package:tamil_setu/providers/mistake_provider.dart';
 import 'package:tamil_setu/providers/theme_provider.dart';
+import 'package:tamil_setu/providers/privacy_provider.dart';
 import 'package:tamil_setu/services/auth_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_mock.dart';
@@ -26,6 +27,13 @@ void main() {
     final content = ContentProvider()..setLessonsForTesting([]);
     final review = ReviewProvider();
     final auth = AuthService(auth: MockFirebaseAuth());
+    final privacy = PrivacyProvider();
+    await privacy.completeOnboarding(birthYear: 2000);
+    await privacy.completeAdultConsent(
+      trackingAllowed: true,
+      socialEnabled: true,
+      notificationsEnabled: true,
+    );
 
     await tester.pumpWidget(
       StreamProvider<User?>.value(
@@ -39,6 +47,7 @@ void main() {
             ChangeNotifierProvider.value(value: review),
             ChangeNotifierProvider(create: (_) => ThemeProvider()),
             ChangeNotifierProvider(create: (_) => MistakeProvider()),
+            ChangeNotifierProvider.value(value: privacy),
           ],
           child: const MaterialApp(home: DashboardScreen()),
         ),

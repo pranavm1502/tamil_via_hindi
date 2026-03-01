@@ -15,12 +15,19 @@ class AnalyticsService {
   String? _sessionId;
   String? _appVersion;
   bool _initialized = false;
+  bool _trackingEnabled = true;
 
   FirebaseAnalyticsObserver get observer =>
       FirebaseAnalyticsObserver(analytics: _analytics);
 
   bool _isTestEnvironment() {
     return !kIsWeb && Platform.environment.containsKey('FLUTTER_TEST');
+  }
+
+  Future<void> setTrackingEnabled(bool enabled) async {
+    _trackingEnabled = enabled;
+    if (_isTestEnvironment()) return;
+    await _analytics.setAnalyticsCollectionEnabled(enabled);
   }
 
   Future<void> initialize({bool coldStart = true}) async {
@@ -211,7 +218,7 @@ class AnalyticsService {
   }
 
   Future<void> logEvent(String name, Map<String, Object?> params) async {
-    if (_isTestEnvironment()) return;
+    if (_isTestEnvironment() || !_trackingEnabled) return;
 
     final enriched = <String, Object?>{
       ..._baseParams(),

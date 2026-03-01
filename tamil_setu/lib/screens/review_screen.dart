@@ -160,7 +160,6 @@ class _ReviewScreenState extends State<ReviewScreen> {
     await SyncService().updateStreakAndXP(
       user.uid,
       xp,
-      displayName: user.displayName ?? user.email,
       reason: 'item',
     );
   }
@@ -191,7 +190,6 @@ class _ReviewScreenState extends State<ReviewScreen> {
         final result = await SyncService().updateStreakAndXP(
           user.uid,
           xp,
-          displayName: user.displayName ?? user.email,
           reason: 'review',
         );
         if (!mounted) return;
