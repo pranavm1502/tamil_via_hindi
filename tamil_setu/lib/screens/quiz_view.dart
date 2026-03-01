@@ -155,7 +155,6 @@ class _QuizViewState extends State<QuizView> {
     await SyncService().updateStreakAndXP(
       user.uid,
       xp,
-      displayName: user.displayName ?? user.email,
       reason: 'item',
     );
   }
@@ -214,7 +213,6 @@ class _QuizViewState extends State<QuizView> {
       final result = await SyncService().updateStreakAndXP(
         user.uid,
         passed ? XpRules.lessonPass : 0,
-        displayName: user.displayName ?? user.email,
         reason: 'lesson',
       );
       if (!mounted) return;

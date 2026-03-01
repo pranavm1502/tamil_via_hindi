@@ -22,7 +22,7 @@ void main() {
   testWidgets('Shows ranked users', (tester) async {
     final firestore = FakeFirebaseFirestore();
     await firestore.collection('users').doc('u1').set({
-      'display_name': 'Learner One',
+      'display_tag': 'Neela Mor-42',
       'total_xp': 150,
       'xp_weekly': 40,
       'streak_count': 3,
@@ -38,7 +38,7 @@ void main() {
     await tester.tap(find.text('All Time'));
     await tester.pumpAndSettle();
     expect(find.text('Top Learners'), findsOneWidget);
-    expect(find.text('Learner One'), findsOneWidget);
+    expect(find.text('Neela Mor-42'), findsOneWidget);
     expect(find.text('XP: 150  |  Streak: 3'), findsOneWidget);
   });
 }

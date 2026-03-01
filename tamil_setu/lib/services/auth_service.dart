@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart';
-import 'sync_service.dart';
 
 /// Sign-in result with optional error details for UI feedback.
 class SignInResult {
@@ -74,12 +73,6 @@ class AuthService {
       final UserCredential userCredential =
           await auth.signInWithCredential(credential);
       final user = userCredential.user;
-      if (user != null) {
-        final firstName = _firstNameFromProfile(user);
-        if (firstName.isNotEmpty) {
-          await SyncService().upsertDisplayName(user.uid, firstName);
-        }
-      }
       return SignInResult(user: user);
     } on GoogleSignInException catch (e) {
       debugPrint('Google Sign-In Exception: ${e.code}');
@@ -110,24 +103,4 @@ class AuthService {
     }
   }
 
-  String _firstNameFromProfile(User user) {
-    final raw = user.displayName?.trim();
-    if (raw != null && raw.isNotEmpty) {
-      return _capitalize(raw.split(RegExp(r'\s+')).first);
-    }
-
-    final email = user.email?.trim();
-    if (email != null && email.contains('@')) {
-      final local = email.split('@').first.replaceAll(RegExp(r'[._-]+'), ' ');
-      final token = local.split(RegExp(r'\s+')).first.trim();
-      if (token.isNotEmpty) return _capitalize(token);
-    }
-
-    return '';
-  }
-
-  String _capitalize(String value) {
-    if (value.isEmpty) return value;
-    return value[0].toUpperCase() + value.substring(1);
-  }
 }

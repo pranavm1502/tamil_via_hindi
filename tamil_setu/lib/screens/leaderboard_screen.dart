@@ -144,12 +144,6 @@ class _LeaderboardList extends StatelessWidget {
           return const Center(child: Text('No leaderboard data.'));
         }
         final docs = snapshot.data!.docs;
-        final nameCounts = <String, int>{};
-        for (final doc in docs) {
-          final data = doc.data() as Map<String, dynamic>;
-          final name = (data['display_name'] ?? 'Learner') as String;
-          nameCounts[name] = (nameCounts[name] ?? 0) + 1;
-        }
         return ListView.builder(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
           itemCount: docs.length + 1,
@@ -160,12 +154,8 @@ class _LeaderboardList extends StatelessWidget {
             final rank = index;
             final doc = docs[index - 1];
             final data = doc.data() as Map<String, dynamic>;
-            final baseName = data['display_name'] ?? 'Learner';
-            final storedTag = data['display_tag'] as String?;
-            final isDuplicate = (nameCounts[baseName] ?? 0) > 1;
-            final displayName = isDuplicate
-              ? '$baseName · ${storedTag ?? _buildTag(doc.id)}'
-              : baseName;
+            final displayName =
+                (data['display_tag'] as String?) ?? _buildTag(doc.id);
             final xp = data[orderField] ?? 0;
             final streak = data['streak_count'] ?? 0;
             final bool isTopThree = rank <= 3;

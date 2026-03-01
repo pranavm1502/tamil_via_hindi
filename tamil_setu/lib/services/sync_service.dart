@@ -32,7 +32,6 @@ class SyncService {
   Future<StreakUpdateResult> updateStreakAndXP(
     String uid,
     int xpGained, {
-    String? displayName,
     String? reason,
   }) async {
     final userRef = _db.collection('users').doc(uid);
@@ -70,10 +69,6 @@ class SyncService {
             'last_freeze_award_streak': 0,
             'last_lesson_freeze_date': null,
             'display_tag': _buildFunTag(uid),
-            'display_name':
-                (displayName == null || displayName.isEmpty)
-                    ? 'Learner'
-                    : displayName,
           };
           transaction.set(userRef, data);
           resultStreak = 1;
@@ -167,13 +162,6 @@ class SyncService {
           updateData['display_tag'] = _buildFunTag(uid);
         }
 
-        if (displayName != null && displayName.isNotEmpty) {
-          final existingName = data['display_name'] as String?;
-          if (existingName == null || existingName != displayName) {
-            updateData['display_name'] = displayName;
-          }
-        }
-
         transaction.update(userRef, updateData);
         resultStreak = newStreak;
         resultFreezes = currentFreezes;
@@ -195,18 +183,6 @@ class SyncService {
       consumedFreeze: consumedFreeze,
       streakCount: resultStreak,
       freezeCount: resultFreezes,
-    );
-  }
-
-  /// Update display name without touching streak or XP.
-  Future<void> upsertDisplayName(String uid, String displayName) async {
-    if (displayName.isEmpty) return;
-    await _db.collection('users').doc(uid).set(
-      {
-        'display_name': displayName,
-        'display_tag': _buildFunTag(uid),
-      },
-      SetOptions(merge: true),
     );
   }
 

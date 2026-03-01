@@ -6,6 +6,7 @@ import '../providers/progress_provider.dart';
 import '../providers/review_provider.dart';
 import '../services/auth_service.dart';
 import '../services/avatar_service.dart';
+import '../services/local_name_service.dart';
 import '../services/sync_service.dart';
 import '../theme.dart';
 
@@ -63,9 +64,33 @@ int _hashString(String value) {
   return hash;
 }
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   final SyncService? syncService;
   const ProfileScreen({super.key, this.syncService});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  String? _localName;
+  String? _loadedUid;
+
+  Future<void> _loadLocalName(String uid) async {
+    final name = await LocalNameService().getName(uid);
+    if (!mounted) return;
+    setState(() {
+      _localName = name;
+    });
+  }
+
+  Future<void> _saveLocalName(String uid, String name) async {
+    await LocalNameService().setName(uid, name);
+    if (!mounted) return;
+    setState(() {
+      _localName = name;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,9 +134,15 @@ class ProfileScreen extends StatelessWidget {
       );
     }
 
+    if (_loadedUid != user.uid) {
+      _loadedUid = user.uid;
+      // ignore: discarded_futures
+      _loadLocalName(user.uid);
+    }
+
     final reviewStats = review.statistics;
     final accuracy = (reviewStats['accuracy'] as double?) ?? 0.0;
-    final statsService = syncService ?? SyncService();
+    final statsService = widget.syncService ?? SyncService();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
@@ -119,17 +150,22 @@ class ProfileScreen extends StatelessWidget {
         stream: statsService.userStatsStream(user.uid),
         builder: (context, snapshot) {
           final data = snapshot.data;
-            final displayName =
-              (data?['display_name'] as String?) ?? user.displayName ?? 'Learner';
-            final displayTag = (data?['display_tag'] as String?) ?? _buildFunTag(user.uid);
+          final fallbackName = user.displayName?.trim().isNotEmpty == true
+              ? user.displayName!.trim()
+              : 'Learner';
+          final displayName = (_localName?.trim().isNotEmpty ?? false)
+              ? _localName!.trim()
+              : fallbackName;
+          final displayTag =
+              (data?['display_tag'] as String?) ?? _buildFunTag(user.uid);
           final totalXp = (data?['total_xp'] as int?) ?? 0;
           final streak = (data?['streak_count'] as int?) ?? 0;
-            final streakFreezes = (data?['streak_freezes'] as int?) ?? 0;
+          final streakFreezes = (data?['streak_freezes'] as int?) ?? 0;
 
-            if (data != null && data['display_tag'] == null) {
-              // ignore: discarded_futures
-              statsService.ensureDisplayTag(user.uid);
-            }
+          if (data != null && data['display_tag'] == null) {
+            // ignore: discarded_futures
+            statsService.ensureDisplayTag(user.uid);
+          }
 
           Future<void> updateDisplayName() async {
             final controller = TextEditingController(text: displayName);
@@ -166,8 +202,7 @@ class ProfileScreen extends StatelessWidget {
             final nextName = result?.trim();
             if (nextName == null || nextName.isEmpty) return;
 
-            await user.updateDisplayName(nextName);
-            await statsService.upsertDisplayName(user.uid, nextName);
+            await _saveLocalName(user.uid, nextName);
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Name updated.')),

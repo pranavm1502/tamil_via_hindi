@@ -264,7 +264,6 @@ class _SentenceBuilderQuizState extends State<SentenceBuilderQuiz> {
     await SyncService().updateStreakAndXP(
       user.uid,
       xp,
-      displayName: user.displayName ?? user.email,
       reason: 'item',
     );
   }
@@ -325,7 +324,6 @@ class _SentenceBuilderQuizState extends State<SentenceBuilderQuiz> {
     await SyncService().updateStreakAndXP(
       user.uid,
       passed ? XpRules.lessonPass : 0,
-      displayName: user.displayName ?? user.email,
       reason: 'lesson',
     );
   }
@@ -341,7 +339,6 @@ class _SentenceBuilderQuizState extends State<SentenceBuilderQuiz> {
     await SyncService().updateStreakAndXP(
       user.uid,
       XpRules.buildPass,
-      displayName: user.displayName ?? user.email,
       reason: 'build',
     );
   }
