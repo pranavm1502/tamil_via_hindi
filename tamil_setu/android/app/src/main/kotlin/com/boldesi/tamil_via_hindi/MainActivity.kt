@@ -1,7 +1,8 @@
 package com.boldesi.tamil_via_hindi
 
-import com.google.android.play.integrity.IntegrityManagerFactory
-import com.google.android.play.integrity.IntegrityTokenRequest
+import com.google.android.play.core.integrity.IntegrityManagerFactory
+import com.google.android.play.core.integrity.IntegrityTokenRequest
+import com.google.android.play.core.integrity.IntegrityTokenResponse
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -34,10 +35,10 @@ class MainActivity : FlutterActivity() {
 					.build()
 
 				integrityManager.requestIntegrityToken(request)
-					.addOnSuccessListener { response ->
+					.addOnSuccessListener { response: IntegrityTokenResponse ->
 						result.success(response.token())
 					}
-					.addOnFailureListener { e ->
+					.addOnFailureListener { e: Exception ->
 						result.error("INTEGRITY_ERROR", e.message, null)
 					}
 			}
