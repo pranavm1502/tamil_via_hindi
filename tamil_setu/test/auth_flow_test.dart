@@ -12,6 +12,7 @@ import 'package:tamil_setu/services/auth_service.dart';
 import 'firebase_mock.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TestAuthService extends AuthService {
   final StreamController<User?> controller;
@@ -42,6 +43,7 @@ void main() {
   setupFirebaseMocks();
 
   setUpAll(() async {
+    SharedPreferences.setMockInitialValues({});
     await Firebase.initializeApp();
   });
 
@@ -76,7 +78,7 @@ void main() {
     await controller.close();
   });
 
-  testWidgets('Shows sign-out icon when signed in', (tester) async {
+  testWidgets('Shows profile avatar when signed in', (tester) async {
     final controller = StreamController<User?>.broadcast();
     final user = MockUser();
     final auth = TestAuthService(controller: controller, user: user);
@@ -104,7 +106,8 @@ void main() {
     controller.add(user);
     await tester.pump();
 
-    expect(find.byIcon(Icons.logout), findsOneWidget);
+    expect(find.byIcon(Icons.logout), findsNothing);
+    expect(find.byType(CircleAvatar), findsOneWidget);
 
     await controller.close();
   });

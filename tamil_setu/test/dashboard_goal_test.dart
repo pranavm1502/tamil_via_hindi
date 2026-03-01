@@ -11,12 +11,14 @@ import 'package:tamil_setu/services/auth_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_mock.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setupFirebaseMocks();
 
   setUpAll(() async {
+    SharedPreferences.setMockInitialValues({});
     await Firebase.initializeApp();
   });
 
