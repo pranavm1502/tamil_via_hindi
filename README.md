@@ -4,7 +4,6 @@
 
 **A Hindi-to-Tamil language learning application built with Flutter**
 
-[![Build & Release](https://github.com/pmundada/tamil_via_hindi/actions/workflows/build_and_release.yml/badge.svg)](https://github.com/pmundada/tamil_via_hindi/actions/workflows/build_and_release.yml)
 
 </div>
 
