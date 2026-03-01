@@ -596,13 +596,9 @@ class _PlanRow extends StatelessWidget {
           SizedBox(
             height: 36,
             child: enabled
-                ? FilledButton(
+                ? _PlanActionButton(
+                    label: actionLabel,
                     onPressed: onPressed,
-                    style: FilledButton.styleFrom(
-                      backgroundColor: PeacockTheme.peacockBlue.withAlpha(180),
-                      foregroundColor: Colors.white,
-                    ),
-                    child: Text(actionLabel),
                   )
                 : OutlinedButton(
                     onPressed: null,
@@ -610,6 +606,40 @@ class _PlanRow extends StatelessWidget {
                   ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _PlanActionButton extends StatelessWidget {
+  final String label;
+  final VoidCallback onPressed;
+
+  const _PlanActionButton({
+    required this.label,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: PeacockTheme.peacockBlue.withAlpha(120),
+      borderRadius: BorderRadius.circular(10),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: onPressed,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Center(
+            child: Text(
+              label,
+              style: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
