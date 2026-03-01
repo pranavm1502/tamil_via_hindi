@@ -19,11 +19,13 @@ import '../services/analytics_service.dart';
 class MultipleChoiceQuiz extends StatefulWidget {
   final List<WordPair> words;
   final int lessonIndex;
+  final VoidCallback? onComplete;
 
   const MultipleChoiceQuiz({
     super.key,
     required this.words,
     required this.lessonIndex,
+    this.onComplete,
   });
 
   @override
@@ -203,8 +205,14 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
       _confettiController.play();
     }
     // 1. YOUR LOCAL SAVE
-    Provider.of<ProgressProvider>(context, listen: false)
-        .saveQuizScore(widget.lessonIndex, score, shuffledWords.length);
+    final progress = Provider.of<ProgressProvider>(context, listen: false);
+    final wasCompleted = progress.isLessonCompleted(widget.lessonIndex);
+    progress.saveQuizScore(widget.lessonIndex, score, shuffledWords.length);
+
+    if (passed && !wasCompleted) {
+      Provider.of<ReviewProvider>(context, listen: false)
+        .addLessonProgress(widget.words.length);
+    }
     // 2. ADD THE CLOUD SYNC HERE
     final user = AuthService().currentUser;
     if (user != null && percentage >= 80) {
@@ -280,7 +288,11 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
                   onPressed: () {
                     _confettiController.stop();
                     Navigator.pop(ctx);
-                    Navigator.pop(context);
+                    if (widget.onComplete != null) {
+                      widget.onComplete!();
+                    } else {
+                      Navigator.pop(context);
+                    }
                   },
                   child: const Text('Finish'),
                 ),

@@ -128,12 +128,19 @@ class _LessonScreenState extends State<LessonScreen>
         controller: _tabController,
         children: [
           _buildLearnTab(),
-          QuizView(words: widget.lesson.words, lessonIndex: widget.lessonIndex),
+          QuizView(
+            words: widget.lesson.words,
+            lessonIndex: widget.lessonIndex,
+            onComplete: () => _tabController.animateTo(2),
+          ),
           MultipleChoiceQuiz(
-              words: widget.lesson.words, lessonIndex: widget.lessonIndex),
+              words: widget.lesson.words,
+              lessonIndex: widget.lessonIndex,
+              onComplete: () => _tabController.animateTo(3)),
           SentenceBuilderQuiz(
             sentences: sentences,
             lessonIndex: widget.lessonIndex,
+            onComplete: () => Navigator.pop(context),
           ),
         ],
       ),

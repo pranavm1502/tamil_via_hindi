@@ -9,11 +9,13 @@ import '../services/analytics_service.dart';
 class SentenceBuilderQuiz extends StatefulWidget {
   final List<SentenceItem> sentences;
   final int lessonIndex;
+  final VoidCallback? onComplete;
 
   const SentenceBuilderQuiz({
     super.key,
     required this.sentences,
     required this.lessonIndex,
+    this.onComplete,
   });
 
   @override
@@ -177,6 +179,10 @@ class _SentenceBuilderQuizState extends State<SentenceBuilderQuiz> {
         passed: true,
         durationSec: durationSec,
       );
+      if (widget.onComplete != null) {
+        widget.onComplete!();
+        return;
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Sentence builder complete!')),
       );

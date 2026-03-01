@@ -244,4 +244,31 @@ class ReviewStorageService {
         (stats['cardsReviewedToday'] ?? 0) + cardsReviewed;
     await saveReviewStats(stats);
   }
+
+  /// Increment daily goal progress without creating a review session.
+  Future<void> incrementCardsReviewedToday(int cardsReviewed) async {
+    final stats = await loadReviewStats();
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final lastReviewStr = stats['lastReviewDate'] as String?;
+
+    if (lastReviewStr == null) {
+      stats['lastReviewDate'] = today.toIso8601String();
+      stats['cardsReviewedToday'] = 0;
+    } else {
+      final lastReview = DateTime.parse(lastReviewStr);
+      final lastReviewDay =
+          DateTime(lastReview.year, lastReview.month, lastReview.day);
+      if (lastReviewDay != today) {
+        stats['cardsReviewedToday'] = 0;
+        stats['lastReviewDate'] = today.toIso8601String();
+      }
+    }
+
+    stats['totalCardsReviewed'] =
+        (stats['totalCardsReviewed'] ?? 0) + cardsReviewed;
+    stats['cardsReviewedToday'] =
+        (stats['cardsReviewedToday'] ?? 0) + cardsReviewed;
+    await saveReviewStats(stats);
+  }
 }

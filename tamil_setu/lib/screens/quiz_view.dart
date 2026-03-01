@@ -16,8 +16,14 @@ import '../services/analytics_service.dart';
 class QuizView extends StatefulWidget {
   final List<WordPair> words;
   final int lessonIndex;
+  final VoidCallback? onComplete;
 
-  const QuizView({super.key, required this.words, required this.lessonIndex});
+  const QuizView({
+    super.key,
+    required this.words,
+    required this.lessonIndex,
+    this.onComplete,
+  });
 
   @override
   State<QuizView> createState() => _QuizViewState();
@@ -163,8 +169,14 @@ class _QuizViewState extends State<QuizView> {
       _confettiController.play();
     }
 
-    Provider.of<ProgressProvider>(context, listen: false)
-        .saveQuizScore(widget.lessonIndex, score, shuffledWords.length);
+    final progress = Provider.of<ProgressProvider>(context, listen: false);
+    final wasCompleted = progress.isLessonCompleted(widget.lessonIndex);
+    progress.saveQuizScore(widget.lessonIndex, score, shuffledWords.length);
+
+    if (passed && !wasCompleted) {
+      Provider.of<ReviewProvider>(context, listen: false)
+        .addLessonProgress(widget.words.length);
+    }
 
     // 2. ADD THE CLOUD SYNC HERE
     final user = AuthService().currentUser;
@@ -180,7 +192,7 @@ class _QuizViewState extends State<QuizView> {
     }
     // Create review cards for this lesson (if not already created)
     Provider.of<ReviewProvider>(context, listen: false)
-        .createCardsForLesson(widget.lessonIndex, widget.words.length);
+      .createCardsForLesson(widget.lessonIndex, widget.words.length);
 
     if (!mounted) return;
 
@@ -234,7 +246,11 @@ class _QuizViewState extends State<QuizView> {
                 onPressed: () {
                   _confettiController.stop();
                   Navigator.pop(ctx);
-                  Navigator.pop(context);
+                  if (widget.onComplete != null) {
+                    widget.onComplete!();
+                  } else {
+                    Navigator.pop(context);
+                  }
                 },
                 child: const Text('Finish'),
               ),

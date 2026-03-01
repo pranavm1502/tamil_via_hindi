@@ -153,6 +153,13 @@ class ReviewProvider with ChangeNotifier {
     final baseToday = _isSameDay(lastReviewStr) ? base : 0;
     return hasMoreCards ? baseToday + _currentCardIndex : baseToday;
   }
+
+  Future<void> addLessonProgress(int cardsReviewed) async {
+    if (cardsReviewed <= 0) return;
+    await _storageService.incrementCardsReviewedToday(cardsReviewed);
+    _stats = await _storageService.loadReviewStats();
+    notifyListeners();
+  }
   String? get reminderTime => _stats['reminderTime'] as String?;
   TimeOfDay? get reminderTimeOfDay {
     final value = reminderTime;
