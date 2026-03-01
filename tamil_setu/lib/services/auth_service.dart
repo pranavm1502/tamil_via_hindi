@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart';
+import 'play_integrity_service.dart';
 
 /// Sign-in result with optional error details for UI feedback.
 class SignInResult {
@@ -73,6 +74,13 @@ class AuthService {
       final UserCredential userCredential =
           await auth.signInWithCredential(credential);
       final user = userCredential.user;
+      if (user != null) {
+        try {
+          await PlayIntegrityService().requestToken();
+        } catch (e) {
+          debugPrint('Play Integrity error: $e');
+        }
+      }
       return SignInResult(user: user);
     } on GoogleSignInException catch (e) {
       debugPrint('Google Sign-In Exception: ${e.code}');
