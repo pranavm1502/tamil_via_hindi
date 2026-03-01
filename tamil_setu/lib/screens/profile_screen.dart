@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import '../providers/progress_provider.dart';
 import '../providers/review_provider.dart';
 import '../services/auth_service.dart';
+import '../services/avatar_service.dart';
 import '../services/sync_service.dart';
 import '../theme.dart';
 
@@ -78,6 +79,8 @@ class ProfileScreen extends StatelessWidget {
                 email: user.email,
                 photoUrl: user.photoURL,
               ),
+              const SizedBox(height: 12),
+              _AvatarPicker(photoUrl: user.photoURL),
               const SizedBox(height: 16),
               const _SectionTitle(title: 'Learning Stats'),
               const SizedBox(height: 8),
@@ -421,12 +424,22 @@ class _ProfileHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 28,
-            backgroundImage: photoUrl != null ? NetworkImage(photoUrl!) : null,
-            child: photoUrl == null
-                ? const Icon(Icons.person, color: Colors.white)
-                : null,
+          FutureBuilder<String?>(
+            future: AvatarService().loadAvatarAsset(),
+            builder: (context, snapshot) {
+              final overrideAsset = snapshot.data;
+              final imageProvider = overrideAsset != null
+                  ? AssetImage(overrideAsset) as ImageProvider
+                  : (photoUrl != null ? NetworkImage(photoUrl!) : null);
+
+              return CircleAvatar(
+                radius: 28,
+                backgroundImage: imageProvider,
+                child: imageProvider == null
+                    ? const Icon(Icons.person, color: Colors.white)
+                    : null,
+              );
+            },
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -444,6 +457,115 @@ class _ProfileHeader extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class _AvatarPicker extends StatefulWidget {
+  final String? photoUrl;
+  const _AvatarPicker({this.photoUrl});
+
+  @override
+  State<_AvatarPicker> createState() => _AvatarPickerState();
+}
+
+class _AvatarPickerState extends State<_AvatarPicker> {
+  static const _avatarOptions = [
+    null,
+    'assets/images/peacock_guide.png',
+    'assets/images/peacock_celebrator.png',
+    'assets/images/peacock_retry.png',
+  ];
+
+  String? _selectedAsset;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSelection();
+  }
+
+  Future<void> _loadSelection() async {
+    final value = await AvatarService().loadAvatarAsset();
+    if (!mounted) return;
+    setState(() {
+      _selectedAsset = value;
+      _isLoading = false;
+    });
+  }
+
+  Future<void> _setSelection(String? assetPath) async {
+    await AvatarService().setAvatarAsset(assetPath);
+    if (!mounted) return;
+    setState(() {
+      _selectedAsset = assetPath;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: theme.cardColor,
+        border: Border.all(color: PeacockTheme.peacockBlue.withAlpha(40)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Avatar', style: theme.textTheme.titleMedium),
+          const SizedBox(height: 6),
+          Text(
+            'Pick a cute animal avatar or use your Google photo.',
+            style: theme.textTheme.bodySmall,
+          ),
+          const SizedBox(height: 12),
+          if (_isLoading)
+            const Center(child: CircularProgressIndicator())
+          else
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: _avatarOptions.map((asset) {
+                final isSelected = _selectedAsset == asset;
+                return InkWell(
+                  borderRadius: BorderRadius.circular(40),
+                  onTap: () => _setSelection(asset),
+                  child: Container(
+                    width: 64,
+                    height: 64,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isSelected
+                            ? PeacockTheme.peacockGreen
+                            : PeacockTheme.peacockBlue.withAlpha(60),
+                        width: isSelected ? 2 : 1,
+                      ),
+                    ),
+                    child: _buildAvatarPreview(asset),
+                  ),
+                );
+              }).toList(),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAvatarPreview(String? asset) {
+    if (asset == null) {
+      return CircleAvatar(
+        backgroundImage:
+            widget.photoUrl != null ? NetworkImage(widget.photoUrl!) : null,
+        child: widget.photoUrl == null
+            ? const Icon(Icons.person, color: Colors.white)
+            : null,
+      );
+    }
+    return CircleAvatar(backgroundImage: AssetImage(asset));
   }
 }
 

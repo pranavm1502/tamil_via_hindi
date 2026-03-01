@@ -11,6 +11,7 @@ import '../providers/mistake_provider.dart';
 import '../providers/theme_provider.dart';
 import '../widgets/peacock_mascot.dart';
 import '../widgets/streak_widget.dart';
+import '../services/avatar_service.dart';
 import '../theme.dart';
 import 'lesson_screen.dart';
 import 'review_screen.dart';
@@ -41,24 +42,12 @@ class DashboardScreen extends StatelessWidget {
             },
           ),
           if (user != null) ...[
-            IconButton(
-              icon: const Icon(Icons.logout),
-              tooltip: 'Sign out',
-              onPressed: () => context.read<AuthService>().signOut(),
-            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: InkWell(
                 borderRadius: BorderRadius.circular(24),
                 onTap: () => Navigator.pushNamed(context, '/profile'),
-                child: CircleAvatar(
-                  backgroundImage: user.photoURL != null
-                      ? NetworkImage(user.photoURL!)
-                      : null,
-                  child: user.photoURL == null
-                      ? const Icon(Icons.person, color: Colors.white)
-                      : null,
-                ),
+                child: _ProfileAvatar(photoUrl: user.photoURL),
               ),
             ),
           ],
@@ -150,8 +139,8 @@ class DashboardScreen extends StatelessWidget {
                               vertical: 14,
                             ),
                             layout: MascotLayout.overlap,
-                            overlapInset: 140,
-                            imageOffset: Offset(14, 10),
+                            overlapInset: 168,
+                            imageOffset: Offset(32, 10),
                           ),
                         ),
                       ),
@@ -733,6 +722,12 @@ class _LessonTile extends StatelessWidget {
             : isCompleted
                 ? (isDark ? Colors.green.shade900 : Colors.green.shade50)
                 : (isDark ? Colors.orange.shade900 : Colors.orange.shade50);
+        final Color titleColor = isLocked
+          ? Colors.grey.shade700
+          : (isDark ? Colors.white : PeacockTheme.ink);
+        final Color subtitleColor = isLocked
+          ? Colors.grey.shade600
+          : (isDark ? Colors.white70 : Colors.black87);
 
         return Card(
           elevation: isLocked ? 0 : 4,
@@ -774,12 +769,15 @@ class _LessonTile extends StatelessWidget {
                       textAlign: TextAlign.center,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: titleColor,
+                      )),
                   Text(lesson.description,
                       textAlign: TextAlign.center,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 12)),
+                      style: TextStyle(fontSize: 12, color: subtitleColor)),
                 ],
               ),
             ),
@@ -977,6 +975,31 @@ class _CheckpointTile extends StatelessWidget {
               ),
             ),
           ),
+        );
+      },
+    );
+  }
+}
+
+class _ProfileAvatar extends StatelessWidget {
+  final String? photoUrl;
+  const _ProfileAvatar({this.photoUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<String?>(
+      future: AvatarService().loadAvatarAsset(),
+      builder: (context, snapshot) {
+        final overrideAsset = snapshot.data;
+        final imageProvider = overrideAsset != null
+            ? AssetImage(overrideAsset) as ImageProvider
+            : (photoUrl != null ? NetworkImage(photoUrl!) : null);
+
+        return CircleAvatar(
+          backgroundImage: imageProvider,
+          child: imageProvider == null
+              ? const Icon(Icons.person, color: Colors.white)
+              : null,
         );
       },
     );
