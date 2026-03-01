@@ -178,6 +178,7 @@ class _QuizViewState extends State<QuizView> {
     final durationSec =
         DateTime.now().difference(_quizStartTime).inSeconds;
     final passed = percentage >= 80;
+    final streakEligible = percentage >= 50;
 
     AnalyticsService().logQuizComplete(
       lessonIndex: widget.lessonIndex,
@@ -207,12 +208,12 @@ class _QuizViewState extends State<QuizView> {
         .addLessonProgress(widget.words.length);
     }
 
-    // 2. ADD THE CLOUD SYNC HERE
+    // 2. ADD THE CLOUD SYNC HERE (streak for 50%+)
     final user = AuthService().currentUser;
-    if (user != null && percentage >= 80) {
+    if (user != null && streakEligible) {
       final result = await SyncService().updateStreakAndXP(
         user.uid,
-        XpRules.lessonPass,
+        passed ? XpRules.lessonPass : 0,
         displayName: user.displayName ?? user.email,
         reason: 'lesson',
       );

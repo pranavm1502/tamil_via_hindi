@@ -208,6 +208,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
     final durationSec =
         DateTime.now().difference(_quizStartTime).inSeconds;
     final passed = percentage >= 80;
+    final streakEligible = percentage >= 50;
 
     AnalyticsService().logQuizComplete(
       lessonIndex: widget.lessonIndex,
@@ -240,11 +241,15 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
       Provider.of<ReviewProvider>(context, listen: false)
         .addLessonProgress(widget.words.length);
     }
-    // 2. ADD THE CLOUD SYNC HERE
+    // 2. ADD THE CLOUD SYNC HERE (streak for 50%+)
     final user = AuthService().currentUser;
-    if (user != null && percentage >= 80) {
+    if (user != null && streakEligible) {
       SyncService()
-          .updateStreakAndXP(user.uid, XpRules.lessonPass, reason: 'lesson')
+          .updateStreakAndXP(
+            user.uid,
+            passed ? XpRules.lessonPass : 0,
+            reason: 'lesson',
+          )
           .then((result) {
         if (!mounted) return;
         if (result.earnedFreeze) {

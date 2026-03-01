@@ -231,6 +231,7 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
     final durationSec =
         DateTime.now().difference(_quizStartTime).inSeconds;
     final passed = percentage >= 80;
+    final streakEligible = percentage >= 50;
 
     AnalyticsService().logQuizComplete(
       lessonIndex: widget.checkpoint.startLessonIndex,
@@ -253,11 +254,11 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
         widget.checkpoint.checkpointNumber, score, quizWords.length);
 
     final user = AuthService().currentUser;
-    if (user != null && percentage >= 80) {
+    if (user != null && streakEligible) {
       SyncService()
           .updateStreakAndXP(
             user.uid,
-            XpRules.checkpointPass,
+            passed ? XpRules.checkpointPass : 0,
             displayName: user.displayName ?? user.email,
             reason: 'checkpoint',
           )

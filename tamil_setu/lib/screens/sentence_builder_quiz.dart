@@ -298,6 +298,7 @@ class _SentenceBuilderQuizState extends State<SentenceBuilderQuiz> {
       final scorePercent =
           ((_correctCount / _shuffledSentences.length) * 100).round();
       final passed = scorePercent >= 80;
+      final streakEligible = scorePercent >= 50;
       AnalyticsService().logQuizComplete(
         lessonIndex: widget.lessonIndex,
         quizType: 'build',
@@ -308,11 +309,25 @@ class _SentenceBuilderQuizState extends State<SentenceBuilderQuiz> {
       if (passed) {
         await _awardBuildXp();
       }
+      if (streakEligible) {
+        await _updateLessonStreak(passed: passed);
+      }
       if (passed) {
         await _awardWeeklyLessonFreeze();
       }
       _showCompletionDialog(scorePercent, passed);
     }
+  }
+
+  Future<void> _updateLessonStreak({required bool passed}) async {
+    final user = AuthService().currentUser;
+    if (user == null) return;
+    await SyncService().updateStreakAndXP(
+      user.uid,
+      passed ? XpRules.lessonPass : 0,
+      displayName: user.displayName ?? user.email,
+      reason: 'lesson',
+    );
   }
 
   Future<void> _awardBuildXp() async {
