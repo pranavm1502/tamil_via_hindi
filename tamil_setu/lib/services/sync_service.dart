@@ -122,6 +122,10 @@ class SyncService {
           }
         }
 
+        if (newStreak == 0) {
+          newStreak = 1;
+        }
+
         if (currentFreezes > 4) {
           currentFreezes = 4;
         }
