@@ -103,6 +103,11 @@ class _ReviewScreenState extends State<ReviewScreen> {
         quality: quality.name,
       );
     }
+
+    if (!_isTestEnvironment()) {
+      // ignore: discarded_futures
+      _playFeedbackSound(quality, lessonIndex: currentCard?.lessonIndex);
+    }
     await reviewProvider.reviewCurrentCard(quality);
 
     setState(() {
@@ -111,6 +116,27 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
     if (!reviewProvider.hasMoreCards) {
       await _showCompletionDialog();
+    }
+  }
+
+  Future<void> _playFeedbackSound(
+    ReviewQuality quality, {
+    int? lessonIndex,
+  }) async {
+    if (_audioPlayer == null) return;
+    final passed = quality != ReviewQuality.again;
+    final asset = passed
+        ? 'assets/audio/success.mp3'
+        : 'assets/audio/fail.mp3';
+    try {
+      final cleanPath = asset.replaceFirst('assets/', '');
+      await _audioPlayer!.stop();
+      await _audioPlayer!.play(AssetSource(cleanPath));
+    } catch (_) {
+      AnalyticsService().logAudioPlaybackError(
+        source: 'review_feedback',
+        lessonIndex: lessonIndex,
+      );
     }
   }
 

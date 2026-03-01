@@ -127,6 +127,7 @@ class ReviewStorageService {
           'streakFreezes': 2,
           'lastFreezeDate': null,
           'lastFreezeAwardStreak': 0,
+          'lastLessonFreezeDate': null,
         };
       }
 
@@ -146,6 +147,7 @@ class ReviewStorageService {
         'streakFreezes': 2,
         'lastFreezeDate': null,
         'lastFreezeAwardStreak': 0,
+        'lastLessonFreezeDate': null,
       };
     }
   }
@@ -179,7 +181,8 @@ class ReviewStorageService {
 
         final lastAwardStreak = (stats['lastFreezeAwardStreak'] ?? 0) as int;
         if (stats['currentStreak'] == 3 && lastAwardStreak != 3) {
-          stats['streakFreezes'] = (stats['streakFreezes'] ?? 0) + 1;
+          final nextFreezes = (stats['streakFreezes'] ?? 0) + 1;
+          stats['streakFreezes'] = nextFreezes > 4 ? 4 : nextFreezes;
           stats['lastFreezeAwardStreak'] = 3;
         }
 
@@ -270,5 +273,30 @@ class ReviewStorageService {
     stats['cardsReviewedToday'] =
         (stats['cardsReviewedToday'] ?? 0) + cardsReviewed;
     await saveReviewStats(stats);
+  }
+
+  /// Award a freeze for completing a lesson once per week.
+  Future<bool> awardWeeklyLessonFreeze() async {
+    final stats = await loadReviewStats();
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final lastLessonFreezeStr = stats['lastLessonFreezeDate'] as String?;
+    final lastLessonFreezeDay = lastLessonFreezeStr == null
+        ? null
+        : DateTime.parse(lastLessonFreezeStr);
+
+    final daysSinceLast = lastLessonFreezeDay == null
+        ? 999
+        : today.difference(lastLessonFreezeDay).inDays;
+
+    if (daysSinceLast < 7) {
+      return false;
+    }
+
+    final nextFreezes = (stats['streakFreezes'] ?? 0) + 1;
+    stats['streakFreezes'] = nextFreezes > 4 ? 4 : nextFreezes;
+    stats['lastLessonFreezeDate'] = today.toIso8601String();
+    await saveReviewStats(stats);
+    return true;
   }
 }

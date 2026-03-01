@@ -57,6 +57,7 @@ class SyncService {
           'streak_freezes': 2,
           'last_freeze_date': null,
           'last_freeze_award_streak': 0,
+          'last_lesson_freeze_date': null,
           'display_name':
               (displayName == null || displayName.isEmpty)
                   ? 'Learner'
@@ -75,6 +76,8 @@ class SyncService {
       DateTime? lastFreezeDate =
           (data['last_freeze_date'] as Timestamp?)?.toDate();
       int lastFreezeAwardStreak = data['last_freeze_award_streak'] ?? 0;
+      DateTime? lastLessonFreezeDate =
+          (data['last_lesson_freeze_date'] as Timestamp?)?.toDate();
 
       // Streak Logic
       int newStreak = currentStreak;
@@ -100,6 +103,10 @@ class SyncService {
         }
       }
 
+      if (currentFreezes > 4) {
+        currentFreezes = 4;
+      }
+
       final updateData = <String, dynamic>{
         'total_xp': currentXP + xpGained,
         'streak_count': newStreak,
@@ -108,6 +115,9 @@ class SyncService {
         'last_freeze_date':
             lastFreezeDate == null ? null : Timestamp.fromDate(lastFreezeDate),
         'last_freeze_award_streak': lastFreezeAwardStreak,
+        'last_lesson_freeze_date': lastLessonFreezeDate == null
+          ? null
+          : Timestamp.fromDate(lastLessonFreezeDate),
       };
 
       if (displayName != null && displayName.isNotEmpty) {
@@ -148,5 +158,38 @@ class SyncService {
       {'display_name': displayName},
       SetOptions(merge: true),
     );
+  }
+
+  /// Award one streak freeze per week for passing the build lesson.
+  Future<bool> awardWeeklyLessonFreeze(String uid) async {
+    final userRef = _db.collection('users').doc(uid);
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    var awarded = false;
+
+    await _db.runTransaction((transaction) async {
+      final snapshot = await transaction.get(userRef);
+      if (!snapshot.exists) return;
+      final data = snapshot.data() ?? <String, dynamic>{};
+      final currentFreezes = (data['streak_freezes'] ?? 0) as int;
+      final lastLessonFreezeDate =
+          (data['last_lesson_freeze_date'] as Timestamp?)?.toDate();
+      final daysSinceLast = lastLessonFreezeDate == null
+          ? 999
+          : today.difference(lastLessonFreezeDate).inDays;
+
+      if (daysSinceLast < 7 || currentFreezes >= 4) {
+        return;
+      }
+
+      final nextFreezes = currentFreezes + 1;
+      transaction.update(userRef, {
+        'streak_freezes': nextFreezes > 4 ? 4 : nextFreezes,
+        'last_lesson_freeze_date': Timestamp.fromDate(today),
+      });
+      awarded = true;
+    });
+
+    return awarded;
   }
 }

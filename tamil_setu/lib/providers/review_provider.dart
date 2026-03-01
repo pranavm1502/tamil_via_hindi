@@ -160,6 +160,15 @@ class ReviewProvider with ChangeNotifier {
     _stats = await _storageService.loadReviewStats();
     notifyListeners();
   }
+
+  Future<bool> awardWeeklyLessonFreeze() async {
+    final awarded = await _storageService.awardWeeklyLessonFreeze();
+    if (awarded) {
+      _stats = await _storageService.loadReviewStats();
+      notifyListeners();
+    }
+    return awarded;
+  }
   String? get reminderTime => _stats['reminderTime'] as String?;
   TimeOfDay? get reminderTimeOfDay {
     final value = reminderTime;

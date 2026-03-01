@@ -57,11 +57,11 @@ class PeacockMascot extends StatelessWidget {
 
     final content = layout == MascotLayout.inline
         ? Row(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               // Dynamic Speech Bubble
-              Flexible(
+              Expanded(
                 child: Container(
                   padding: bubblePadding,
                   decoration: BoxDecoration(
@@ -85,6 +85,10 @@ class PeacockMascot extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       fontSize: fontSize,
                     ),
+                    softWrap: true,
+                    overflow: TextOverflow.visible,
+                    textAlign: TextAlign.left,
+                    textWidthBasis: TextWidthBasis.parent,
                   ),
                 ),
               ),
@@ -129,6 +133,10 @@ class PeacockMascot extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     fontSize: fontSize,
                   ),
+                  softWrap: true,
+                  overflow: TextOverflow.visible,
+                  textAlign: TextAlign.left,
+                  textWidthBasis: TextWidthBasis.parent,
                 ),
               ),
               Transform.translate(

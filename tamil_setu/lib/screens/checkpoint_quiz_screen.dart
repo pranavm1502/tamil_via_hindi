@@ -203,6 +203,11 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
       durationSec: durationSec,
     );
 
+    if (!_isTestEnvironment()) {
+      // ignore: discarded_futures
+      _playFeedbackSound(passed);
+    }
+
     if (percentage >= 80) {
       _confettiController.play();
     }
@@ -320,6 +325,23 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _playFeedbackSound(bool passed) async {
+    if (_audioPlayer == null) return;
+    final asset = passed
+        ? 'assets/audio/success.mp3'
+        : 'assets/audio/fail.mp3';
+    try {
+      final cleanPath = asset.replaceFirst('assets/', '');
+      await _audioPlayer!.stop();
+      await _audioPlayer!.play(AssetSource(cleanPath));
+    } catch (_) {
+      AnalyticsService().logAudioPlaybackError(
+        source: 'checkpoint_feedback',
+        lessonIndex: widget.checkpoint.startLessonIndex,
+      );
+    }
   }
 
   WordPair? _getWordPairForOption(String tamilOption) {
