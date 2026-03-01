@@ -17,6 +17,7 @@ import 'package:firebase_auth/firebase_auth.dart'; // For FirebaseAuth
 import 'package:cloud_firestore/cloud_firestore.dart'; // For FirebaseFirestore
 import 'services/auth_service.dart';
 import 'services/notification_service.dart';
+import 'services/analytics_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +26,8 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+
+    await AnalyticsService().initialize(coldStart: true);
 
     await NotificationService().initialize();
 
@@ -44,6 +47,8 @@ void main() async {
     final mistakeProvider = MistakeProvider();
     final sentenceProvider = SentenceProvider();
     final authService = AuthService();
+
+    AnalyticsService().bindUserStream(authService.userStream);
 
     // Load persistent data (Progress, Themes, Lesson Content, and Review Cards)
     await Future.wait([
@@ -132,6 +137,7 @@ class TamilSetuApp extends StatelessWidget {
           theme: PeacockTheme.lightTheme,
           darkTheme: PeacockTheme.darkTheme,
           themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          navigatorObservers: [AnalyticsService().observer],
           home: const DashboardScreen(),
           routes: {
             '/leaderboard': (context) => const LeaderboardScreen(),

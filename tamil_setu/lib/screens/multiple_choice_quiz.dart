@@ -14,6 +14,7 @@ import 'package:tamil_setu/services/auth_service.dart';
 import '../services/sync_service.dart';
 import '../services/tts_service.dart';
 import '../services/xp_rules.dart';
+import '../services/analytics_service.dart';
 
 class MultipleChoiceQuiz extends StatefulWidget {
   final List<WordPair> words;
@@ -40,6 +41,8 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
   // 1. Changed to nullable to support safe testing
   AudioPlayer? _audioPlayer;
   late ConfettiController _confettiController;
+  late DateTime _quizStartTime;
+  late DateTime _questionStartTime;
 
   @override
   void initState() {
@@ -48,6 +51,13 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
         ConfettiController(duration: const Duration(seconds: 2));
     shuffledWords = List.from(widget.words)..shuffle();
     _generateOptions();
+
+    _quizStartTime = DateTime.now();
+    _questionStartTime = _quizStartTime;
+    AnalyticsService().logQuizStart(
+      lessonIndex: widget.lessonIndex,
+      quizType: 'mcq',
+    );
 
     // 2. Initialize AudioPlayer ONLY if NOT in a test environment
     if (!_isTestEnvironment()) {
@@ -75,7 +85,11 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
     try {
       final colloquial = _colloquialTamil(pair.tamil);
       if (pair.tamil.contains('/') && colloquial.isNotEmpty) {
-        final spoke = await TtsService().speak(colloquial);
+        final spoke = await TtsService().speak(
+          colloquial,
+          source: 'mcq',
+          lessonIndex: widget.lessonIndex,
+        );
         if (spoke) return;
       }
 
@@ -87,6 +101,10 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
       await _audioPlayer!.play(AssetSource(cleanPath));
     } catch (e) {
       debugPrint('Audio Error: $e');
+      AnalyticsService().logAudioPlaybackError(
+        source: 'mcq',
+        lessonIndex: widget.lessonIndex,
+      );
     }
   }
 
@@ -114,11 +132,14 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
   void _selectAnswer(String answer) {
     if (showResult) return;
 
+    final responseMs =
+        DateTime.now().difference(_questionStartTime).inMilliseconds;
     setState(() {
       selectedAnswer = answer;
       showResult = true;
 
       final currentWord = shuffledWords[currentIndex];
+      final correct = answer == currentWord.tamil;
       if (answer == currentWord.tamil) {
         score++;
       } else {
@@ -130,6 +151,12 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
               );
         }
       }
+      AnalyticsService().logQuizAnswer(
+        lessonIndex: widget.lessonIndex,
+        quizType: 'mcq',
+        correct: correct,
+        responseTimeMs: responseMs,
+      );
       _playAudio(currentWord);
     });
   }
@@ -144,6 +171,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
         selectedAnswer = null;
         showResult = false;
         _generateOptions();
+        _questionStartTime = DateTime.now();
       });
     } else {
       _showFinalResults();
@@ -153,6 +181,23 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
   // Note: Ensure _showFinalResults uses the passed lessonIndex correctly as you did before.
   void _showFinalResults() {
     final percentage = (score / shuffledWords.length * 100).round();
+    final durationSec =
+        DateTime.now().difference(_quizStartTime).inSeconds;
+    final passed = percentage >= 80;
+
+    AnalyticsService().logQuizComplete(
+      lessonIndex: widget.lessonIndex,
+      quizType: 'mcq',
+      scorePercent: percentage,
+      passed: passed,
+      durationSec: durationSec,
+    );
+    AnalyticsService().logLessonComplete(
+      lessonIndex: widget.lessonIndex,
+      scorePercent: percentage,
+      durationSec: durationSec,
+      passed: passed,
+    );
 
     if (percentage >= 80) {
       _confettiController.play();
@@ -164,7 +209,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
     final user = AuthService().currentUser;
     if (user != null && percentage >= 80) {
       SyncService()
-          .updateStreakAndXP(user.uid, XpRules.lessonPass)
+          .updateStreakAndXP(user.uid, XpRules.lessonPass, reason: 'lesson')
           .then((result) {
         if (!mounted) return;
         if (result.earnedFreeze) {

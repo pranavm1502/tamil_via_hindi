@@ -10,13 +10,18 @@ import 'multiple_choice_quiz.dart';
 import 'sentence_builder_quiz.dart';
 import '../providers/sentence_provider.dart';
 import '../services/tts_service.dart';
+import '../services/analytics_service.dart';
 
 class LessonScreen extends StatefulWidget {
   final Lesson lesson;
   final int lessonIndex;
+  final String source;
 
   const LessonScreen(
-      {super.key, required this.lesson, required this.lessonIndex});
+      {super.key,
+      required this.lesson,
+      required this.lessonIndex,
+      this.source = 'dashboard'});
 
   @override
   State<LessonScreen> createState() => _LessonScreenState();
@@ -38,6 +43,12 @@ class _LessonScreenState extends State<LessonScreen>
     if (!_isTestEnvironment()) {
       _audioPlayer = AudioPlayer();
     }
+
+    AnalyticsService().logLessonStart(
+      lessonIndex: widget.lessonIndex,
+      lessonTitle: widget.lesson.title,
+      source: widget.source,
+    );
   }
 
   // Helper to detect test environment consistently
@@ -55,7 +66,11 @@ class _LessonScreenState extends State<LessonScreen>
     try {
       final colloquial = _colloquialTamil(pair.tamil);
       if (pair.tamil.contains('/') && colloquial.isNotEmpty) {
-        final spoke = await TtsService().speak(colloquial);
+        final spoke = await TtsService().speak(
+          colloquial,
+          source: 'lesson_learn',
+          lessonIndex: widget.lessonIndex,
+        );
         if (spoke) return;
       }
 
@@ -64,6 +79,10 @@ class _LessonScreenState extends State<LessonScreen>
       await _audioPlayer!.play(AssetSource(cleanPath));
     } catch (e) {
       debugPrint('Audio Error: $e');
+      AnalyticsService().logAudioPlaybackError(
+        source: 'lesson_learn',
+        lessonIndex: widget.lessonIndex,
+      );
     }
   }
 

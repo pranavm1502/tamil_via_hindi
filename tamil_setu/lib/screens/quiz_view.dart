@@ -11,6 +11,7 @@ import 'package:tamil_setu/services/auth_service.dart';
 import '../services/sync_service.dart';
 import '../services/tts_service.dart';
 import '../services/xp_rules.dart';
+import '../services/analytics_service.dart';
 
 class QuizView extends StatefulWidget {
   final List<WordPair> words;
@@ -29,6 +30,8 @@ class _QuizViewState extends State<QuizView> {
   late List<WordPair> shuffledWords;
   final AudioPlayer _audioPlayer = AudioPlayer();
   late ConfettiController _confettiController; // 2. Added Controller
+  late DateTime _quizStartTime;
+  late DateTime _questionStartTime;
 
   @override
   void initState() {
@@ -37,6 +40,12 @@ class _QuizViewState extends State<QuizView> {
     // 3. Initialize Controller
     _confettiController =
         ConfettiController(duration: const Duration(seconds: 2));
+    _quizStartTime = DateTime.now();
+    _questionStartTime = _quizStartTime;
+    AnalyticsService().logQuizStart(
+      lessonIndex: widget.lessonIndex,
+      quizType: 'flashcard',
+    );
   }
 
   @override
@@ -50,7 +59,11 @@ class _QuizViewState extends State<QuizView> {
     try {
       final colloquial = _colloquialTamil(pair.tamil);
       if (pair.tamil.contains('/') && colloquial.isNotEmpty) {
-        final spoke = await TtsService().speak(colloquial);
+        final spoke = await TtsService().speak(
+          colloquial,
+          source: 'flashcard',
+          lessonIndex: widget.lessonIndex,
+        );
         if (spoke) return;
       }
 
@@ -60,6 +73,10 @@ class _QuizViewState extends State<QuizView> {
       await _audioPlayer.play(AssetSource(cleanPath));
     } catch (e) {
       debugPrint('Audio Error: $e');
+      AnalyticsService().logAudioPlaybackError(
+        source: 'flashcard',
+        lessonIndex: widget.lessonIndex,
+      );
     }
   }
 
@@ -78,6 +95,14 @@ class _QuizViewState extends State<QuizView> {
   }
 
   void _nextCard(bool knewIt) {
+    final responseMs =
+        DateTime.now().difference(_questionStartTime).inMilliseconds;
+    AnalyticsService().logQuizAnswer(
+      lessonIndex: widget.lessonIndex,
+      quizType: 'flashcard',
+      correct: knewIt,
+      responseTimeMs: responseMs,
+    );
     if (knewIt) {
       score++;
     } else {
@@ -93,6 +118,7 @@ class _QuizViewState extends State<QuizView> {
       if (currentIndex < shuffledWords.length - 1) {
         currentIndex++;
         showAnswer = false;
+        _questionStartTime = DateTime.now();
       } else {
         _showResultDialog();
       }
@@ -114,6 +140,23 @@ class _QuizViewState extends State<QuizView> {
   Future<void> _showResultDialog() async {
     // 1. Calculate percentage (Fixes 'unused variable' warning)
     final percentage = (score / shuffledWords.length * 100).round();
+    final durationSec =
+        DateTime.now().difference(_quizStartTime).inSeconds;
+    final passed = percentage >= 80;
+
+    AnalyticsService().logQuizComplete(
+      lessonIndex: widget.lessonIndex,
+      quizType: 'flashcard',
+      scorePercent: percentage,
+      passed: passed,
+      durationSec: durationSec,
+    );
+    AnalyticsService().logLessonComplete(
+      lessonIndex: widget.lessonIndex,
+      scorePercent: percentage,
+      durationSec: durationSec,
+      passed: passed,
+    );
 
     // 5. Trigger Confetti for high scores
     if (percentage >= 80) {
@@ -130,6 +173,7 @@ class _QuizViewState extends State<QuizView> {
         user.uid,
         XpRules.lessonPass,
         displayName: user.displayName ?? user.email,
+        reason: 'lesson',
       );
       if (!mounted) return;
       _showFreezeToast(context, result);

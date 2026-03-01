@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'analytics_service.dart';
 
 class StreakUpdateResult {
   final bool earnedFreeze;
@@ -32,6 +33,7 @@ class SyncService {
     String uid,
     int xpGained, {
     String? displayName,
+    String? reason,
   }) async {
     final userRef = _db.collection('users').doc(uid);
     final now = DateTime.now();
@@ -42,8 +44,9 @@ class SyncService {
     var resultStreak = 1;
     var resultFreezes = 0;
 
-    await _db.runTransaction((transaction) async {
-      final snapshot = await transaction.get(userRef);
+    try {
+      await _db.runTransaction((transaction) async {
+        final snapshot = await transaction.get(userRef);
 
       if (!snapshot.exists) {
         // New user initialization
@@ -114,10 +117,21 @@ class SyncService {
         }
       }
 
-      transaction.update(userRef, updateData);
-      resultStreak = newStreak;
-      resultFreezes = currentFreezes;
-    });
+        transaction.update(userRef, updateData);
+        resultStreak = newStreak;
+        resultFreezes = currentFreezes;
+      });
+    } catch (e) {
+      AnalyticsService().logSyncError(action: 'update_streak_xp');
+      rethrow;
+    }
+
+    if (reason != null && reason.isNotEmpty) {
+      AnalyticsService().logStreakUpdated(
+        streakDays: resultStreak,
+        reason: reason,
+      );
+    }
 
     return StreakUpdateResult(
       earnedFreeze: earnedFreeze,

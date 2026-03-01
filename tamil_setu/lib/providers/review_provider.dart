@@ -3,6 +3,7 @@ import '../models/review_card.dart';
 import '../services/srs_service.dart';
 import '../services/review_storage_service.dart';
 import '../services/notification_service.dart';
+import '../services/analytics_service.dart';
 
 /// Provider for managing spaced repetition review state.
 class ReviewProvider with ChangeNotifier {
@@ -191,6 +192,9 @@ class ReviewProvider with ChangeNotifier {
       final minutes = value.minute.toString().padLeft(2, '0');
       _stats['reminderTime'] = '$hours:$minutes';
       await NotificationService().scheduleDailyReminder(value);
+      AnalyticsService().logNotificationScheduled(
+        timeLocal: _stats['reminderTime'] as String,
+      );
     }
     await _storageService.saveReviewStats(_stats);
     notifyListeners();

@@ -13,6 +13,7 @@ import '../services/tts_service.dart';
 import '../services/auth_service.dart';
 import '../services/sync_service.dart';
 import '../services/xp_rules.dart';
+import '../services/analytics_service.dart';
 
 class ReviewScreen extends StatefulWidget {
   const ReviewScreen({super.key});
@@ -25,6 +26,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
   bool _showAnswer = false;
   AudioPlayer? _audioPlayer;
   bool _sessionInitialized = false;
+  DateTime? _sessionStartTime;
 
   @override
   void dispose() {
@@ -45,16 +47,27 @@ class _ReviewScreenState extends State<ReviewScreen> {
       await reviewProvider.loadReviewCards();
       if (reviewProvider.allCards.isNotEmpty) {
         reviewProvider.startReviewSession();
+        _sessionStartTime = DateTime.now();
+        AnalyticsService().logReviewStart(
+          dueCards: reviewProvider.dueCardCount,
+          dailyGoal: reviewProvider.dailyGoalCards,
+        );
       }
     });
   }
 
   void _playAudio(WordPair pair) async {
     if (_audioPlayer == null) return;
+    final lessonIndex =
+        context.read<ReviewProvider>().currentCard?.lessonIndex;
     try {
       final colloquial = _colloquialTamil(pair.tamil);
       if (pair.tamil.contains('/') && colloquial.isNotEmpty) {
-        final spoke = await TtsService().speak(colloquial);
+        final spoke = await TtsService().speak(
+          colloquial,
+          source: 'review',
+          lessonIndex: lessonIndex,
+        );
         if (spoke) return;
       }
 
@@ -65,6 +78,10 @@ class _ReviewScreenState extends State<ReviewScreen> {
       await _audioPlayer!.play(AssetSource(cleanPath));
     } catch (e) {
       debugPrint('Audio Error: $e');
+      AnalyticsService().logAudioPlaybackError(
+        source: 'review',
+        lessonIndex: lessonIndex,
+      );
     }
   }
 
@@ -78,6 +95,14 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
   void _handleReview(BuildContext context, ReviewQuality quality) async {
     final reviewProvider = context.read<ReviewProvider>();
+    final currentCard = reviewProvider.currentCard;
+    if (currentCard != null) {
+      AnalyticsService().logReviewAnswer(
+        lessonIndex: currentCard.lessonIndex,
+        wordIndex: currentCard.wordIndex,
+        quality: quality.name,
+      );
+    }
     await reviewProvider.reviewCurrentCard(quality);
 
     setState(() {
@@ -95,6 +120,15 @@ class _ReviewScreenState extends State<ReviewScreen> {
     final dailyGoal = reviewProvider.dailyGoalCards;
     final todayCount = reviewProvider.cardsReviewedToday;
     final hitDailyGoal = todayCount >= dailyGoal;
+    final durationSec = _sessionStartTime == null
+        ? 0
+        : DateTime.now().difference(_sessionStartTime!).inSeconds;
+
+    AnalyticsService().logReviewComplete(
+      cardsReviewed: cardsReviewed,
+      durationSec: durationSec,
+      streakDays: reviewProvider.currentStreak,
+    );
 
     if (cardsReviewed > 0) {
       final user = AuthService().currentUser;
@@ -107,6 +141,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
           user.uid,
           xp,
           displayName: user.displayName ?? user.email,
+          reason: 'review',
         );
         if (!mounted) return;
         if (result.earnedFreeze) {
@@ -209,6 +244,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                             builder: (context) => LessonScreen(
                               lesson: lessons.first,
                               lessonIndex: 0,
+                              source: 'review',
                             ),
                           ),
                         );

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../models/sentence_item.dart';
 import '../services/tts_service.dart';
+import '../services/analytics_service.dart';
 
 class SentenceBuilderQuiz extends StatefulWidget {
   final List<SentenceItem> sentences;
@@ -27,6 +28,9 @@ class _SentenceBuilderQuizState extends State<SentenceBuilderQuiz> {
   List<String> _selectedTokens = [];
   bool _showResult = false;
   bool _isCorrect = false;
+  int _correctCount = 0;
+  late DateTime _quizStartTime;
+  late DateTime _questionStartTime;
 
   @override
   void initState() {
@@ -35,6 +39,13 @@ class _SentenceBuilderQuizState extends State<SentenceBuilderQuiz> {
       _audioPlayer = AudioPlayer();
     }
     _shuffledSentences = List.from(widget.sentences)..shuffle();
+    _quizStartTime = DateTime.now();
+    _questionStartTime = _quizStartTime;
+    _correctCount = 0;
+    AnalyticsService().logQuizStart(
+      lessonIndex: widget.lessonIndex,
+      quizType: 'build',
+    );
     _prepareTokens();
   }
 
@@ -50,6 +61,7 @@ class _SentenceBuilderQuizState extends State<SentenceBuilderQuiz> {
     _selectedTokens = [];
     _showResult = false;
     _isCorrect = false;
+    _questionStartTime = DateTime.now();
   }
 
   String _colloquialTamil(String value) {
@@ -60,6 +72,10 @@ class _SentenceBuilderQuizState extends State<SentenceBuilderQuiz> {
 
   void _selectToken(String token) {
     if (_showResult) return;
+    if (!_isTestEnvironment()) {
+      // ignore: discarded_futures
+      _playTokenAudio(token);
+    }
     setState(() {
       _availableTokens.remove(token);
       _selectedTokens.add(token);
@@ -68,23 +84,49 @@ class _SentenceBuilderQuizState extends State<SentenceBuilderQuiz> {
 
   void _unselectToken(String token) {
     if (_showResult) return;
+    if (!_isTestEnvironment()) {
+      // ignore: discarded_futures
+      _playTokenAudio(token);
+    }
     setState(() {
       _selectedTokens.remove(token);
       _availableTokens.add(token);
     });
   }
 
+  Future<void> _playTokenAudio(String token) async {
+    final cleaned = token.trim();
+    if (cleaned.isEmpty) return;
+    await TtsService().speak(
+      cleaned,
+      source: 'build_token',
+      lessonIndex: widget.lessonIndex,
+    );
+  }
+
   Future<void> _playAudio(SentenceItem sentence) async {
     if (_audioPlayer == null) return;
     final colloquial = _colloquialTamil(sentence.tamil);
     if (colloquial.isEmpty) return;
-    if (sentence.audioPath.isNotEmpty) {
-      final cleanPath = sentence.audioPath.replaceFirst('assets/', '');
-      await _audioPlayer!.stop();
-      await _audioPlayer!.play(AssetSource(cleanPath));
-      return;
+    try {
+      if (sentence.audioPath.isNotEmpty) {
+        final cleanPath = sentence.audioPath.replaceFirst('assets/', '');
+        await _audioPlayer!.stop();
+        await _audioPlayer!.play(AssetSource(cleanPath));
+        return;
+      }
+      await TtsService().speak(
+        colloquial,
+        source: 'build',
+        lessonIndex: widget.lessonIndex,
+      );
+    } catch (e) {
+      debugPrint('Audio Error: $e');
+      AnalyticsService().logAudioPlaybackError(
+        source: 'build',
+        lessonIndex: widget.lessonIndex,
+      );
     }
-    await TtsService().speak(colloquial);
   }
 
   @override
@@ -98,10 +140,22 @@ class _SentenceBuilderQuizState extends State<SentenceBuilderQuiz> {
     final target = _colloquialTamil(current.tamil);
     final attempt = _selectedTokens.join(' ');
     final correct = attempt == target;
+    final responseMs =
+        DateTime.now().difference(_questionStartTime).inMilliseconds;
+
+    AnalyticsService().logQuizAnswer(
+      lessonIndex: widget.lessonIndex,
+      quizType: 'build',
+      correct: correct,
+      responseTimeMs: responseMs,
+    );
 
     setState(() {
       _showResult = true;
       _isCorrect = correct;
+      if (correct) {
+        _correctCount++;
+      }
     });
   }
 
@@ -112,11 +166,23 @@ class _SentenceBuilderQuizState extends State<SentenceBuilderQuiz> {
         _prepareTokens();
       });
     } else {
+      final durationSec =
+          DateTime.now().difference(_quizStartTime).inSeconds;
+      final scorePercent =
+          ((_correctCount / _shuffledSentences.length) * 100).round();
+      AnalyticsService().logQuizComplete(
+        lessonIndex: widget.lessonIndex,
+        quizType: 'build',
+        scorePercent: scorePercent,
+        passed: true,
+        durationSec: durationSec,
+      );
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Sentence builder complete!')),
       );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
