@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,12 +13,20 @@ import 'package:tamil_setu/services/auth_service.dart';
 import '../services/sync_service.dart';
 import '../services/tts_service.dart';
 import '../services/xp_rules.dart';
+import '../services/analytics_service.dart';
+import '../services/xp_tracker_service.dart';
 
 class QuizView extends StatefulWidget {
   final List<WordPair> words;
   final int lessonIndex;
+  final VoidCallback? onComplete;
 
-  const QuizView({super.key, required this.words, required this.lessonIndex});
+  const QuizView({
+    super.key,
+    required this.words,
+    required this.lessonIndex,
+    this.onComplete,
+  });
 
   @override
   State<QuizView> createState() => _QuizViewState();
@@ -29,6 +39,12 @@ class _QuizViewState extends State<QuizView> {
   late List<WordPair> shuffledWords;
   final AudioPlayer _audioPlayer = AudioPlayer();
   late ConfettiController _confettiController; // 2. Added Controller
+  late DateTime _quizStartTime;
+  late DateTime _questionStartTime;
+
+  bool _isTestEnvironment() {
+    return !kIsWeb && Platform.environment.containsKey('FLUTTER_TEST');
+  }
 
   @override
   void initState() {
@@ -37,6 +53,12 @@ class _QuizViewState extends State<QuizView> {
     // 3. Initialize Controller
     _confettiController =
         ConfettiController(duration: const Duration(seconds: 2));
+    _quizStartTime = DateTime.now();
+    _questionStartTime = _quizStartTime;
+    AnalyticsService().logQuizStart(
+      lessonIndex: widget.lessonIndex,
+      quizType: 'flashcard',
+    );
   }
 
   @override
@@ -50,7 +72,11 @@ class _QuizViewState extends State<QuizView> {
     try {
       final colloquial = _colloquialTamil(pair.tamil);
       if (pair.tamil.contains('/') && colloquial.isNotEmpty) {
-        final spoke = await TtsService().speak(colloquial);
+        final spoke = await TtsService().speak(
+          colloquial,
+          source: 'flashcard',
+          lessonIndex: widget.lessonIndex,
+        );
         if (spoke) return;
       }
 
@@ -60,6 +86,10 @@ class _QuizViewState extends State<QuizView> {
       await _audioPlayer.play(AssetSource(cleanPath));
     } catch (e) {
       debugPrint('Audio Error: $e');
+      AnalyticsService().logAudioPlaybackError(
+        source: 'flashcard',
+        lessonIndex: widget.lessonIndex,
+      );
     }
   }
 
@@ -78,8 +108,21 @@ class _QuizViewState extends State<QuizView> {
   }
 
   void _nextCard(bool knewIt) {
+    final responseMs =
+        DateTime.now().difference(_questionStartTime).inMilliseconds;
+    AnalyticsService().logQuizAnswer(
+      lessonIndex: widget.lessonIndex,
+      quizType: 'flashcard',
+      correct: knewIt,
+      responseTimeMs: responseMs,
+    );
     if (knewIt) {
       score++;
+      final wordIndex = widget.words.indexOf(shuffledWords[currentIndex]);
+      if (wordIndex != -1) {
+        // ignore: discarded_futures
+        _awardXpForWord(wordIndex);
+      }
     } else {
       final wordIndex = widget.words.indexOf(shuffledWords[currentIndex]);
       if (wordIndex != -1) {
@@ -93,10 +136,28 @@ class _QuizViewState extends State<QuizView> {
       if (currentIndex < shuffledWords.length - 1) {
         currentIndex++;
         showAnswer = false;
+        _questionStartTime = DateTime.now();
       } else {
         _showResultDialog();
       }
     });
+  }
+
+  Future<void> _awardXpForWord(int wordIndex) async {
+    if (_isTestEnvironment()) return;
+    final xp = await XpTrackerService().awardDailyXpForItem(
+      'word:${widget.lessonIndex}:$wordIndex',
+    );
+    if (xp == 0) return;
+
+    final user = AuthService().currentUser;
+    if (user == null) return;
+    await SyncService().updateStreakAndXP(
+      user.uid,
+      xp,
+      displayName: user.displayName ?? user.email,
+      reason: 'item',
+    );
   }
 
   void _showFreezeToast(BuildContext context, StreakUpdateResult result) {
@@ -114,29 +175,54 @@ class _QuizViewState extends State<QuizView> {
   Future<void> _showResultDialog() async {
     // 1. Calculate percentage (Fixes 'unused variable' warning)
     final percentage = (score / shuffledWords.length * 100).round();
+    final durationSec =
+        DateTime.now().difference(_quizStartTime).inSeconds;
+    final passed = percentage >= 80;
+    final streakEligible = percentage >= 50;
+
+    AnalyticsService().logQuizComplete(
+      lessonIndex: widget.lessonIndex,
+      quizType: 'flashcard',
+      scorePercent: percentage,
+      passed: passed,
+      durationSec: durationSec,
+    );
+    AnalyticsService().logLessonComplete(
+      lessonIndex: widget.lessonIndex,
+      scorePercent: percentage,
+      durationSec: durationSec,
+      passed: passed,
+    );
 
     // 5. Trigger Confetti for high scores
     if (percentage >= 80) {
       _confettiController.play();
     }
 
-    Provider.of<ProgressProvider>(context, listen: false)
-        .saveQuizScore(widget.lessonIndex, score, shuffledWords.length);
+    final progress = Provider.of<ProgressProvider>(context, listen: false);
+    final wasCompleted = progress.isLessonCompleted(widget.lessonIndex);
+    progress.saveQuizScore(widget.lessonIndex, score, shuffledWords.length);
 
-    // 2. ADD THE CLOUD SYNC HERE
+    if (passed && !wasCompleted) {
+      Provider.of<ReviewProvider>(context, listen: false)
+        .addLessonProgress(widget.words.length);
+    }
+
+    // 2. ADD THE CLOUD SYNC HERE (streak for 50%+)
     final user = AuthService().currentUser;
-    if (user != null && percentage >= 80) {
+    if (user != null && streakEligible) {
       final result = await SyncService().updateStreakAndXP(
         user.uid,
-        XpRules.lessonPass,
+        passed ? XpRules.lessonPass : 0,
         displayName: user.displayName ?? user.email,
+        reason: 'lesson',
       );
       if (!mounted) return;
       _showFreezeToast(context, result);
     }
     // Create review cards for this lesson (if not already created)
     Provider.of<ReviewProvider>(context, listen: false)
-        .createCardsForLesson(widget.lessonIndex, widget.words.length);
+      .createCardsForLesson(widget.lessonIndex, widget.words.length);
 
     if (!mounted) return;
 
@@ -190,7 +276,11 @@ class _QuizViewState extends State<QuizView> {
                 onPressed: () {
                   _confettiController.stop();
                   Navigator.pop(ctx);
-                  Navigator.pop(context);
+                  if (widget.onComplete != null) {
+                    widget.onComplete!();
+                  } else {
+                    Navigator.pop(context);
+                  }
                 },
                 child: const Text('Finish'),
               ),

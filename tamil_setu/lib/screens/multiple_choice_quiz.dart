@@ -14,15 +14,19 @@ import 'package:tamil_setu/services/auth_service.dart';
 import '../services/sync_service.dart';
 import '../services/tts_service.dart';
 import '../services/xp_rules.dart';
+import '../services/analytics_service.dart';
+import '../services/xp_tracker_service.dart';
 
 class MultipleChoiceQuiz extends StatefulWidget {
   final List<WordPair> words;
   final int lessonIndex;
+  final VoidCallback? onComplete;
 
   const MultipleChoiceQuiz({
     super.key,
     required this.words,
     required this.lessonIndex,
+    this.onComplete,
   });
 
   @override
@@ -40,6 +44,8 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
   // 1. Changed to nullable to support safe testing
   AudioPlayer? _audioPlayer;
   late ConfettiController _confettiController;
+  late DateTime _quizStartTime;
+  late DateTime _questionStartTime;
 
   @override
   void initState() {
@@ -48,6 +54,13 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
         ConfettiController(duration: const Duration(seconds: 2));
     shuffledWords = List.from(widget.words)..shuffle();
     _generateOptions();
+
+    _quizStartTime = DateTime.now();
+    _questionStartTime = _quizStartTime;
+    AnalyticsService().logQuizStart(
+      lessonIndex: widget.lessonIndex,
+      quizType: 'mcq',
+    );
 
     // 2. Initialize AudioPlayer ONLY if NOT in a test environment
     if (!_isTestEnvironment()) {
@@ -75,7 +88,11 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
     try {
       final colloquial = _colloquialTamil(pair.tamil);
       if (pair.tamil.contains('/') && colloquial.isNotEmpty) {
-        final spoke = await TtsService().speak(colloquial);
+        final spoke = await TtsService().speak(
+          colloquial,
+          source: 'mcq',
+          lessonIndex: widget.lessonIndex,
+        );
         if (spoke) return;
       }
 
@@ -87,6 +104,10 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
       await _audioPlayer!.play(AssetSource(cleanPath));
     } catch (e) {
       debugPrint('Audio Error: $e');
+      AnalyticsService().logAudioPlaybackError(
+        source: 'mcq',
+        lessonIndex: widget.lessonIndex,
+      );
     }
   }
 
@@ -114,13 +135,21 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
   void _selectAnswer(String answer) {
     if (showResult) return;
 
+    final responseMs =
+        DateTime.now().difference(_questionStartTime).inMilliseconds;
     setState(() {
       selectedAnswer = answer;
       showResult = true;
 
       final currentWord = shuffledWords[currentIndex];
+      final correct = answer == currentWord.tamil;
       if (answer == currentWord.tamil) {
         score++;
+        final wordIndex = widget.words.indexOf(currentWord);
+        if (wordIndex != -1) {
+          // ignore: discarded_futures
+          _awardXpForWord(wordIndex);
+        }
       } else {
         final wordIndex = widget.words.indexOf(currentWord);
         if (wordIndex != -1) {
@@ -130,8 +159,30 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
               );
         }
       }
+      AnalyticsService().logQuizAnswer(
+        lessonIndex: widget.lessonIndex,
+        quizType: 'mcq',
+        correct: correct,
+        responseTimeMs: responseMs,
+      );
       _playAudio(currentWord);
     });
+  }
+
+  Future<void> _awardXpForWord(int wordIndex) async {
+    if (_isTestEnvironment()) return;
+    final xp = await XpTrackerService().awardDailyXpForItem(
+      'word:${widget.lessonIndex}:$wordIndex',
+    );
+    if (xp == 0) return;
+
+    final user = AuthService().currentUser;
+    if (user == null) return;
+    await SyncService().updateStreakAndXP(
+      user.uid,
+      xp,
+      reason: 'item',
+    );
   }
 
   // ... (The rest of your logic: _nextQuestion, _showFinalResults, build method)
@@ -144,6 +195,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
         selectedAnswer = null;
         showResult = false;
         _generateOptions();
+        _questionStartTime = DateTime.now();
       });
     } else {
       _showFinalResults();
@@ -153,18 +205,51 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
   // Note: Ensure _showFinalResults uses the passed lessonIndex correctly as you did before.
   void _showFinalResults() {
     final percentage = (score / shuffledWords.length * 100).round();
+    final durationSec =
+        DateTime.now().difference(_quizStartTime).inSeconds;
+    final passed = percentage >= 80;
+    final streakEligible = percentage >= 50;
+
+    AnalyticsService().logQuizComplete(
+      lessonIndex: widget.lessonIndex,
+      quizType: 'mcq',
+      scorePercent: percentage,
+      passed: passed,
+      durationSec: durationSec,
+    );
+    AnalyticsService().logLessonComplete(
+      lessonIndex: widget.lessonIndex,
+      scorePercent: percentage,
+      durationSec: durationSec,
+      passed: passed,
+    );
+
+    if (!_isTestEnvironment()) {
+      // ignore: discarded_futures
+      _playFeedbackSound(passed);
+    }
 
     if (percentage >= 80) {
       _confettiController.play();
     }
     // 1. YOUR LOCAL SAVE
-    Provider.of<ProgressProvider>(context, listen: false)
-        .saveQuizScore(widget.lessonIndex, score, shuffledWords.length);
-    // 2. ADD THE CLOUD SYNC HERE
+    final progress = Provider.of<ProgressProvider>(context, listen: false);
+    final wasCompleted = progress.isLessonCompleted(widget.lessonIndex);
+    progress.saveQuizScore(widget.lessonIndex, score, shuffledWords.length);
+
+    if (passed && !wasCompleted) {
+      Provider.of<ReviewProvider>(context, listen: false)
+        .addLessonProgress(widget.words.length);
+    }
+    // 2. ADD THE CLOUD SYNC HERE (streak for 50%+)
     final user = AuthService().currentUser;
-    if (user != null && percentage >= 80) {
+    if (user != null && streakEligible) {
       SyncService()
-          .updateStreakAndXP(user.uid, XpRules.lessonPass)
+          .updateStreakAndXP(
+            user.uid,
+            passed ? XpRules.lessonPass : 0,
+            reason: 'lesson',
+          )
           .then((result) {
         if (!mounted) return;
         if (result.earnedFreeze) {
@@ -235,7 +320,11 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
                   onPressed: () {
                     _confettiController.stop();
                     Navigator.pop(ctx);
-                    Navigator.pop(context);
+                    if (widget.onComplete != null) {
+                      widget.onComplete!();
+                    } else {
+                      Navigator.pop(context);
+                    }
                   },
                   child: const Text('Finish'),
                 ),
@@ -254,6 +343,23 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
         ],
       ),
     );
+  }
+
+  Future<void> _playFeedbackSound(bool passed) async {
+    if (_audioPlayer == null) return;
+    final asset = passed
+        ? 'assets/audio/success.mp3'
+        : 'assets/audio/fail.mp3';
+    try {
+      final cleanPath = asset.replaceFirst('assets/', '');
+      await _audioPlayer!.stop();
+      await _audioPlayer!.play(AssetSource(cleanPath));
+    } catch (_) {
+      AnalyticsService().logAudioPlaybackError(
+        source: 'mcq_feedback',
+        lessonIndex: widget.lessonIndex,
+      );
+    }
   }
 
   WordPair? _getWordPairForOption(String tamilOption) {

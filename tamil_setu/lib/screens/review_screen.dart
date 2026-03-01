@@ -13,6 +13,8 @@ import '../services/tts_service.dart';
 import '../services/auth_service.dart';
 import '../services/sync_service.dart';
 import '../services/xp_rules.dart';
+import '../services/analytics_service.dart';
+import '../services/xp_tracker_service.dart';
 
 class ReviewScreen extends StatefulWidget {
   const ReviewScreen({super.key});
@@ -25,6 +27,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
   bool _showAnswer = false;
   AudioPlayer? _audioPlayer;
   bool _sessionInitialized = false;
+  DateTime? _sessionStartTime;
 
   @override
   void dispose() {
@@ -45,26 +48,44 @@ class _ReviewScreenState extends State<ReviewScreen> {
       await reviewProvider.loadReviewCards();
       if (reviewProvider.allCards.isNotEmpty) {
         reviewProvider.startReviewSession();
+        _sessionStartTime = DateTime.now();
+        AnalyticsService().logReviewStart(
+          dueCards: reviewProvider.dueCardCount,
+          dailyGoal: reviewProvider.dailyGoalCards,
+        );
       }
     });
   }
 
   void _playAudio(WordPair pair) async {
     if (_audioPlayer == null) return;
+    final lessonIndex =
+        context.read<ReviewProvider>().currentCard?.lessonIndex;
     try {
-      final colloquial = _colloquialTamil(pair.tamil);
-      if (pair.tamil.contains('/') && colloquial.isNotEmpty) {
-        final spoke = await TtsService().speak(colloquial);
-        if (spoke) return;
+      await _audioPlayer!.stop();
+      await TtsService().stop();
+      if (pair.audioPath.isNotEmpty) {
+        final cleanPath = pair.audioPath.replaceFirst('assets/', '');
+        // Set speed slightly faster for quick revision
+        await _audioPlayer!.setPlaybackRate(1.2);
+        await _audioPlayer!.play(AssetSource(cleanPath));
+        return;
       }
 
-      if (pair.audioPath.isEmpty) return;
-      final cleanPath = pair.audioPath.replaceFirst('assets/', '');
-      // Set speed slightly faster for quick revision
-      await _audioPlayer!.setPlaybackRate(1.2);
-      await _audioPlayer!.play(AssetSource(cleanPath));
+      final colloquial = _colloquialTamil(pair.tamil);
+      if (colloquial.isNotEmpty) {
+        await TtsService().speak(
+          colloquial,
+          source: 'review',
+          lessonIndex: lessonIndex,
+        );
+      }
     } catch (e) {
       debugPrint('Audio Error: $e');
+      AnalyticsService().logAudioPlaybackError(
+        source: 'review',
+        lessonIndex: lessonIndex,
+      );
     }
   }
 
@@ -78,6 +99,23 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
   void _handleReview(BuildContext context, ReviewQuality quality) async {
     final reviewProvider = context.read<ReviewProvider>();
+    final currentCard = reviewProvider.currentCard;
+    if (currentCard != null) {
+      AnalyticsService().logReviewAnswer(
+        lessonIndex: currentCard.lessonIndex,
+        wordIndex: currentCard.wordIndex,
+        quality: quality.name,
+      );
+    }
+
+    if (!_isTestEnvironment()) {
+      // ignore: discarded_futures
+      _playFeedbackSound(quality, lessonIndex: currentCard?.lessonIndex);
+    }
+    if (quality != ReviewQuality.again && currentCard != null) {
+      // ignore: discarded_futures
+      _awardXpForReview(currentCard.lessonIndex, currentCard.wordIndex);
+    }
     await reviewProvider.reviewCurrentCard(quality);
 
     setState(() {
@@ -89,12 +127,59 @@ class _ReviewScreenState extends State<ReviewScreen> {
     }
   }
 
+  Future<void> _playFeedbackSound(
+    ReviewQuality quality, {
+    int? lessonIndex,
+  }) async {
+    if (_audioPlayer == null) return;
+    final passed = quality != ReviewQuality.again;
+    final asset = passed
+        ? 'assets/audio/success.mp3'
+        : 'assets/audio/fail.mp3';
+    try {
+      final cleanPath = asset.replaceFirst('assets/', '');
+      await _audioPlayer!.stop();
+      await _audioPlayer!.play(AssetSource(cleanPath));
+    } catch (_) {
+      AnalyticsService().logAudioPlaybackError(
+        source: 'review_feedback',
+        lessonIndex: lessonIndex,
+      );
+    }
+  }
+
+  Future<void> _awardXpForReview(int lessonIndex, int wordIndex) async {
+    if (_isTestEnvironment()) return;
+    final xp = await XpTrackerService().awardDailyXpForItem(
+      'word:$lessonIndex:$wordIndex',
+    );
+    if (xp == 0) return;
+
+    final user = AuthService().currentUser;
+    if (user == null) return;
+    await SyncService().updateStreakAndXP(
+      user.uid,
+      xp,
+      displayName: user.displayName ?? user.email,
+      reason: 'item',
+    );
+  }
+
   Future<void> _showCompletionDialog() async {
     final reviewProvider = context.read<ReviewProvider>();
     final cardsReviewed = reviewProvider.totalCardsInSession;
     final dailyGoal = reviewProvider.dailyGoalCards;
     final todayCount = reviewProvider.cardsReviewedToday;
     final hitDailyGoal = todayCount >= dailyGoal;
+    final durationSec = _sessionStartTime == null
+        ? 0
+        : DateTime.now().difference(_sessionStartTime!).inSeconds;
+
+    AnalyticsService().logReviewComplete(
+      cardsReviewed: cardsReviewed,
+      durationSec: durationSec,
+      streakDays: reviewProvider.currentStreak,
+    );
 
     if (cardsReviewed > 0) {
       final user = AuthService().currentUser;
@@ -107,6 +192,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
           user.uid,
           xp,
           displayName: user.displayName ?? user.email,
+          reason: 'review',
         );
         if (!mounted) return;
         if (result.earnedFreeze) {
@@ -209,6 +295,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                             builder: (context) => LessonScreen(
                               lesson: lessons.first,
                               lessonIndex: 0,
+                              source: 'review',
                             ),
                           ),
                         );

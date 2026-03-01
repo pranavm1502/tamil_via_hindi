@@ -3,6 +3,7 @@ import '../models/review_card.dart';
 import '../services/srs_service.dart';
 import '../services/review_storage_service.dart';
 import '../services/notification_service.dart';
+import '../services/analytics_service.dart';
 
 /// Provider for managing spaced repetition review state.
 class ReviewProvider with ChangeNotifier {
@@ -152,6 +153,22 @@ class ReviewProvider with ChangeNotifier {
     final baseToday = _isSameDay(lastReviewStr) ? base : 0;
     return hasMoreCards ? baseToday + _currentCardIndex : baseToday;
   }
+
+  Future<void> addLessonProgress(int cardsReviewed) async {
+    if (cardsReviewed <= 0) return;
+    await _storageService.incrementCardsReviewedToday(cardsReviewed);
+    _stats = await _storageService.loadReviewStats();
+    notifyListeners();
+  }
+
+  Future<bool> awardWeeklyLessonFreeze() async {
+    final awarded = await _storageService.awardWeeklyLessonFreeze();
+    if (awarded) {
+      _stats = await _storageService.loadReviewStats();
+      notifyListeners();
+    }
+    return awarded;
+  }
   String? get reminderTime => _stats['reminderTime'] as String?;
   TimeOfDay? get reminderTimeOfDay {
     final value = reminderTime;
@@ -191,6 +208,9 @@ class ReviewProvider with ChangeNotifier {
       final minutes = value.minute.toString().padLeft(2, '0');
       _stats['reminderTime'] = '$hours:$minutes';
       await NotificationService().scheduleDailyReminder(value);
+      AnalyticsService().logNotificationScheduled(
+        timeLocal: _stats['reminderTime'] as String,
+      );
     }
     await _storageService.saveReviewStats(_stats);
     notifyListeners();

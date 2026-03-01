@@ -1,4 +1,5 @@
 import 'package:flutter_tts/flutter_tts.dart';
+import 'analytics_service.dart';
 
 /// Service for managing Text-to-Speech functionality.
 ///
@@ -41,12 +42,16 @@ class TtsService {
   /// Speak the given text in Tamil.
   ///
   /// Returns true if speech was initiated successfully, false otherwise.
-  Future<bool> speak(String text) async {
+  Future<bool> speak(String text, {String? source, int? lessonIndex}) async {
     if (!_isInitialized) {
       await initialize();
     }
 
     if (!_isAvailable) {
+      AnalyticsService().logTtsError(
+        source: source ?? 'tts',
+        lessonIndex: lessonIndex,
+      );
       return false;
     }
 
@@ -54,6 +59,10 @@ class TtsService {
       await _flutterTts.speak(text);
       return true;
     } catch (e) {
+      AnalyticsService().logTtsError(
+        source: source ?? 'tts',
+        lessonIndex: lessonIndex,
+      );
       return false;
     }
   }

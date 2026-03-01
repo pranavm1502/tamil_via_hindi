@@ -15,6 +15,8 @@ import '../services/tts_service.dart';
 import '../services/auth_service.dart';
 import '../services/sync_service.dart';
 import '../services/xp_rules.dart';
+import '../services/analytics_service.dart';
+import '../services/xp_tracker_service.dart';
 
 class CheckpointQuizScreen extends StatefulWidget {
   final Checkpoint checkpoint;
@@ -35,6 +37,8 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
   bool showResult = false;
   AudioPlayer? _audioPlayer;
   late ConfettiController _confettiController;
+  late DateTime _quizStartTime;
+  late DateTime _questionStartTime;
 
   @override
   void initState() {
@@ -46,6 +50,13 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
     }
     _loadWordsFromLessons();
     _generateOptions();
+
+    _quizStartTime = DateTime.now();
+    _questionStartTime = _quizStartTime;
+    AnalyticsService().logQuizStart(
+      lessonIndex: widget.checkpoint.startLessonIndex,
+      quizType: 'checkpoint',
+    );
   }
 
   void _loadWordsFromLessons() {
@@ -80,7 +91,11 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
       await TtsService().stop();
       final colloquial = _colloquialTamil(pair.tamil);
       if (pair.tamil.contains('/') && colloquial.isNotEmpty) {
-        final spoke = await TtsService().speak(colloquial);
+        final spoke = await TtsService().speak(
+          colloquial,
+          source: 'checkpoint',
+          lessonIndex: widget.checkpoint.startLessonIndex,
+        );
         if (spoke) return;
       }
 
@@ -89,6 +104,10 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
       await _audioPlayer!.play(AssetSource(cleanPath));
     } catch (e) {
       debugPrint('Audio Error: $e');
+      AnalyticsService().logAudioPlaybackError(
+        source: 'checkpoint',
+        lessonIndex: widget.checkpoint.startLessonIndex,
+      );
     }
   }
 
@@ -120,16 +139,27 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
   void _selectAnswer(String answer) {
     if (showResult) return;
 
+    final responseMs =
+        DateTime.now().difference(_questionStartTime).inMilliseconds;
     setState(() {
       selectedAnswer = answer;
       showResult = true;
 
       final currentWord = quizWords[currentIndex];
+      final correct = answer == currentWord.tamil;
       if (answer == currentWord.tamil) {
         score++;
+        // ignore: discarded_futures
+        _awardXpForWord(currentWord);
       } else {
         _recordMistake(currentWord);
       }
+      AnalyticsService().logQuizAnswer(
+        lessonIndex: widget.checkpoint.startLessonIndex,
+        quizType: 'checkpoint',
+        correct: correct,
+        responseTimeMs: responseMs,
+      );
       _playAudio(currentWord);
     });
   }
@@ -148,6 +178,40 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
     }
   }
 
+  Future<void> _awardXpForWord(WordPair pair) async {
+    if (_isTestEnvironment()) return;
+    final indices = _findLessonWordIndex(pair);
+    if (indices == null) return;
+
+    final xp = await XpTrackerService().awardDailyXpForItem(
+      'word:${indices.lessonIndex}:${indices.wordIndex}',
+    );
+    if (xp == 0) return;
+
+    final user = AuthService().currentUser;
+    if (user == null) return;
+    await SyncService().updateStreakAndXP(
+      user.uid,
+      xp,
+      displayName: user.displayName ?? user.email,
+      reason: 'item',
+    );
+  }
+
+  _LessonWordIndex? _findLessonWordIndex(WordPair pair) {
+    final content = context.read<ContentProvider>();
+    for (int i = 0; i < content.lessons.length; i++) {
+      final lesson = content.lessons[i];
+      final index = lesson.words.indexWhere((word) {
+        return word.hindi == pair.hindi && word.tamil == pair.tamil;
+      });
+      if (index != -1) {
+        return _LessonWordIndex(i, index);
+      }
+    }
+    return null;
+  }
+
   void _nextQuestion() {
     if (currentIndex < quizWords.length - 1) {
       setState(() {
@@ -155,6 +219,7 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
         selectedAnswer = null;
         showResult = false;
         _generateOptions();
+        _questionStartTime = DateTime.now();
       });
     } else {
       _showFinalResults();
@@ -163,6 +228,23 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
 
   void _showFinalResults() {
     final percentage = (score / quizWords.length * 100).round();
+    final durationSec =
+        DateTime.now().difference(_quizStartTime).inSeconds;
+    final passed = percentage >= 80;
+    final streakEligible = percentage >= 50;
+
+    AnalyticsService().logQuizComplete(
+      lessonIndex: widget.checkpoint.startLessonIndex,
+      quizType: 'checkpoint',
+      scorePercent: percentage,
+      passed: passed,
+      durationSec: durationSec,
+    );
+
+    if (!_isTestEnvironment()) {
+      // ignore: discarded_futures
+      _playFeedbackSound(passed);
+    }
 
     if (percentage >= 80) {
       _confettiController.play();
@@ -172,12 +254,13 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
         widget.checkpoint.checkpointNumber, score, quizWords.length);
 
     final user = AuthService().currentUser;
-    if (user != null && percentage >= 80) {
+    if (user != null && streakEligible) {
       SyncService()
           .updateStreakAndXP(
             user.uid,
-            XpRules.checkpointPass,
+            passed ? XpRules.checkpointPass : 0,
             displayName: user.displayName ?? user.email,
+            reason: 'checkpoint',
           )
           .then((result) {
         if (!mounted) return;
@@ -280,6 +363,23 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _playFeedbackSound(bool passed) async {
+    if (_audioPlayer == null) return;
+    final asset = passed
+        ? 'assets/audio/success.mp3'
+        : 'assets/audio/fail.mp3';
+    try {
+      final cleanPath = asset.replaceFirst('assets/', '');
+      await _audioPlayer!.stop();
+      await _audioPlayer!.play(AssetSource(cleanPath));
+    } catch (_) {
+      AnalyticsService().logAudioPlaybackError(
+        source: 'checkpoint_feedback',
+        lessonIndex: widget.checkpoint.startLessonIndex,
+      );
+    }
   }
 
   WordPair? _getWordPairForOption(String tamilOption) {
@@ -483,4 +583,11 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
       ),
     );
   }
+}
+
+class _LessonWordIndex {
+  final int lessonIndex;
+  final int wordIndex;
+
+  const _LessonWordIndex(this.lessonIndex, this.wordIndex);
 }

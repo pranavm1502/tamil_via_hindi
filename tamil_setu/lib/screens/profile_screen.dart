@@ -9,6 +9,60 @@ import '../services/avatar_service.dart';
 import '../services/sync_service.dart';
 import '../theme.dart';
 
+const List<String> _tagAdjectives = [
+  'Kesar',
+  'Neela',
+  'Sundar',
+  'Tez',
+  'Veer',
+  'Rani',
+  'Raja',
+  'Chand',
+  'Suraj',
+  'Ambar',
+  'Mehek',
+  'Sitar',
+  'Rang',
+  'Shakti',
+  'Sagar',
+  'Komal',
+];
+
+const List<String> _tagNouns = [
+  'Mor',
+  'Koyal',
+  'Diya',
+  'Baansuri',
+  'Dhol',
+  'Raga',
+  'Kamal',
+  'Genda',
+  'Chakra',
+  'Ghat',
+  'Haat',
+  'Bazaar',
+  'Panghat',
+  'Mehfil',
+  'Rangoli',
+  'Sitar',
+];
+
+String _buildFunTag(String id) {
+  final hash = _hashString(id);
+  final adj = _tagAdjectives[hash % _tagAdjectives.length];
+  final noun = _tagNouns[(hash ~/ 7) % _tagNouns.length];
+  final number = (hash % 90) + 10;
+  return '$adj $noun-$number';
+}
+
+int _hashString(String value) {
+  var hash = 0;
+  for (final unit in value.codeUnits) {
+    hash = (hash * 31 + unit) & 0x7fffffff;
+  }
+  return hash;
+}
+
 class ProfileScreen extends StatelessWidget {
   final SyncService? syncService;
   const ProfileScreen({super.key, this.syncService});
@@ -65,19 +119,71 @@ class ProfileScreen extends StatelessWidget {
         stream: statsService.userStatsStream(user.uid),
         builder: (context, snapshot) {
           final data = snapshot.data;
-          final displayName =
+            final displayName =
               (data?['display_name'] as String?) ?? user.displayName ?? 'Learner';
+            final displayTag = (data?['display_tag'] as String?) ?? _buildFunTag(user.uid);
           final totalXp = (data?['total_xp'] as int?) ?? 0;
           final streak = (data?['streak_count'] as int?) ?? 0;
             final streakFreezes = (data?['streak_freezes'] as int?) ?? 0;
+
+            if (data != null && data['display_tag'] == null) {
+              // ignore: discarded_futures
+              statsService.ensureDisplayTag(user.uid);
+            }
+
+          Future<void> updateDisplayName() async {
+            final controller = TextEditingController(text: displayName);
+            final result = await showDialog<String>(
+              context: context,
+              builder: (dialogContext) {
+                return AlertDialog(
+                  title: const Text('Update name'),
+                  content: TextField(
+                    controller: controller,
+                    textInputAction: TextInputAction.done,
+                    maxLength: 20,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter your name',
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(dialogContext),
+                      child: const Text('Cancel'),
+                    ),
+                    FilledButton(
+                      onPressed: () {
+                        final value = controller.text.trim();
+                        Navigator.pop(dialogContext, value);
+                      },
+                      child: const Text('Save'),
+                    ),
+                  ],
+                );
+              },
+            );
+
+            final nextName = result?.trim();
+            if (nextName == null || nextName.isEmpty) return;
+
+            await user.updateDisplayName(nextName);
+            await statsService.upsertDisplayName(user.uid, nextName);
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Name updated.')),
+              );
+            }
+          }
 
           return ListView(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
             children: [
               _ProfileHeader(
                 name: displayName,
+                tag: displayTag,
                 email: user.email,
                 photoUrl: user.photoURL,
+                onEditName: updateDisplayName,
               ),
               const SizedBox(height: 12),
               _AvatarPicker(photoUrl: user.photoURL),
@@ -399,13 +505,17 @@ class _AchievementCard extends StatelessWidget {
 
 class _ProfileHeader extends StatelessWidget {
   final String name;
+  final String tag;
   final String? email;
   final String? photoUrl;
+  final VoidCallback? onEditName;
 
   const _ProfileHeader({
     required this.name,
+    required this.tag,
     required this.email,
     required this.photoUrl,
+    this.onEditName,
   });
 
   @override
@@ -446,7 +556,42 @@ class _ProfileHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name, style: Theme.of(context).textTheme.titleMedium),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        name,
+                        style: Theme.of(context).textTheme.titleMedium,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    if (onEditName != null)
+                      IconButton(
+                        icon: const Icon(Icons.edit, size: 18),
+                        tooltip: 'Edit name',
+                        onPressed: onEditName,
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: PeacockTheme.peacockBlue.withAlpha(30),
+                      borderRadius: BorderRadius.circular(999),
+                      border: Border.all(
+                        color: PeacockTheme.peacockBlue.withAlpha(80),
+                      ),
+                    ),
+                    child: Text(
+                      tag,
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                  ),
+                ),
                 if (email != null) ...[
                   const SizedBox(height: 2),
                   Text(email!, style: Theme.of(context).textTheme.bodySmall),

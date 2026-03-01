@@ -12,6 +12,7 @@ import '../providers/theme_provider.dart';
 import '../widgets/peacock_mascot.dart';
 import '../widgets/streak_widget.dart';
 import '../services/avatar_service.dart';
+import '../services/analytics_service.dart';
 import '../theme.dart';
 import 'lesson_screen.dart';
 import 'review_screen.dart';
@@ -20,13 +21,38 @@ import 'mistakes_review_screen.dart';
 import 'package:sign_in_button/sign_in_button.dart';
 
 /// Main entry screen showing progress, streak, and lesson list.
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  bool _loggedView = false;
+
+  void _logDashboardView(BuildContext context) {
+    if (_loggedView) return;
+    final contentProvider = context.read<ContentProvider>();
+    if (contentProvider.isLoading) return;
+
+    final reviewProvider = context.read<ReviewProvider>();
+    _loggedView = true;
+    AnalyticsService().logDashboardView(
+      lessonsVisible: contentProvider.lessons.length,
+      streakDays: reviewProvider.currentStreak,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final contentProvider = context.watch<ContentProvider>();
     final user = context.watch<User?>();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _logDashboardView(context);
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -505,6 +531,7 @@ class _TodayPlanCard extends StatelessWidget {
                   builder: (context) => LessonScreen(
                     lesson: lesson,
                     lessonIndex: nextLessonIndex,
+                    source: 'dashboard',
                   ),
                 ),
               );
@@ -569,9 +596,9 @@ class _PlanRow extends StatelessWidget {
           SizedBox(
             height: 36,
             child: enabled
-                ? FilledButton(
+                ? _PlanActionButton(
+                    label: actionLabel,
                     onPressed: onPressed,
-                    child: Text(actionLabel),
                   )
                 : OutlinedButton(
                     onPressed: null,
@@ -579,6 +606,40 @@ class _PlanRow extends StatelessWidget {
                   ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _PlanActionButton extends StatelessWidget {
+  final String label;
+  final VoidCallback onPressed;
+
+  const _PlanActionButton({
+    required this.label,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: PeacockTheme.peacockBlue.withAlpha(120),
+      borderRadius: BorderRadius.circular(10),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: onPressed,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Center(
+            child: Text(
+              label,
+              style: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -746,7 +807,9 @@ class _LessonTile extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) => LessonScreen(
-                                lesson: lesson, lessonIndex: index)));
+                            lesson: lesson,
+                            lessonIndex: index,
+                            source: 'dashboard')));
                   },
             child: Padding(
               padding: const EdgeInsets.all(12.0),
