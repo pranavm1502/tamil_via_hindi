@@ -100,8 +100,8 @@ class ProgressProvider with ChangeNotifier {
 
     // Check if this lesson requires a checkpoint to be completed
     final requiredCheckpoint =
-        (lessonIndex) ~/ CheckpointService.lessonsPerSection - 1;
-    if (requiredCheckpoint >= 0 &&
+      (lessonIndex) ~/ CheckpointService.lessonsPerSection;
+    if (requiredCheckpoint >= 1 &&
         !_completedCheckpoints.contains(requiredCheckpoint)) {
       return true;
     }
