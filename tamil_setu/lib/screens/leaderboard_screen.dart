@@ -161,13 +161,26 @@ class _LeaderboardList extends StatelessWidget {
             final doc = docs[index - 1];
             final data = doc.data() as Map<String, dynamic>;
             final baseName = data['display_name'] ?? 'Learner';
+            final storedTag = data['display_tag'] as String?;
             final isDuplicate = (nameCounts[baseName] ?? 0) > 1;
             final displayName = isDuplicate
-              ? '$baseName · ${_buildTag(doc.id)}'
+              ? '$baseName · ${storedTag ?? _buildTag(doc.id)}'
               : baseName;
             final xp = data[orderField] ?? 0;
             final streak = data['streak_count'] ?? 0;
             final bool isTopThree = rank <= 3;
+            final IconData? trophyIcon = switch (rank) {
+              1 => Icons.emoji_events,
+              2 => Icons.emoji_events,
+              3 => Icons.emoji_events,
+              _ => null,
+            };
+            final Color? trophyColor = switch (rank) {
+              1 => const Color(0xFFD4AF37),
+              2 => const Color(0xFFC0C0C0),
+              3 => const Color(0xFFCD7F32),
+              _ => null,
+            };
             return Semantics(
               label:
                   'Rank $rank, $displayName, $xp $xpLabel, streak $streak days',
@@ -191,10 +204,9 @@ class _LeaderboardList extends StatelessWidget {
                   ),
                   title: Text(displayName),
                   subtitle: Text('$xpLabel: $xp  |  Streak: $streak'),
-                  trailing: isTopThree
-                      ? const Icon(Icons.emoji_events,
-                          color: PeacockTheme.vibrantOrange)
-                      : null,
+                    trailing: trophyIcon == null
+                      ? null
+                      : Icon(trophyIcon, color: trophyColor),
                 ),
               ),
             );

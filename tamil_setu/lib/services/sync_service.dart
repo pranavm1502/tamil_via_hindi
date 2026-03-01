@@ -69,6 +69,7 @@ class SyncService {
             'last_freeze_date': null,
             'last_freeze_award_streak': 0,
             'last_lesson_freeze_date': null,
+            'display_tag': _buildFunTag(uid),
             'display_name':
                 (displayName == null || displayName.isEmpty)
                     ? 'Learner'
@@ -158,6 +159,10 @@ class SyncService {
               : Timestamp.fromDate(lastLessonFreezeDate),
         };
 
+        if (data['display_tag'] == null) {
+          updateData['display_tag'] = _buildFunTag(uid);
+        }
+
         if (displayName != null && displayName.isNotEmpty) {
           final existingName = data['display_name'] as String?;
           if (existingName == null || existingName != displayName) {
@@ -193,10 +198,78 @@ class SyncService {
   Future<void> upsertDisplayName(String uid, String displayName) async {
     if (displayName.isEmpty) return;
     await _db.collection('users').doc(uid).set(
-      {'display_name': displayName},
+      {
+        'display_name': displayName,
+        'display_tag': _buildFunTag(uid),
+      },
       SetOptions(merge: true),
     );
   }
+
+  Future<void> ensureDisplayTag(String uid) async {
+    final userRef = _db.collection('users').doc(uid);
+    await _db.runTransaction((transaction) async {
+      final snapshot = await transaction.get(userRef);
+      if (!snapshot.exists) return;
+      final data = snapshot.data() ?? <String, dynamic>{};
+      if (data['display_tag'] != null) return;
+      transaction.update(userRef, {'display_tag': _buildFunTag(uid)});
+    });
+  }
+
+  String _buildFunTag(String id) {
+    final hash = _hashString(id);
+    final adj = _tagAdjectives[hash % _tagAdjectives.length];
+    final noun = _tagNouns[(hash ~/ 7) % _tagNouns.length];
+    final number = (hash % 90) + 10;
+    return '$adj $noun-$number';
+  }
+
+  int _hashString(String value) {
+    var hash = 0;
+    for (final unit in value.codeUnits) {
+      hash = (hash * 31 + unit) & 0x7fffffff;
+    }
+    return hash;
+  }
+
+  static const List<String> _tagAdjectives = [
+    'Kesar',
+    'Neela',
+    'Sundar',
+    'Tez',
+    'Veer',
+    'Rani',
+    'Raja',
+    'Chand',
+    'Suraj',
+    'Ambar',
+    'Mehek',
+    'Sitar',
+    'Rang',
+    'Shakti',
+    'Sagar',
+    'Komal',
+  ];
+
+  static const List<String> _tagNouns = [
+    'Mor',
+    'Koyal',
+    'Diya',
+    'Baansuri',
+    'Dhol',
+    'Raga',
+    'Kamal',
+    'Genda',
+    'Chakra',
+    'Ghat',
+    'Haat',
+    'Bazaar',
+    'Panghat',
+    'Mehfil',
+    'Rangoli',
+    'Sitar',
+  ];
 
   int _isoWeekNumber(DateTime date) {
     final thursday = date.add(Duration(days: 3 - ((date.weekday + 6) % 7)));
