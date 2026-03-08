@@ -234,32 +234,41 @@ class _QuizViewState extends State<QuizView> {
           AlertDialog(
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                PeacockMascot(
-                  message: percentage >= 80
-                      ? 'Excellent! Great job!'
-                      : 'Keep practicing! You are getting better.',
-                  state: percentage >= 80
-                      ? MascotState.celebrate
-                      : MascotState.confused,
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  'You scored $score out of ${shuffledWords.length}',
-                  style: const TextStyle(fontSize: 18),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  '$percentage%',
-                  style: TextStyle(
-                    fontSize: 42,
-                    fontWeight: FontWeight.bold,
-                    color: percentage >= 80 ? Colors.green : Colors.orange,
+            content: Container(
+              width: 320, // Increase dialog width to prevent awkward wrapping
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  PeacockMascot(
+                    message: percentage >= 80
+                        ? 'Excellent! Great job!'
+                        : 'Keep practicing! You are getting better.',
+                    state: percentage >= 80
+                        ? MascotState.celebrate
+                        : MascotState.confused,
                   ),
-                ),
-              ],
+                  const SizedBox(height: 24),
+                  Flexible(
+                    child: Text(
+                      'You scored $score out of ${shuffledWords.length}.',
+                      style: const TextStyle(fontSize: 18),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Flexible(
+                    child: Text(
+                      '$percentage%',
+                      style: TextStyle(
+                        fontSize: 42,
+                        fontWeight: FontWeight.bold,
+                        color: percentage >= 80 ? Colors.green : Colors.orange,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
             ),
             actions: [
               TextButton(

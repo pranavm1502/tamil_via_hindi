@@ -221,25 +221,33 @@ class _ReviewScreenState extends State<ReviewScreen> {
               state: MascotState.celebrate,
             ),
             const SizedBox(height: 24),
-            Text(
-              'You reviewed $cardsReviewed card${cardsReviewed != 1 ? 's' : ''}!',
-              style: const TextStyle(fontSize: 18),
-              textAlign: TextAlign.center,
+            Flexible(
+              child: Text(
+                'You reviewed $cardsReviewed card${cardsReviewed != 1 ? 's' : ''}!',
+                style: const TextStyle(fontSize: 18),
+                textAlign: TextAlign.center,
+              ),
             ),
             const SizedBox(height: 8),
             if (reviewProvider.currentStreak > 0)
-              Text(
-                '🔥 ${reviewProvider.currentStreak} day streak!',
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.orange,
+              Flexible(
+                child: Text(
+                  '🔥 ${reviewProvider.currentStreak} day streak!',
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
             const SizedBox(height: 8),
-            Text(
-              'Daily goal: $todayCount / $dailyGoal',
-              style: const TextStyle(fontSize: 16, color: Colors.black54),
+            Flexible(
+              child: Text(
+                'Daily goal: $todayCount / $dailyGoal',
+                style: const TextStyle(fontSize: 16, color: Colors.black54),
+                textAlign: TextAlign.center,
+              ),
             ),
           ],
         ),

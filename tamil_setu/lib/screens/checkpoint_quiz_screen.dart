@@ -296,16 +296,22 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
                       : MascotState.confused,
                 ),
                 const SizedBox(height: 20),
-                Text(
-                  'You scored $score out of ${quizWords.length}',
-                  style: const TextStyle(fontSize: 18),
+                Flexible(
+                  child: Text(
+                    'You scored $score out of ${quizWords.length}',
+                    style: const TextStyle(fontSize: 18),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-                Text(
-                  '$percentage%',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: percentage >= 80 ? Colors.green : Colors.orange,
+                Flexible(
+                  child: Text(
+                    '$percentage%',
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: percentage >= 80 ? Colors.green : Colors.orange,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
                 const SizedBox(height: 16),

@@ -362,8 +362,8 @@ class _SentenceBuilderQuizState extends State<SentenceBuilderQuiz> {
     if (!mounted) return;
 
     final message = passed
-        ? 'Fantastic work! Lesson unlocked.'
-        : 'Almost there! Give it another shot.';
+      ? 'Fantastic work! Lesson unlocked.'
+      : 'Almost there! Try again.';
 
     if (passed) {
       _confettiController.play();
@@ -376,30 +376,38 @@ class _SentenceBuilderQuizState extends State<SentenceBuilderQuiz> {
         alignment: Alignment.topCenter,
         children: [
           AlertDialog(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                PeacockMascot(
-                  message: message,
-                  state: passed ? MascotState.celebrate : MascotState.confused,
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  'You scored $_correctCount out of ${_shuffledSentences.length}',
-                  style: const TextStyle(fontSize: 18),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  '$scorePercent%',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: passed ? Colors.green : Colors.orange,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            content: Container(
+              width: 320, // Increase dialog width to prevent awkward wrapping
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  PeacockMascot(
+                    message: message,
+                    state: passed ? MascotState.celebrate : MascotState.confused,
                   ),
-                ),
-              ],
+                  const SizedBox(height: 20),
+                  Flexible(
+                    child: Text(
+                      'You scored $_correctCount out of ${_shuffledSentences.length}.',
+                      style: const TextStyle(fontSize: 18),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Flexible(
+                    child: Text(
+                      '$scorePercent%',
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: passed ? Colors.green : Colors.orange,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
             ),
             actions: [
               TextButton(

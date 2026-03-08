@@ -41,6 +41,14 @@ class PeacockMascot extends StatelessWidget {
     return !kIsWeb && Platform.environment.containsKey('FLUTTER_TEST');
   }
 
+  String _preventOrphanedPunctuation(String value) {
+    // Insert a word-joiner before sentence-ending punctuation to avoid orphaned glyphs.
+    return value.replaceAllMapped(
+      RegExp(r'([A-Za-z0-9])([.!?])'),
+      (match) => '${match[1]}\u2060${match[2]}',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     String assetPath;
@@ -54,6 +62,8 @@ class PeacockMascot extends StatelessWidget {
       default:
         assetPath = 'assets/images/peacock_guide.png';
     }
+
+    final safeMessage = _preventOrphanedPunctuation(message);
 
     final content = layout == MascotLayout.inline
         ? Row(
@@ -80,7 +90,7 @@ class PeacockMascot extends StatelessWidget {
                     ],
                   ),
                   child: Text(
-                    message,
+                    safeMessage,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: fontSize,
@@ -88,7 +98,7 @@ class PeacockMascot extends StatelessWidget {
                     softWrap: true,
                     overflow: TextOverflow.visible,
                     textAlign: TextAlign.left,
-                    textWidthBasis: TextWidthBasis.parent,
+                    textWidthBasis: TextWidthBasis.longestLine,
                   ),
                 ),
               ),
@@ -128,7 +138,7 @@ class PeacockMascot extends StatelessWidget {
                   ],
                 ),
                 child: Text(
-                  message,
+                  safeMessage,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: fontSize,
@@ -136,7 +146,7 @@ class PeacockMascot extends StatelessWidget {
                   softWrap: true,
                   overflow: TextOverflow.visible,
                   textAlign: TextAlign.left,
-                  textWidthBasis: TextWidthBasis.parent,
+                  textWidthBasis: TextWidthBasis.longestLine,
                 ),
               ),
               Transform.translate(

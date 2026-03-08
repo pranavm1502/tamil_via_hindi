@@ -290,14 +290,24 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
                         : MascotState.confused,
                   ),
                   const SizedBox(height: 20),
-                  Text('You scored $score out of ${shuffledWords.length}',
-                      style: const TextStyle(fontSize: 18)),
-                  Text('$percentage%',
+                  Flexible(
+                    child: Text(
+                      'You scored $score out of ${shuffledWords.length}',
+                      style: const TextStyle(fontSize: 18),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Flexible(
+                    child: Text(
+                      '$percentage%',
                       style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color:
-                              percentage >= 80 ? Colors.green : Colors.orange)),
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: percentage >= 80 ? Colors.green : Colors.orange,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                 ],
               ),
               actions: [
