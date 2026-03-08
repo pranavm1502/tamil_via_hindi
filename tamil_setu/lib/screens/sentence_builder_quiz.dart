@@ -377,7 +377,7 @@ class _SentenceBuilderQuizState extends State<SentenceBuilderQuiz> {
         children: [
           AlertDialog(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            content: Container(
+            content: SizedBox(
               width: 320, // Increase dialog width to prevent awkward wrapping
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -385,6 +385,10 @@ class _SentenceBuilderQuizState extends State<SentenceBuilderQuiz> {
                   PeacockMascot(
                     message: message,
                     state: passed ? MascotState.celebrate : MascotState.confused,
+                    layout: MascotLayout.overlap,
+                    imageSize: 88,
+                    overlapInset: 84,
+                    imageOffset: const Offset(16, 0),
                   ),
                   const SizedBox(height: 20),
                   Flexible(

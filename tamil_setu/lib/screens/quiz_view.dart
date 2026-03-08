@@ -234,7 +234,7 @@ class _QuizViewState extends State<QuizView> {
           AlertDialog(
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            content: Container(
+            content: SizedBox(
               width: 320, // Increase dialog width to prevent awkward wrapping
               child: Column(
                 mainAxisSize: MainAxisSize.min,
