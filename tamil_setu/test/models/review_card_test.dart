@@ -49,6 +49,37 @@ void main() {
       expect(card.accuracy, 0.0);
     });
 
+    group('accuracy bounds', () {
+      test('is 0 when no reviews have been done', () {
+        final card = ReviewCard.newCard(lessonIndex: 0, wordIndex: 0);
+        expect(card.accuracy, 0.0);
+        expect(card.accuracy, inInclusiveRange(0.0, 100.0));
+      });
+
+      test('is 100 when all reviews are correct', () {
+        final card = ReviewCard.newCard(lessonIndex: 0, wordIndex: 0)
+            .copyWith(totalReviews: 10, totalCorrect: 10);
+        expect(card.accuracy, 100.0);
+        expect(card.accuracy, inInclusiveRange(0.0, 100.0));
+      });
+
+      test('is between 0 and 100 for partial accuracy', () {
+        final card = ReviewCard.newCard(lessonIndex: 0, wordIndex: 0)
+            .copyWith(totalReviews: 10, totalCorrect: 7);
+        expect(card.accuracy, inInclusiveRange(0.0, 100.0));
+      });
+
+      test('asserts when totalCorrect exceeds totalReviews (corrupted data)',
+          () {
+        final card = ReviewCard.newCard(lessonIndex: 0, wordIndex: 0)
+            .copyWith(totalReviews: 5, totalCorrect: 8);
+        expect(
+          () => card.accuracy,
+          throwsA(isA<AssertionError>()),
+        );
+      });
+    });
+
     test('toJson serializes correctly', () {
       final now = DateTime.now();
       final card = ReviewCard(

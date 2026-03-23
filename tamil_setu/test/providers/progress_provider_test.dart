@@ -138,5 +138,46 @@ void main() {
       await progressProvider.saveCheckpointScore(1, 8, 10);
       expect(progressProvider.isCheckpointCompleted(1), isTrue);
     });
+
+    group('getOverallProgress bounds', () {
+      test('returns 0 when no lessons are completed', () async {
+        await progressProvider.loadProgress();
+        final progress = progressProvider.getOverallProgress(10);
+        expect(progress, 0.0);
+        expect(progress, inInclusiveRange(0.0, 100.0));
+      });
+
+      test('returns 100 when all lessons are completed', () async {
+        await progressProvider.loadProgress();
+        for (int i = 0; i < 5; i++) {
+          await progressProvider.saveQuizScore(i, 10, 10);
+        }
+        final progress = progressProvider.getOverallProgress(5);
+        expect(progress, 100.0);
+        expect(progress, inInclusiveRange(0.0, 100.0));
+      });
+
+      test('is always between 0 and 100 for partial completion', () async {
+        await progressProvider.loadProgress();
+        await progressProvider.saveQuizScore(0, 10, 10);
+        await progressProvider.saveQuizScore(1, 10, 10);
+        final progress = progressProvider.getOverallProgress(10);
+        expect(progress, inInclusiveRange(0.0, 100.0));
+      });
+
+      test('asserts when completed lessons exceed total (corrupted data)',
+          () async {
+        await progressProvider.loadProgress();
+        // Complete 5 lessons, then ask for progress out of only 3 —
+        // simulates a curriculum shrink with stale persisted data.
+        for (int i = 0; i < 5; i++) {
+          await progressProvider.saveQuizScore(i, 10, 10);
+        }
+        expect(
+          () => progressProvider.getOverallProgress(3),
+          throwsA(isA<AssertionError>()),
+        );
+      });
+    });
   });
 }

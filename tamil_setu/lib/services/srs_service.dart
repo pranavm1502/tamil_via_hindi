@@ -143,7 +143,13 @@ class SRSService {
       'matureCards': matureCards,
       'totalReviews': totalReviews,
       'totalCorrect': totalCorrect,
-      'accuracy': totalReviews == 0 ? 0.0 : (totalCorrect / totalReviews) * 100,
+      'accuracy': () {
+        if (totalReviews == 0) return 0.0;
+        final result = (totalCorrect / totalReviews) * 100;
+        assert(result >= 0.0 && result <= 100.0,
+            'SrsService accuracy out of range: $result (totalCorrect=$totalCorrect, totalReviews=$totalReviews)');
+        return result;
+      }(),
       'avgEasiness': avgEasiness,
     };
   }

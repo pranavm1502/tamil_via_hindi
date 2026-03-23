@@ -14,6 +14,7 @@ import '../services/sync_service.dart';
 import '../services/tts_service.dart';
 import '../services/xp_rules.dart';
 import '../services/analytics_service.dart';
+import '../services/quiz_score.dart';
 import '../services/xp_tracker_service.dart';
 
 class QuizView extends StatefulWidget {
@@ -173,7 +174,7 @@ class _QuizViewState extends State<QuizView> {
 
   Future<void> _showResultDialog() async {
     // 1. Calculate percentage (Fixes 'unused variable' warning)
-    final percentage = (score / shuffledWords.length * 100).round();
+    final percentage = QuizScore.percent(score, shuffledWords.length);
     final durationSec =
         DateTime.now().difference(_quizStartTime).inSeconds;
     final passed = percentage >= 80;
