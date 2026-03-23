@@ -7,7 +7,7 @@ This is a working plan captured before committing to git. It will be updated as 
 - Learning content: Hindi <-> Tamil translation only.
 - Avoid mixing scripts in instructional copy.
 
-## Phase 1 - Stabilize Core Loop (Now)
+## Phase 1 - Stabilize Core Loop
 Goals: reliable progression, consistent instruction language, data integrity, measurable retention basics.
 - Enforce progression gates (disable testing mode in production).
 - Remove duplicate provider wiring.

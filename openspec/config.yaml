@@ -1,0 +1,59 @@
+schema: spec-driven
+
+context: |
+  ## Project: Tamil Setu (तमिल सेतु)
+  A Flutter app that teaches Tamil to Hindi speakers. Available on Android (Play Store).
+
+  ## Tech Stack
+  - Flutter / Dart (SDK ≥3.0.0)
+  - Firebase: Auth (Google Sign-In), Firestore (cloud sync), Analytics
+  - Provider for state management (ProgressProvider, ReviewProvider, AuthService)
+  - SharedPreferences for offline-first local storage
+  - SRS (spaced repetition) for review scheduling
+  - flutter_tts + audioplayers for audio playback
+  - flutter_test + flutter_local_notifications
+
+  ## App structure (lib/)
+  - screens/         — UI screens (dashboard, quiz_view, multiple_choice_quiz,
+                       checkpoint_quiz_screen, sentence_builder_quiz, review_screen,
+                       mistakes_review_screen, profile_screen, leaderboard_screen)
+  - providers/       — ProgressProvider, ReviewProvider
+  - services/        — SRSService, SyncService, XpRules, QuizScore, ProgressService,
+                       XpTrackerService, AnalyticsService, AuthService
+  - models/          — Lesson, WordPair, ReviewCard, Checkpoint
+  - data/            — ContentProvider (loads curriculum.json + master_content.json)
+  - widgets/         — Reusable widgets (PeacockMascot, StreakWidget, etc.)
+
+  ## Key domain concepts
+  - Lessons are unlocked sequentially; 80% quiz score required to pass.
+  - Checkpoint quizzes (every 5 lessons) gate the next section.
+  - SRS review cards use SM-2 algorithm (ReviewQuality: again/hard/good/easy).
+  - XP is earned for lessons (50 XP pass, 0 XP fail), builds (25 XP), checkpoints
+    (100 XP), and review sessions (10 + 2/card, +25 bonus for hitting daily goal).
+  - Streaks are stored in Firestore; streak freezes protect against missed days.
+  - Streaks reset after 48 hours of inactivity; streak freezes can be used to prevent reset. 
+  - Leaderboard ranks users by weekly XP.
+  - QuizScore.percent(correct, total) is the single source of truth for all
+    percentage calculations — asserts fire if values go out of [0, 100].
+
+  ## Conventions
+  - Language policy: UI and instructions in English only; content in Hindi ↔ Tamil.
+  - Offline-first: all lesson content and progress saved locally; Firestore is
+    additive (sync, streaks, leaderboard).
+  - Tests live in test/ mirroring lib/ structure (providers/, services/, models/).
+  - Use assert() for impossible states in debug/test builds (not clamp/silent fail).
+  - Avoid adding features beyond scope; keep solutions minimal.
+
+rules:
+  proposal:
+    - State the user problem being solved, not just the feature being added.
+    - Include a "Non-goals" section to keep scope tight.
+    - Reference the relevant phase from PHASED_PLAN.md if applicable.
+  design:
+    - Identify which existing providers/services will be extended vs. new ones needed.
+    - Note any Firestore schema changes required.
+    - Call out offline-first implications (what works without network?).
+  tasks:
+    - Each task should map to a single file or closely related set of files.
+    - Include a test task for any new logic (unit test in test/services/ or test/providers/).
+    - Prefix tasks that touch Firestore with "[cloud]" for visibility.

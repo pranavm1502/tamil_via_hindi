@@ -15,6 +15,7 @@ import '../services/sync_service.dart';
 import '../services/xp_rules.dart';
 import '../services/analytics_service.dart';
 import '../services/xp_tracker_service.dart';
+import 'mistakes_review_screen.dart';
 
 class ReviewScreen extends StatefulWidget {
   const ReviewScreen({super.key});
@@ -174,6 +175,10 @@ class _ReviewScreenState extends State<ReviewScreen> {
         ? 0
         : DateTime.now().difference(_sessionStartTime!).inSeconds;
 
+    // Capture context-dependent objects before any async gap.
+    final scaffold = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+
     AnalyticsService().logReviewComplete(
       cardsReviewed: cardsReviewed,
       durationSec: durationSec,
@@ -194,11 +199,11 @@ class _ReviewScreenState extends State<ReviewScreen> {
         );
         if (!mounted) return;
         if (result.earnedFreeze) {
-          ScaffoldMessenger.of(context).showSnackBar(
+          scaffold.showSnackBar(
             const SnackBar(content: Text('Streak freeze earned!')),
           );
         } else if (result.consumedFreeze) {
-          ScaffoldMessenger.of(context).showSnackBar(
+          scaffold.showSnackBar(
             const SnackBar(
                 content: Text('Streak freeze used to keep your streak.')),
           );
@@ -206,7 +211,9 @@ class _ReviewScreenState extends State<ReviewScreen> {
       }
     }
 
-    if (!context.mounted) return;
+    if (!mounted) return;
+
+    final mistakes = reviewProvider.sessionMistakes;
 
     showDialog(
       context: context,
@@ -252,10 +259,25 @@ class _ReviewScreenState extends State<ReviewScreen> {
           ],
         ),
         actions: [
+          if (mistakes.isNotEmpty)
+            TextButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+                navigator.pop();
+                navigator.push(
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        MistakesReviewScreen(sessionCards: mistakes),
+                  ),
+                );
+              },
+              child: Text(
+                  'Drill ${mistakes.length} mistake${mistakes.length != 1 ? 's' : ''}'),
+            ),
           FilledButton(
             onPressed: () {
               Navigator.pop(ctx);
-              Navigator.pop(context);
+              navigator.pop();
             },
             child: const Text('Done'),
           ),
