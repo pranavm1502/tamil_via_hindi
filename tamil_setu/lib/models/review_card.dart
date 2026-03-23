@@ -70,8 +70,13 @@ class ReviewCard {
       DateTime.now().isAtSameMomentAs(nextReview);
 
   /// Calculate accuracy percentage
-  double get accuracy =>
-      totalReviews == 0 ? 0.0 : (totalCorrect / totalReviews) * 100;
+  double get accuracy {
+    if (totalReviews == 0) return 0.0;
+    final result = (totalCorrect / totalReviews) * 100;
+    assert(result >= 0.0 && result <= 100.0,
+        'ReviewCard.accuracy out of range: $result (totalCorrect=$totalCorrect, totalReviews=$totalReviews)');
+    return result;
+  }
 
   /// Convert to JSON for storage
   Map<String, dynamic> toJson() {

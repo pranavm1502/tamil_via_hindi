@@ -10,6 +10,59 @@ void main() {
       srsService = SRSService();
     });
 
+    group('getStatistics accuracy bounds', () {
+      test('accuracy is 0 when there are no cards', () {
+        final stats = srsService.getStatistics([]);
+        expect(stats['accuracy'], 0.0);
+        expect(stats['accuracy'] as double, inInclusiveRange(0.0, 100.0));
+      });
+
+      test('accuracy is 0 when no reviews have been done', () {
+        final cards = [
+          ReviewCard.newCard(lessonIndex: 0, wordIndex: 0),
+          ReviewCard.newCard(lessonIndex: 0, wordIndex: 1),
+        ];
+        final stats = srsService.getStatistics(cards);
+        expect(stats['accuracy'], 0.0);
+        expect(stats['accuracy'] as double, inInclusiveRange(0.0, 100.0));
+      });
+
+      test('accuracy is 100 when every review was correct', () {
+        final cards = [
+          ReviewCard.newCard(lessonIndex: 0, wordIndex: 0)
+              .copyWith(totalReviews: 5, totalCorrect: 5),
+          ReviewCard.newCard(lessonIndex: 0, wordIndex: 1)
+              .copyWith(totalReviews: 3, totalCorrect: 3),
+        ];
+        final stats = srsService.getStatistics(cards);
+        expect(stats['accuracy'], 100.0);
+        expect(stats['accuracy'] as double, inInclusiveRange(0.0, 100.0));
+      });
+
+      test('accuracy is between 0 and 100 for mixed results', () {
+        final cards = [
+          ReviewCard.newCard(lessonIndex: 0, wordIndex: 0)
+              .copyWith(totalReviews: 10, totalCorrect: 7),
+          ReviewCard.newCard(lessonIndex: 0, wordIndex: 1)
+              .copyWith(totalReviews: 5, totalCorrect: 2),
+        ];
+        final stats = srsService.getStatistics(cards);
+        expect(stats['accuracy'] as double, inInclusiveRange(0.0, 100.0));
+      });
+
+      test('asserts when totalCorrect exceeds totalReviews (corrupted data)',
+          () {
+        final cards = [
+          ReviewCard.newCard(lessonIndex: 0, wordIndex: 0)
+              .copyWith(totalReviews: 5, totalCorrect: 9),
+        ];
+        expect(
+          () => srsService.getStatistics(cards),
+          throwsA(isA<AssertionError>()),
+        );
+      });
+    });
+
     group('updateCard', () {
       test('updates card with "again" quality - resets progress', () {
         final card = ReviewCard.newCard(lessonIndex: 0, wordIndex: 0).copyWith(

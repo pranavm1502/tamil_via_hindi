@@ -15,6 +15,7 @@ import '../services/sync_service.dart';
 import '../services/tts_service.dart';
 import '../services/xp_rules.dart';
 import '../services/analytics_service.dart';
+import '../services/quiz_score.dart';
 import '../services/xp_tracker_service.dart';
 
 class MultipleChoiceQuiz extends StatefulWidget {
@@ -204,7 +205,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
 
   // Note: Ensure _showFinalResults uses the passed lessonIndex correctly as you did before.
   void _showFinalResults() {
-    final percentage = (score / shuffledWords.length * 100).round();
+    final percentage = QuizScore.percent(score, shuffledWords.length);
     final durationSec =
         DateTime.now().difference(_quizStartTime).inSeconds;
     final passed = percentage >= 80;

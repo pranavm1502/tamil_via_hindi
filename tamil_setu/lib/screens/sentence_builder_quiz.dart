@@ -12,6 +12,7 @@ import '../services/tts_service.dart';
 import '../services/analytics_service.dart';
 import '../services/sync_service.dart';
 import '../services/xp_rules.dart';
+import '../services/quiz_score.dart';
 import '../services/xp_tracker_service.dart';
 import '../widgets/peacock_mascot.dart';
 
@@ -295,7 +296,7 @@ class _SentenceBuilderQuizState extends State<SentenceBuilderQuiz> {
       final durationSec =
           DateTime.now().difference(_quizStartTime).inSeconds;
       final scorePercent =
-          ((_correctCount / _shuffledSentences.length) * 100).round();
+          QuizScore.percent(_correctCount, _shuffledSentences.length);
       final passed = scorePercent >= 80;
       final streakEligible = scorePercent >= 50;
       AnalyticsService().logQuizComplete(

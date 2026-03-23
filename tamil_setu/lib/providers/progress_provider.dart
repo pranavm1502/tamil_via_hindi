@@ -150,7 +150,10 @@ class ProgressProvider with ChangeNotifier {
   /// Calculates the overall progress percentage for the dashboard header.
   double getOverallProgress(int totalLessons) {
     if (totalLessons == 0) return 0.0;
-    return (_completedLessons.length / totalLessons) * 100;
+    final result = (_completedLessons.length / totalLessons) * 100;
+    assert(result >= 0.0 && result <= 100.0,
+        'getOverallProgress out of range: $result (completedLessons=${_completedLessons.length}, totalLessons=$totalLessons)');
+    return result;
   }
 
   /// Saves the quiz score and handles unlocking the next level.

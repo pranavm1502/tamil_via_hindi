@@ -16,6 +16,7 @@ import '../services/auth_service.dart';
 import '../services/sync_service.dart';
 import '../services/xp_rules.dart';
 import '../services/analytics_service.dart';
+import '../services/quiz_score.dart';
 import '../services/xp_tracker_service.dart';
 
 class CheckpointQuizScreen extends StatefulWidget {
@@ -226,7 +227,7 @@ class _CheckpointQuizScreenState extends State<CheckpointQuizScreen> {
   }
 
   void _showFinalResults() {
-    final percentage = (score / quizWords.length * 100).round();
+    final percentage = QuizScore.percent(score, quizWords.length);
     final durationSec =
         DateTime.now().difference(_quizStartTime).inSeconds;
     final passed = percentage >= 80;

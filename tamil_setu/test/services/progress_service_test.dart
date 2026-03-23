@@ -111,6 +111,41 @@ void main() {
       expect(progress, 0);
     });
 
+    group('getOverallProgress bounds', () {
+      test('returns 0 when no lessons are completed', () async {
+        final progress = await progressService.getOverallProgress(10);
+        expect(progress, 0);
+        expect(progress, inInclusiveRange(0, 100));
+      });
+
+      test('returns 100 when all lessons are completed', () async {
+        for (int i = 0; i < 5; i++) {
+          await progressService.markLessonCompleted(i);
+        }
+        final progress = await progressService.getOverallProgress(5);
+        expect(progress, 100);
+        expect(progress, inInclusiveRange(0, 100));
+      });
+
+      test('is always between 0 and 100 for partial completion', () async {
+        await progressService.markLessonCompleted(0);
+        await progressService.markLessonCompleted(1);
+        final progress = await progressService.getOverallProgress(10);
+        expect(progress, inInclusiveRange(0, 100));
+      });
+
+      test('asserts when completed lessons exceed total (corrupted data)',
+          () async {
+        for (int i = 0; i < 5; i++) {
+          await progressService.markLessonCompleted(i);
+        }
+        expect(
+          () async => progressService.getOverallProgress(3),
+          throwsA(isA<AssertionError>()),
+        );
+      });
+    });
+
     test('should clear all progress', () async {
       await progressService.markLessonCompleted(0);
       await progressService.saveQuizScore(0, 10, 10);

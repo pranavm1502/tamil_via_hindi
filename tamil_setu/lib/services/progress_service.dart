@@ -99,6 +99,9 @@ class ProgressService {
   Future<int> getOverallProgress(int totalLessons) async {
     final completed = await getTotalCompletedLessons();
     if (totalLessons == 0) return 0;
-    return (completed / totalLessons * 100).round();
+    final result = (completed / totalLessons * 100).round();
+    assert(result >= 0 && result <= 100,
+        'getOverallProgress out of range: $result (completed=$completed, totalLessons=$totalLessons)');
+    return result;
   }
 }
