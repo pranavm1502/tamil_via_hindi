@@ -12,6 +12,7 @@ class ReviewProvider with ChangeNotifier {
 
   List<ReviewCard> _allCards = [];
   List<ReviewCard> _currentReviewQueue = [];
+  List<ReviewCard> _sessionMistakes = [];
   int _currentCardIndex = 0;
   Map<String, dynamic> _stats = {};
   bool _isLoading = true;
@@ -30,6 +31,9 @@ class ReviewProvider with ChangeNotifier {
   bool get hasMoreCards => _currentCardIndex < _currentReviewQueue.length;
   ReviewCard? get currentCard =>
       hasMoreCards ? _currentReviewQueue[_currentCardIndex] : null;
+
+  /// Cards answered incorrectly (again) in the current/last review session.
+  List<ReviewCard> get sessionMistakes => List.unmodifiable(_sessionMistakes);
 
   /// Load all review cards from storage
   Future<void> loadReviewCards() async {
@@ -84,6 +88,7 @@ class ReviewProvider with ChangeNotifier {
     }
 
     _currentCardIndex = 0;
+    _sessionMistakes = [];
     notifyListeners();
   }
 
@@ -93,6 +98,11 @@ class ReviewProvider with ChangeNotifier {
 
     final currentCard = _currentReviewQueue[_currentCardIndex];
     final updatedCard = _srsService.updateCard(currentCard, quality);
+
+    // Track session mistakes
+    if (quality == ReviewQuality.again) {
+      _sessionMistakes.add(currentCard);
+    }
 
     // Update in storage
     await _storageService.upsertReviewCard(updatedCard);
