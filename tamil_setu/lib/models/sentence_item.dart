@@ -4,6 +4,7 @@ class SentenceItem {
   final String pronunciation;
   final String audioPath;
   final List<String> tags;
+  final String? imagePath; // e.g. "assets/images/words/eat.png"; null when absent
 
   const SentenceItem({
     required this.hindi,
@@ -11,6 +12,7 @@ class SentenceItem {
     required this.pronunciation,
     required this.audioPath,
     required this.tags,
+    this.imagePath,
   });
 
   factory SentenceItem.fromJson(Map<String, dynamic> json) {
@@ -21,6 +23,7 @@ class SentenceItem {
       pronunciation: json['pronunciation'] ?? '',
       audioPath: json['audio_path'] ?? '',
       tags: rawTags.map((tag) => tag.toString()).toList(),
+      imagePath: json['image_path'] as String?,
     );
   }
 }

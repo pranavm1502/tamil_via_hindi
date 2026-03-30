@@ -336,47 +336,67 @@ class _QuizViewState extends State<QuizView> {
               elevation: 10,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20)),
-              child: Container(
-                constraints: const BoxConstraints(minHeight: 240),
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text('Translate this Hindi word:',
-                        style: TextStyle(color: Colors.grey)),
-                    const SizedBox(height: 10),
-                    Text(currentWord.hindi,
-                        style: const TextStyle(
-                            fontSize: 36,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue)),
-                    const Divider(height: 40),
-                    if (showAnswer)
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(currentWord.tamil,
-                              style: const TextStyle(
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.deepOrange)),
-                          const SizedBox(height: 4),
-                          Text('(${currentWord.pronunciation})',
-                              style: const TextStyle(
-                                  fontSize: 20, color: Colors.blueGrey)),
-                          const SizedBox(height: 8),
-                          IconButton(
-                              icon: const Icon(Icons.volume_up,
-                                  color: Colors.blue),
-                                onPressed: () => _playAudio(currentWord)),
-                        ],
-                      )
-                    else
-                      const Text('?',
-                          style: TextStyle(fontSize: 50, color: Colors.grey)),
-                  ],
-                ),
+              child: Column(
+                children: [
+                  if (currentWord.imagePath != null)
+                    ClipRRect(
+                      borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(20)),
+                      child: SizedBox(
+                        height: 150,
+                        width: double.infinity,
+                        child: Image.asset(
+                          currentWord.imagePath!,
+                          key: const ValueKey('flashcard-word-image'),
+                          fit: BoxFit.contain,
+                          semanticLabel: currentWord.hindi,
+                          errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                        ),
+                      ),
+                    ),
+                  Container(
+                    constraints: const BoxConstraints(minHeight: 240),
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Translate this Hindi word:',
+                            style: TextStyle(color: Colors.grey)),
+                        const SizedBox(height: 10),
+                        Text(currentWord.hindi,
+                            style: const TextStyle(
+                                fontSize: 36,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue)),
+                        const Divider(height: 40),
+                        if (showAnswer)
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(currentWord.tamil,
+                                  style: const TextStyle(
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.deepOrange)),
+                              const SizedBox(height: 4),
+                              Text('(${currentWord.pronunciation})',
+                                  style: const TextStyle(
+                                      fontSize: 20, color: Colors.blueGrey)),
+                              const SizedBox(height: 8),
+                              IconButton(
+                                  icon: const Icon(Icons.volume_up,
+                                      color: Colors.blue),
+                                    onPressed: () => _playAudio(currentWord)),
+                            ],
+                          )
+                        else
+                          const Text('?',
+                              style: TextStyle(fontSize: 50, color: Colors.grey)),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 40),

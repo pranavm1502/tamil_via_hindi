@@ -5,6 +5,7 @@ class WordCard extends StatelessWidget {
   final String tamil;
   final String pronunciation;
   final VoidCallback onPlayAudio;
+  final String? imagePath;
 
   const WordCard({
     super.key,
@@ -12,6 +13,7 @@ class WordCard extends StatelessWidget {
     required this.tamil,
     required this.pronunciation,
     required this.onPlayAudio,
+    this.imagePath,
   });
 
   @override
@@ -22,13 +24,28 @@ class WordCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          if (imagePath != null)
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+              child: SizedBox(
+                height: 150,
+                child: Image.asset(
+                  imagePath!,
+                  key: const ValueKey('word-card-image'),
+                  fit: BoxFit.contain,
+                  semanticLabel: hindi,
+                  errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                ),
+              ),
+            ),
           // Hindi Section (Question)
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.blue.shade50,
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(15)),
+              borderRadius: imagePath == null
+                  ? const BorderRadius.vertical(top: Radius.circular(15))
+                  : BorderRadius.zero,
             ),
             child: Text(hindi,
                 style:

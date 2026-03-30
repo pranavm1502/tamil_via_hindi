@@ -10,6 +10,9 @@
 .svn/
 .vscode/
 
+# Environment secrets
+.env
+
 # Flutter/Dart/Pub
 .dart_tool/
 .flutter-plugins

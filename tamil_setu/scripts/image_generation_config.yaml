@@ -1,0 +1,47 @@
+# Tamil Setu — Image Generation Configuration
+# Used by scripts/generate_images.py
+# Keep this file committed so generations are reproducible.
+
+# ── Gemini Nano Banana (default backend) ──────────────────────────────────────
+gemini:
+  # Model options:
+  #   "gemini-2.5-flash-image"           — fast & free-tier friendly
+  #   "gemini-3.1-flash-image-preview"   — higher quality, supports 512/2K/4K (default)
+  #   "gemini-3-pro-image-preview"       — best quality, "thinking" mode
+  model: "gemini-2.5-flash-image"
+
+# ── Stable Diffusion (--local backend) ────────────────────────────────────────
+generation:
+  # Stable Diffusion checkpoint (HuggingFace model ID or local path).
+  # Must be a publicly accessible model. Options:
+  #   "runwayml/stable-diffusion-v1-5" (general purpose, widely available)
+  #   "stabilityai/stable-diffusion-2-1" (improved quality, larger)
+  # Change this to any checkpoint; re-run the script to regenerate all images.
+  checkpoint: "runwayml/stable-diffusion-v1-5"
+
+  # Fixed seed ensures the same prompt always produces the same output.
+  # Change to regenerate with a different random variation.
+  seed: 42
+
+  # Image dimensions (must match model's expected input; 512x512 is standard SD v1.5)
+  width: 512
+  height: 512
+
+  # Denoising steps — higher = better quality, slower generation
+  steps: 30
+
+  # CFG scale — how closely the image follows the prompt
+  guidance_scale: 7.5
+
+prompt:
+  # This suffix is appended to every per-word concept prefix.
+  # Changing it affects ALL images — regenerate after updating.
+  base_suffix: >-
+    flat vector illustration, warm earthy tones, South Asian cultural context,
+    simple clean white background, no text, no letters, no words,
+    friendly and approachable, vibrant colours, 512x512
+
+  # Negative prompt — things to avoid in all generations
+  negative_prompt: >-
+    text, letters, watermark, signature, ugly, blurry, low quality,
+    realistic photo, photograph, nsfw, violent, disturbing

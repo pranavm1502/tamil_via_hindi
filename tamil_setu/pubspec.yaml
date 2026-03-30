@@ -55,6 +55,7 @@ flutter:
     - assets/data/sentences.json
     - assets/data/sentences.schema.json
     - assets/images/
+    - assets/images/words/
   fonts:
     - family: NotoSansHindi
       fonts:
