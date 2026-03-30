@@ -80,6 +80,24 @@ def hindi_to_image_key(hindi: str) -> str:
     return re.sub(r"_+", "_", key).strip("_")
 
 
+def english_concept(word: dict) -> str:
+    """Extract an English concept for prompting from a word entry.
+
+    Priority: explicit 'english' field > English in parentheses > Hindi (with warning).
+    """
+    # 1. Explicit english field
+    if word.get("english"):
+        return word["english"]
+    # 2. Extract English from parentheses in the hindi field
+    hindi = word.get("hindi", "")
+    m = re.search(r"\(([A-Za-z][A-Za-z /\-']+)\)", hindi)
+    if m:
+        return m.group(1).strip()
+    # 3. Fallback — warn that Hindi text won't produce good images
+    print(f"  WARNING: No English concept for '{hindi}' — SD cannot understand Devanagari.")
+    return hindi.split("/")[0].strip()
+
+
 def build_prompt(concept_prefix: str, config: dict) -> str:
     base = config["prompt"]["base_suffix"]
     negative = config["prompt"].get("negative_prompt", "")
@@ -244,7 +262,8 @@ def run_compare(lessons, lesson_filter, config):
         for word in lesson.get("words", []):
             hindi = word.get("hindi", "")
             key = hindi_to_image_key(hindi)
-            concept_prefix = f"a visual representation of '{hindi.split('/')[0].strip()}'"
+            eng = english_concept(word)
+            concept_prefix = f"a visual representation of '{eng}'"
             prompt, negative_prompt = build_prompt(concept_prefix, config)
             word_list.append((level, hindi, key, prompt, negative_prompt))
 
@@ -341,8 +360,9 @@ def main():
             out_path = IMAGES_DIR / f"{key}.png"
             asset_path = f"assets/images/words/{key}.png"
 
-            # Build prompt
-            concept_prefix = f"a visual representation of '{hindi.split('/')[0].strip()}'"
+            # Build prompt using English concept (SD can't understand Devanagari)
+            eng = english_concept(word)
+            concept_prefix = f"a visual representation of '{eng}'"
             (prompt, negative_prompt) = build_prompt(concept_prefix, config)
 
             print(f"  L{level} [{hindi}] → {key}.png")
