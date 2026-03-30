@@ -15,6 +15,7 @@ void main() {
       expect(wordPair.tamil, 'Vanakkam');
       expect(wordPair.pronunciation, 'वनक्कम');
       expect(wordPair.audioPath, 'assets/audio/l1_greet.mp3');
+      expect(wordPair.imagePath, isNull);
     });
 
     test('should parse from JSON correctly', () {
@@ -31,6 +32,49 @@ void main() {
       expect(pair.hindi, 'नमस्ते');
       expect(pair.pronunciation, 'वणक्कम्');
       expect(pair.audioPath, 'assets/audio/l1_namaste.mp3');
+    });
+
+    group('imagePath', () {
+      test('is populated when image_path is present in JSON', () {
+        final json = {
+          'hindi': 'नमस्ते',
+          'tamil': 'வணக்கம்',
+          'pronunciation': 'वणक्कम्',
+          'audio_path': 'assets/audio/l1_namaste.mp3',
+          'image_path': 'assets/images/words/namaste.png',
+        };
+
+        final pair = WordPair.fromJson(json);
+
+        expect(pair.imagePath, 'assets/images/words/namaste.png');
+      });
+
+      test('is null when image_path key is absent from JSON', () {
+        final json = {
+          'hindi': 'नमस्ते',
+          'tamil': 'வணக்கம்',
+          'pronunciation': 'वणक्कम्',
+          'audio_path': 'assets/audio/l1_namaste.mp3',
+        };
+
+        final pair = WordPair.fromJson(json);
+
+        expect(pair.imagePath, isNull);
+      });
+
+      test('is null when image_path is explicitly null in JSON', () {
+        final json = {
+          'hindi': 'नमस्ते',
+          'tamil': 'வணக்கம்',
+          'pronunciation': 'वणक्कम्',
+          'audio_path': 'assets/audio/l1_namaste.mp3',
+          'image_path': null,
+        };
+
+        final pair = WordPair.fromJson(json);
+
+        expect(pair.imagePath, isNull);
+      });
     });
   });
 }

@@ -412,24 +412,43 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
                             elevation: 6,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15)),
-                            child: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Column(
-                                children: [
-                                  const Text(
-                                      'Choose the correct Tamil translation:',
-                                      style: TextStyle(color: Colors.grey)),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    currentWord.hindi,
-                                    style: const TextStyle(
-                                        fontSize: 32,
-                                        fontWeight: FontWeight.w900,
-                                        color: Colors.blue),
-                                    textAlign: TextAlign.center,
+                            child: Column(
+                              children: [
+                                if (currentWord.imagePath != null)
+                                  ClipRRect(
+                                    borderRadius: const BorderRadius.vertical(
+                                        top: Radius.circular(15)),
+                                    child: SizedBox(
+                                      height: 150,
+                                      width: double.infinity,
+                                      child: Image.asset(
+                                        currentWord.imagePath!,
+                                        key: const ValueKey('mcq-word-image'),
+                                        fit: BoxFit.contain,
+                                        semanticLabel: currentWord.hindi,
+                                      ),
+                                    ),
                                   ),
-                                ],
-                              ),
+                                Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: Column(
+                                    children: [
+                                      const Text(
+                                          'Choose the correct Tamil translation:',
+                                          style: TextStyle(color: Colors.grey)),
+                                      const SizedBox(height: 10),
+                                      Text(
+                                        currentWord.hindi,
+                                        style: const TextStyle(
+                                            fontSize: 32,
+                                            fontWeight: FontWeight.w900,
+                                            color: Colors.blue),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             )),
                       ],
                     ),

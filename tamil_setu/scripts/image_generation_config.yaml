@@ -1,0 +1,39 @@
+# Tamil Setu — Image Generation Configuration
+# Used by scripts/generate_images.py
+# Keep this file committed so generations are reproducible.
+
+generation:
+  # Stable Diffusion checkpoint (HuggingFace model ID or local path).
+  # For a flat-illustration style, options include:
+  #   "fictiverse/Stable_Diffusion_PaperCut_Model" (paper-cut art)
+  #   "nitrosocke/mo-di-diffuse" (modern Disney style — flat, colourful)
+  #   "Linaqruf/anything-v3.0" (anime/illustration style)
+  # Change this to any checkpoint; re-run the script to regenerate all images.
+  checkpoint: "nitrosocke/mo-di-diffuse"
+
+  # Fixed seed ensures the same prompt always produces the same output.
+  # Change to regenerate with a different random variation.
+  seed: 42
+
+  # Image dimensions (must match model's expected input; 512x512 is standard SD v1.5)
+  width: 512
+  height: 512
+
+  # Denoising steps — higher = better quality, slower generation
+  steps: 30
+
+  # CFG scale — how closely the image follows the prompt
+  guidance_scale: 7.5
+
+prompt:
+  # This suffix is appended to every per-word concept prefix.
+  # Changing it affects ALL images — regenerate after updating.
+  base_suffix: >-
+    flat vector illustration, warm earthy tones, South Asian cultural context,
+    simple clean white background, no text, no letters, no words,
+    friendly and approachable, vibrant colours, 512x512
+
+  # Negative prompt — things to avoid in all generations
+  negative_prompt: >-
+    text, letters, watermark, signature, ugly, blurry, low quality,
+    realistic photo, photograph, nsfw, violent, disturbing

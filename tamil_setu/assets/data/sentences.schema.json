@@ -10,6 +10,7 @@
       "tamil": { "type": "string" },
       "pronunciation": { "type": "string" },
       "audio_path": { "type": "string" },
+      "image_path": { "type": "string" },
       "tags": {
         "type": "array",
         "items": { "type": "string" }

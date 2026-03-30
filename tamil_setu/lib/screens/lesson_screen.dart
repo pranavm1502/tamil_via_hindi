@@ -162,11 +162,26 @@ class _LessonScreenState extends State<LessonScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              if (pair.imagePath != null)
+                ClipRRect(
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(15)),
+                  child: SizedBox(
+                    height: 150,
+                    child: Image.asset(
+                      pair.imagePath!,
+                      key: const ValueKey('learn-tab-word-image'),
+                      fit: BoxFit.contain,
+                      semanticLabel: pair.hindi,
+                    ),
+                  ),
+                ),
               Container(
                 decoration: BoxDecoration(
                   color: Colors.blue.shade50,
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(15)),
+                  borderRadius: pair.imagePath == null
+                      ? const BorderRadius.vertical(top: Radius.circular(15))
+                      : BorderRadius.zero,
                 ),
                 padding: const EdgeInsets.all(16),
                 child: Text(
