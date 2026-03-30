@@ -5,8 +5,8 @@
 # ── Gemini Nano Banana (default backend) ──────────────────────────────────────
 gemini:
   # Model options:
-  #   "gemini-2.5-flash-image"           — fast & free-tier friendly (default)
-  #   "gemini-3.1-flash-image-preview"   — higher quality, supports 2K/4K
+  #   "gemini-2.5-flash-image"           — fast & free-tier friendly
+  #   "gemini-3.1-flash-image-preview"   — higher quality, supports 512/2K/4K (default)
   #   "gemini-3-pro-image-preview"       — best quality, "thinking" mode
   model: "gemini-2.5-flash-image"
 

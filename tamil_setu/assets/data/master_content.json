@@ -9,70 +9,80 @@
         "tamil": "வணக்கம்",
         "pronunciation": "वणक्कम्",
         "audio_path": "assets/audio/l1_hello.mp3",
-        "english": "greeting hello namaste"
+        "english": "greeting hello namaste",
+        "image_path": "assets/images/words/l1_hello.png"
       },
       {
         "hindi": "हाँ",
         "tamil": "ஆமா",
         "pronunciation": "आमा",
         "audio_path": "assets/audio/l1_yes.mp3",
-        "english": "yes thumbs up"
+        "english": "yes thumbs up",
+        "image_path": "assets/images/words/l1_yes.png"
       },
       {
         "hindi": "नहीं",
         "tamil": "இல்ல",
         "pronunciation": "इल्ल",
         "audio_path": "assets/audio/l1_no.mp3",
-        "english": "no shaking head"
+        "english": "no shaking head",
+        "image_path": "assets/images/words/l1_no.png"
       },
       {
         "hindi": "ठीक है (Okay)",
         "tamil": "சரி",
         "pronunciation": "चरि",
         "audio_path": "assets/audio/l1_okay.mp3",
-        "english": "okay"
+        "english": "okay",
+        "image_path": "assets/images/words/l1_okay.png"
       },
       {
         "hindi": "मुझे नहीं पता",
         "tamil": "எனக்குத் தெரியாது",
         "pronunciation": "ऎऩक्कुत् तॆरियातु",
         "audio_path": "assets/audio/l1_dont_know.mp3",
-        "english": "I don't know shrugging confused"
+        "english": "I don't know shrugging confused",
+        "image_path": "assets/images/words/l1_dont_know.png"
       },
       {
         "hindi": "कोई बात नहीं",
         "tamil": "பரவாயில்ல",
         "pronunciation": "परवायिल्ल",
         "audio_path": "assets/audio/l1_no_problem.mp3",
-        "english": "no worries its okay"
+        "english": "no worries its okay",
+        "image_path": "assets/images/words/l1_no_problem.png"
       },
       {
         "hindi": "जल्दी",
         "tamil": "சீக்கிரம்",
         "pronunciation": "चीक्किरम्",
         "audio_path": "assets/audio/l1_fast.mp3",
-        "english": "fast running quickly"
+        "english": "fast running quickly",
+        "image_path": "assets/images/words/l1_fast.png"
       },
       {
         "hindi": "धीरे",
         "tamil": "மெதுவா",
         "pronunciation": "मॆतुवा",
         "audio_path": "assets/audio/l1_slow.mp3",
-        "english": "slow calm pace"
+        "english": "slow calm pace",
+        "image_path": "assets/images/words/l1_slow.png"
       },
       {
         "hindi": "रुको",
         "tamil": "நில்லுங்க",
         "pronunciation": "निल्लुङ्क",
         "audio_path": "assets/audio/l1_stop.mp3",
-        "english": "stop hand gesture"
+        "english": "stop hand gesture",
+        "image_path": "assets/images/words/l1_stop.png"
       },
       {
         "hindi": "चलो / चलें",
         "tamil": "போலாம்",
         "pronunciation": "पोलाम्",
         "audio_path": "assets/audio/l1_lets_go.mp3",
-        "english": "let us go walking together"
+        "english": "let us go walking together",
+        "image_path": "assets/images/words/l1_lets_go.png"
       }
     ]
   },

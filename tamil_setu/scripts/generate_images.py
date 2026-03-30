@@ -33,6 +33,7 @@ import json
 import os
 import re
 import sys
+import time
 from pathlib import Path
 
 import requests
@@ -52,6 +53,7 @@ CONFIG_PATH = Path(__file__).resolve().parent / "image_generation_config.yaml"
 ENV_PATH = REPO_ROOT / ".env"
 
 MAX_FILE_SIZE_KB = 80
+TARGET_SIZE = 256  # Images display at 150 logical px; 256 is crisp at 2x density
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -113,28 +115,42 @@ def generate_via_gemini(prompt: str, config: dict) -> bytes:
             "(get one at https://aistudio.google.com/apikey)"
         )
 
-    model = config.get("gemini", {}).get("model", "gemini-2.5-flash-image")
+    model = config.get("gemini", {}).get("model", "gemini-3.1-flash-image-preview")
     client = genai.Client(api_key=api_key)
 
-    response = client.models.generate_content(
-        model=model,
-        contents=[prompt],
-        config=types.GenerateContentConfig(
-            response_modalities=["IMAGE"],
-            image_config=types.ImageConfig(
-                aspect_ratio="1:1",
-            ),
-        ),
-    )
+    max_retries = 3
+    # Append size guidance to prompt for smaller file output
+    prompt_with_size = prompt + ". Use minimal colors, flat shading, and simple shapes to keep file size small."
+    for attempt in range(max_retries):
+        try:
+            response = client.models.generate_content(
+                model=model,
+                contents=[prompt_with_size],
+                config=types.GenerateContentConfig(
+                    response_modalities=["IMAGE"],
+                    image_config=types.ImageConfig(
+                        aspect_ratio="1:1",
+                    ),
+                ),
+            )
 
-    for part in response.parts:
-        if part.inline_data is not None:
-            img = part.as_image()
-            buf = io.BytesIO()
-            img.save(buf, format="PNG", optimize=True)
-            return buf.getvalue()
+            for part in response.parts:
+                if part.inline_data is not None:
+                    # inline_data.data is raw image bytes; re-encode as optimised PNG
+                    raw = base64.b64decode(part.inline_data.data) if isinstance(part.inline_data.data, str) else part.inline_data.data
+                    img = Image.open(io.BytesIO(raw))
+                    buf = io.BytesIO()
+                    img.save(buf, format="PNG", optimize=True)
+                    return buf.getvalue()
 
-    raise ValueError(f"Gemini returned no image. Response: {response.text}")
+            raise ValueError(f"Gemini returned no image. Response: {response.text}")
+        except Exception as exc:
+            if "429" in str(exc) and attempt < max_retries - 1:
+                wait = 15 * (attempt + 1)
+                print(f"    Rate limited, waiting {wait}s...")
+                time.sleep(wait)
+                continue
+            raise
 
 
 def generate_via_banana(prompt: str, negative_prompt: str, config: dict) -> bytes:
@@ -237,13 +253,12 @@ def generate_via_local(prompt: str, negative_prompt: str, config: dict, pipe=Non
 
 
 def compress_if_needed(png_bytes: bytes, max_kb: int = MAX_FILE_SIZE_KB) -> bytes:
-    """Re-encode with Pillow optimisation if over the size limit."""
-    if len(png_bytes) <= max_kb * 1024:
-        return png_bytes
+    """Resize to TARGET_SIZE and re-encode with Pillow optimisation."""
     img = Image.open(io.BytesIO(png_bytes))
-    # Convert to RGB (drop alpha) before quantising — avoids RGBA quantise errors
+    # Resize to target — images display at 150px, 256 is crisp at 2x
+    if img.width > TARGET_SIZE or img.height > TARGET_SIZE:
+        img = img.resize((TARGET_SIZE, TARGET_SIZE), Image.LANCZOS)
     rgb = img.convert("RGB")
-    # Try saving as optimised PNG first
     buf = io.BytesIO()
     rgb.save(buf, format="PNG", optimize=True)
     result = buf.getvalue()
