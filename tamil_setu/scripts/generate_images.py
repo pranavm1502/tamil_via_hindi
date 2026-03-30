@@ -27,7 +27,6 @@ import json
 import os
 import re
 import sys
-import unicodedata
 from pathlib import Path
 
 import requests
@@ -55,29 +54,15 @@ def load_config() -> dict:
         return yaml.safe_load(f)
 
 
-def hindi_to_image_key(hindi: str) -> str:
+def image_key_from_audio(word: dict) -> str:
+    """Derive the image filename stem from the word's audio_path.
+
+    e.g. 'assets/audio/l1_hello.mp3' → 'l1_hello'
     """
-    Derive a snake_case ASCII image key from a Hindi word.
-    Uses the portion before '/' (to handle variant forms like 'नमस्ते / हेलो').
-    Falls back to NFKD-based ASCII stripping; non-ASCII chars become their
-    Unicode name words joined by underscores if all else fails.
-    """
-    primary = hindi.split("/")[0].strip()
-    # Normalise and try to reduce to ASCII
-    nfkd = unicodedata.normalize("NFKD", primary)
-    ascii_attempt = nfkd.encode("ascii", "ignore").decode("ascii").strip()
-    if ascii_attempt:
-        key = re.sub(r"[^a-z0-9]+", "_", ascii_attempt.lower()).strip("_")
-        return key or "word"
-    # If entirely non-ASCII (Devanagari), use Unicode name tokens
-    tokens = []
-    for char in primary:
-        name = unicodedata.name(char, "").lower()
-        # e.g. "devanagari letter na" -> "na"
-        parts = name.split()
-        tokens.extend(p for p in parts if p not in ("devanagari", "letter", "digit", "sign"))
-    key = "_".join(t for t in tokens if t)[:60] or "word"
-    return re.sub(r"_+", "_", key).strip("_")
+    audio = word.get("audio_path", "")
+    if not audio:
+        raise ValueError(f"Word missing audio_path: {word}")
+    return Path(audio).stem
 
 
 def english_concept(word: dict) -> str:
@@ -160,12 +145,12 @@ def generate_via_local(prompt: str, negative_prompt: str, config: dict, pipe=Non
     h = config["generation"]["height"]
 
     if pipe is None:
-        # Detect best available device
-        if torch.cuda.is_available():
-            device = "cuda"
-            dtype = torch.float16
-        elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+        # Detect best available device (MPS for Apple Silicon, CUDA opt-in via --cuda)
+        if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
             device = "mps"
+            dtype = torch.float16
+        elif config.get("use_cuda") and torch.cuda.is_available():
+            device = "cuda"
             dtype = torch.float16
         else:
             device = "cpu"
@@ -260,12 +245,11 @@ def run_compare(lessons, lesson_filter, config):
         if lesson_filter and level not in lesson_filter:
             continue
         for word in lesson.get("words", []):
-            hindi = word.get("hindi", "")
-            key = hindi_to_image_key(hindi)
+            key = image_key_from_audio(word)
             eng = english_concept(word)
             concept_prefix = f"a visual representation of '{eng}'"
             prompt, negative_prompt = build_prompt(concept_prefix, config)
-            word_list.append((level, hindi, key, prompt, negative_prompt))
+            word_list.append((level, key, prompt, negative_prompt))
 
     print(f"\nComparing {len(COMPARE_MODELS)} models × {len(word_list)} words\n")
 
@@ -281,9 +265,9 @@ def run_compare(lessons, lesson_filter, config):
         model_config["generation"]["checkpoint"] = model_id
 
         pipe = None
-        for level, hindi, key, prompt, negative_prompt in word_list:
+        for level, key, prompt, negative_prompt in word_list:
             out_path = model_dir / f"{key}.png"
-            print(f"  L{level} [{hindi}] → {short_name}/{key}.png")
+            print(f"  L{level} → {short_name}/{key}.png")
             try:
                 png_bytes, pipe = generate_via_local(prompt, negative_prompt, model_config, pipe=pipe)
                 png_bytes = compress_if_needed(png_bytes)
@@ -322,9 +306,12 @@ def main():
     parser.add_argument("--overwrite", action="store_true", help="Re-generate even if image already exists")
     parser.add_argument("--compare-models", action="store_true",
                         help="Generate with multiple models for side-by-side comparison (implies --local)")
+    parser.add_argument("--cuda", action="store_true",
+                        help="Use CUDA GPU if available (default: MPS on Apple Silicon, else CPU)")
     args = parser.parse_args()
 
     config = load_config()
+    config["use_cuda"] = args.cuda
 
     lesson_filter = parse_lesson_range(args.lessons) if args.lessons else None
 
@@ -349,14 +336,13 @@ def main():
 
         words = lesson.get("words", [])
         for word in words:
-            hindi = word.get("hindi", "")
             existing_path = word.get("image_path")
 
             if existing_path and not args.overwrite:
                 skipped += 1
                 continue
 
-            key = hindi_to_image_key(hindi)
+            key = image_key_from_audio(word)
             out_path = IMAGES_DIR / f"{key}.png"
             asset_path = f"assets/images/words/{key}.png"
 
@@ -365,7 +351,7 @@ def main():
             concept_prefix = f"a visual representation of '{eng}'"
             (prompt, negative_prompt) = build_prompt(concept_prefix, config)
 
-            print(f"  L{level} [{hindi}] → {key}.png")
+            print(f"  L{level} → {key}.png")
             if args.dry_run:
                 print(f"    Prompt: {prompt}")
                 print(f"    Negative: {negative_prompt}")
