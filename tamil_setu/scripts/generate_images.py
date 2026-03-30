@@ -45,7 +45,7 @@ IMAGES_DIR = APP_ROOT / "assets/images/words"
 CONFIG_PATH = Path(__file__).resolve().parent / "image_generation_config.yaml"
 ENV_PATH = REPO_ROOT / ".env"
 
-MAX_FILE_SIZE_KB = 50
+MAX_FILE_SIZE_KB = 80
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 

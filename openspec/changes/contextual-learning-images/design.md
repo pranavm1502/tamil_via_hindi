@@ -83,7 +83,7 @@ Each word gets a per-concept prefix (e.g. `"a glass of water,"` for पानी
 
 | Risk | Mitigation |
 |---|---|
-| App binary size grows significantly if many images are added | Compress all images to ≤50 KB PNG; audit size in CI before release |
+| App binary size grows significantly if many images are added | Compress all images to ≤80 KB PNG; audit size in CI before release |
 | Culturally inappropriate images for some Hindi/Tamil concepts | Manual review of every image before adding to the bundle; maintain a review checklist |
 | JSON entries for existing words will not have `image_path` → null handling must be correct | `WordPair.fromJson` already defaults missing fields; null-safety enforced by `String?` type |
 | Widget tests may fail if golden files don't account for images | Update/regenerate goldens as part of this change |
