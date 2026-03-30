@@ -4,12 +4,11 @@
 
 generation:
   # Stable Diffusion checkpoint (HuggingFace model ID or local path).
-  # For a flat-illustration style, options include:
-  #   "fictiverse/Stable_Diffusion_PaperCut_Model" (paper-cut art)
-  #   "nitrosocke/mo-di-diffuse" (modern Disney style — flat, colourful)
-  #   "Linaqruf/anything-v3.0" (anime/illustration style)
+  # Must be a publicly accessible model. Options:
+  #   "runwayml/stable-diffusion-v1-5" (general purpose, widely available)
+  #   "stabilityai/stable-diffusion-2-1" (improved quality, larger)
   # Change this to any checkpoint; re-run the script to regenerate all images.
-  checkpoint: "nitrosocke/mo-di-diffuse"
+  checkpoint: "runwayml/stable-diffusion-v1-5"
 
   # Fixed seed ensures the same prompt always produces the same output.
   # Change to regenerate with a different random variation.

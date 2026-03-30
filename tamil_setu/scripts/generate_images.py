@@ -36,9 +36,13 @@ from dotenv import load_dotenv
 from PIL import Image
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
-REPO_ROOT = Path(__file__).resolve().parent.parent
-CONTENT_JSON = REPO_ROOT / "tamil_setu/assets/data/master_content.json"
-IMAGES_DIR = REPO_ROOT / "tamil_setu/assets/images/words"
+# __file__ is at tamil_setu/scripts/generate_images.py
+# APP_ROOT  → tamil_setu/
+# REPO_ROOT → tamil_via_hindi/
+APP_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = APP_ROOT.parent
+CONTENT_JSON = APP_ROOT / "assets/data/master_content.json"
+IMAGES_DIR = APP_ROOT / "assets/images/words"
 CONFIG_PATH = Path(__file__).resolve().parent / "image_generation_config.yaml"
 ENV_PATH = REPO_ROOT / ".env"
 
@@ -122,8 +126,9 @@ def generate_via_banana(prompt: str, negative_prompt: str, config: dict) -> byte
     return base64.b64decode(b64)
 
 
-def generate_via_local(prompt: str, negative_prompt: str, config: dict) -> bytes:
-    """Generate using a local diffusers pipeline (CPU/GPU fallback)."""
+def generate_via_local(prompt: str, negative_prompt: str, config: dict, pipe=None) -> tuple[bytes, object]:
+    """Generate using a local diffusers pipeline (CPU/MPS/GPU).
+    Returns (png_bytes, pipe) so the pipe can be reused across calls."""
     try:
         import torch
         from diffusers import StableDiffusionPipeline
@@ -136,12 +141,34 @@ def generate_via_local(prompt: str, negative_prompt: str, config: dict) -> bytes
     w = config["generation"]["width"]
     h = config["generation"]["height"]
 
-    pipe = StableDiffusionPipeline.from_pretrained(
-        checkpoint,
-        torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-    )
-    pipe = pipe.to("cuda" if torch.cuda.is_available() else "cpu")
-    generator = torch.Generator().manual_seed(seed)
+    if pipe is None:
+        # Detect best available device
+        if torch.cuda.is_available():
+            device = "cuda"
+            dtype = torch.float16
+        elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+            device = "mps"
+            dtype = torch.float16
+        else:
+            device = "cpu"
+            dtype = torch.float32
+
+        print(f"  Loading model {checkpoint} on {device}...")
+        pipe = StableDiffusionPipeline.from_pretrained(
+            checkpoint,
+            torch_dtype=dtype,
+        )
+        pipe = pipe.to(device)
+        # Disable safety checker for illustration-style outputs
+        pipe.safety_checker = None
+        pipe.requires_safety_checker = False
+
+    device = pipe.device
+    if device.type == "mps":
+        generator = torch.Generator()
+    else:
+        generator = torch.Generator(device=device)
+    generator.manual_seed(seed)
 
     result = pipe(
         prompt,
@@ -155,16 +182,24 @@ def generate_via_local(prompt: str, negative_prompt: str, config: dict) -> bytes
     img: Image.Image = result.images[0]
     buf = io.BytesIO()
     img.save(buf, format="PNG", optimize=True)
-    return buf.getvalue()
+    return buf.getvalue(), pipe
 
 
 def compress_if_needed(png_bytes: bytes, max_kb: int = MAX_FILE_SIZE_KB) -> bytes:
-    """Re-encode with Pillow quantisation if over the size limit."""
+    """Re-encode with Pillow optimisation if over the size limit."""
     if len(png_bytes) <= max_kb * 1024:
         return png_bytes
-    img = Image.open(io.BytesIO(png_bytes)).convert("RGBA")
-    # Quantise to 256 colours (palette mode keeps file small)
-    quantised = img.quantize(colors=256, method=Image.Quantize.MEDIANCUT)
+    img = Image.open(io.BytesIO(png_bytes))
+    # Convert to RGB (drop alpha) before quantising — avoids RGBA quantise errors
+    rgb = img.convert("RGB")
+    # Try saving as optimised PNG first
+    buf = io.BytesIO()
+    rgb.save(buf, format="PNG", optimize=True)
+    result = buf.getvalue()
+    if len(result) <= max_kb * 1024:
+        return result
+    # If still too large, quantise to 256 colours
+    quantised = rgb.quantize(colors=256, method=Image.Quantize.FASTOCTREE)
     buf = io.BytesIO()
     quantised.save(buf, format="PNG", optimize=True)
     result = buf.getvalue()
@@ -187,6 +222,75 @@ def parse_lesson_range(s: str) -> set[int]:
     return levels
 
 
+COMPARE_MODELS = [
+    "Fictiverse/Stable_Diffusion_PaperCut_Model",
+    "prompthero/openjourney",
+    "dreamlike-art/dreamlike-diffusion-1.0",
+    "runwayml/stable-diffusion-v1-5",
+]
+
+
+def run_compare(lessons, lesson_filter, config):
+    """Generate one image per word per model into side-by-side folders."""
+    compare_root = APP_ROOT / "assets/images/words_compare"
+    compare_root.mkdir(parents=True, exist_ok=True)
+
+    # Collect words to generate
+    word_list = []
+    for lesson in lessons:
+        level = lesson.get("level", 0)
+        if lesson_filter and level not in lesson_filter:
+            continue
+        for word in lesson.get("words", []):
+            hindi = word.get("hindi", "")
+            key = hindi_to_image_key(hindi)
+            concept_prefix = f"a visual representation of '{hindi.split('/')[0].strip()}'"
+            prompt, negative_prompt = build_prompt(concept_prefix, config)
+            word_list.append((level, hindi, key, prompt, negative_prompt))
+
+    print(f"\nComparing {len(COMPARE_MODELS)} models × {len(word_list)} words\n")
+
+    for model_id in COMPARE_MODELS:
+        short_name = model_id.split("/")[-1]
+        model_dir = compare_root / short_name
+        model_dir.mkdir(parents=True, exist_ok=True)
+        print(f"─── Model: {model_id} ───")
+
+        # Override config checkpoint for this model
+        model_config = dict(config)
+        model_config["generation"] = dict(config["generation"])
+        model_config["generation"]["checkpoint"] = model_id
+
+        pipe = None
+        for level, hindi, key, prompt, negative_prompt in word_list:
+            out_path = model_dir / f"{key}.png"
+            print(f"  L{level} [{hindi}] → {short_name}/{key}.png")
+            try:
+                png_bytes, pipe = generate_via_local(prompt, negative_prompt, model_config, pipe=pipe)
+                png_bytes = compress_if_needed(png_bytes)
+                out_path.write_bytes(png_bytes)
+                size_kb = len(png_bytes) // 1024
+                print(f"    Saved ({size_kb} KB)")
+            except Exception as exc:
+                print(f"    ERROR: {exc}")
+
+        # Free memory before loading next model
+        del pipe
+        try:
+            import torch
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+            import gc
+            gc.collect()
+        except ImportError:
+            pass
+
+    print(f"\nDone! Compare images in:\n  {compare_root}/")
+    for model_id in COMPARE_MODELS:
+        short_name = model_id.split("/")[-1]
+        print(f"    {short_name}/")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Generate word images for Tamil Setu")
     parser.add_argument(
@@ -197,19 +301,27 @@ def main():
     parser.add_argument("--dry-run", action="store_true", help="Print prompts without generating")
     parser.add_argument("--local", action="store_true", help="Use local diffusers instead of Banana.dev")
     parser.add_argument("--overwrite", action="store_true", help="Re-generate even if image already exists")
+    parser.add_argument("--compare-models", action="store_true",
+                        help="Generate with multiple models for side-by-side comparison (implies --local)")
     args = parser.parse_args()
 
     config = load_config()
-    IMAGES_DIR.mkdir(parents=True, exist_ok=True)
 
     lesson_filter = parse_lesson_range(args.lessons) if args.lessons else None
 
     with open(CONTENT_JSON, "r", encoding="utf-8") as f:
         lessons = json.load(f)
 
+    if args.compare_models:
+        run_compare(lessons, lesson_filter, config)
+        return
+
+    IMAGES_DIR.mkdir(parents=True, exist_ok=True)
+
     modified = False
     generated = 0
     skipped = 0
+    pipe = None  # Reuse across words when --local
 
     for lesson in lessons:
         level = lesson.get("level", 0)
@@ -241,7 +353,7 @@ def main():
 
             try:
                 if args.local:
-                    png_bytes = generate_via_local(prompt, negative_prompt, config)
+                    png_bytes, pipe = generate_via_local(prompt, negative_prompt, config, pipe=pipe)
                 else:
                     png_bytes = generate_via_banana(prompt, negative_prompt, config)
 

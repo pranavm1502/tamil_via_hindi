@@ -17,14 +17,14 @@ import json
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
-CONTENT_JSON = REPO_ROOT / "tamil_setu/assets/data/master_content.json"
-SENTENCES_JSON = REPO_ROOT / "tamil_setu/assets/data/sentences.json"
-IMAGES_DIR = REPO_ROOT / "tamil_setu/assets/images/words"
+APP_ROOT = Path(__file__).resolve().parent.parent  # tamil_setu/
+CONTENT_JSON = APP_ROOT / "assets/data/master_content.json"
+SENTENCES_JSON = APP_ROOT / "assets/data/sentences.json"
+IMAGES_DIR = APP_ROOT / "assets/images/words"
 
 # Asset paths in JSON are Flutter asset paths (relative to pubspec.yaml's
 # package root, i.e. the tamil_setu/ folder).
-ASSET_ROOT = REPO_ROOT / "tamil_setu"
+ASSET_ROOT = APP_ROOT
 
 
 def resolve_asset(asset_path: str) -> Path:
