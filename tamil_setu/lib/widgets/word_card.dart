@@ -34,6 +34,7 @@ class WordCard extends StatelessWidget {
                   key: const ValueKey('word-card-image'),
                   fit: BoxFit.contain,
                   semanticLabel: hindi,
+                  errorBuilder: (_, __, ___) => const SizedBox.shrink(),
                 ),
               ),
             ),

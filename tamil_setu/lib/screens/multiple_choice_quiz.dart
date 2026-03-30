@@ -426,6 +426,7 @@ class _MultipleChoiceQuizState extends State<MultipleChoiceQuiz> {
                                         key: const ValueKey('mcq-word-image'),
                                         fit: BoxFit.contain,
                                         semanticLabel: currentWord.hindi,
+                                        errorBuilder: (_, __, ___) => const SizedBox.shrink(),
                                       ),
                                     ),
                                   ),

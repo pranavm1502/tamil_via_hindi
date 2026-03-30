@@ -173,6 +173,7 @@ class _LessonScreenState extends State<LessonScreen>
                       key: const ValueKey('learn-tab-word-image'),
                       fit: BoxFit.contain,
                       semanticLabel: pair.hindi,
+                      errorBuilder: (_, __, ___) => const SizedBox.shrink(),
                     ),
                   ),
                 ),

@@ -18,7 +18,7 @@
 
 - [x] 3.1 Create `scripts/generate_image_manifest.py` that reads `master_content.json` and `sentences.json`, then prints per-lesson image coverage (words with/without `image_path`) and flags broken references (path referenced but file missing)
 - [x] 3.2 Confirm the script exits with code 1 when broken references exist and code 0 otherwise
-- [ ] 3.3 Run the script after step 2.4 and resolve any flagged issues
+- [x] 3.3 Run the script after step 2.4 and resolve any flagged issues
 
 ## 4. WordCard Widget
 
@@ -41,5 +41,5 @@
 ## 7. Regression and Golden Tests
 
 - [x] 7.1 Run the full test suite (`flutter test`) and fix any failures caused by the new `imagePath` parameter (especially constructors in existing tests)
-- [ ] 7.2 Regenerate any golden screenshot files that are affected by the layout changes (run `update_golden_screenshots.sh` or equivalent)
-- [ ] 7.3 Verify that lessons with all-null `imagePath` words produce pixel-identical output to the pre-feature baseline
+- [x] 7.2 Regenerate any golden screenshot files that are affected by the layout changes (run `update_golden_screenshots.sh` or equivalent)
+- [x] 7.3 Verify that lessons with all-null `imagePath` words produce pixel-identical output to the pre-feature baseline

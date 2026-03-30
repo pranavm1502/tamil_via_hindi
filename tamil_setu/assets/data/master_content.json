@@ -96,49 +96,56 @@
         "tamil": "நான்",
         "pronunciation": "नाऩ्",
         "audio_path": "assets/audio/l2_i.mp3",
-        "english": "person pointing at self"
+        "english": "person pointing at self",
+        "image_path": "assets/images/words/l2_i.png"
       },
       {
         "hindi": "तुम (Casual)",
         "tamil": "நீ",
         "pronunciation": "नी",
         "audio_path": "assets/audio/l2_you_casual.mp3",
-        "english": "pointing at you casually"
+        "english": "pointing at you casually",
+        "image_path": "assets/images/words/l2_you_casual.png"
       },
       {
         "hindi": "आप (Respect)",
         "tamil": "நீங்க",
         "pronunciation": "नीङ्क",
         "audio_path": "assets/audio/l2_you_respect.mp3",
-        "english": "respectful greeting"
+        "english": "respectful greeting",
+        "image_path": "assets/images/words/l2_you_respect.png"
       },
       {
         "hindi": "हम (सब साथ में)",
         "tamil": "நம்ம",
         "pronunciation": "नम्म",
         "audio_path": "assets/audio/l2_we_inclusive.mp3",
-        "english": "group of people together inclusive"
+        "english": "group of people together inclusive",
+        "image_path": "assets/images/words/l2_we_inclusive.png"
       },
       {
         "hindi": "हम (सामने वाले को छोड़कर)",
         "tamil": "நாங்க",
         "pronunciation": "नाङ्क",
         "audio_path": "assets/audio/l2_we_exclusive.mp3",
-        "english": "small group exclusive"
+        "english": "small group exclusive",
+        "image_path": "assets/images/words/l2_we_exclusive.png"
       },
       {
         "hindi": "यह (This person/thing)",
         "tamil": "இவன் / இது",
         "pronunciation": "इवऩ् / इतु",
         "audio_path": "assets/audio/l2_this.mp3",
-        "english": "pointing here nearby"
+        "english": "pointing here nearby",
+        "image_path": "assets/images/words/l2_this.png"
       },
       {
         "hindi": "वह (That person/thing)",
         "tamil": "அவன் / அது",
         "pronunciation": "अवऩ् / अतु",
         "audio_path": "assets/audio/l2_that.mp3",
-        "english": "pointing there distant"
+        "english": "pointing there distant",
+        "image_path": "assets/images/words/l2_that.png"
       }
     ]
   },
@@ -152,56 +159,64 @@
         "tamil": "வாங்க",
         "pronunciation": "वाङ्क",
         "audio_path": "assets/audio/l3_come.mp3",
-        "english": "come here beckoning gesture"
+        "english": "come here beckoning gesture",
+        "image_path": "assets/images/words/l3_come.png"
       },
       {
         "hindi": "जाओ (Go)",
         "tamil": "போங்க",
         "pronunciation": "पोङ्क",
         "audio_path": "assets/audio/l3_go.mp3",
-        "english": "go away walking direction"
+        "english": "go away walking direction",
+        "image_path": "assets/images/words/l3_go.png"
       },
       {
         "hindi": "खाओ (Eat)",
         "tamil": "சாப்பிடுங்க",
         "pronunciation": "चाप्पिटुङ्क",
         "audio_path": "assets/audio/l3_eat.mp3",
-        "english": "eating food"
+        "english": "eating food",
+        "image_path": "assets/images/words/l3_eat.png"
       },
       {
         "hindi": "पीओ (Drink)",
         "tamil": "குடிங்க",
         "pronunciation": "कुटिङ्क",
         "audio_path": "assets/audio/l3_drink.mp3",
-        "english": "drinking water"
+        "english": "drinking water",
+        "image_path": "assets/images/words/l3_drink.png"
       },
       {
         "hindi": "देखो (Look)",
         "tamil": "பாருங்க",
         "pronunciation": "पारुङ्क",
         "audio_path": "assets/audio/l3_look.mp3",
-        "english": "looking watching eyes"
+        "english": "looking watching eyes",
+        "image_path": "assets/images/words/l3_look.png"
       },
       {
         "hindi": "बैठो (Sit)",
         "tamil": "உக்காருங்க",
         "pronunciation": "उक्कारुङ्क",
         "audio_path": "assets/audio/l3_sit.mp3",
-        "english": "sitting down on chair"
+        "english": "sitting down on chair",
+        "image_path": "assets/images/words/l3_sit.png"
       },
       {
         "hindi": "सो जाओ (Sleep)",
         "tamil": "தூங்குங்க",
         "pronunciation": "तूङ्कुङ्क",
         "audio_path": "assets/audio/l3_sleep.mp3",
-        "english": "sleeping in bed"
+        "english": "sleeping in bed",
+        "image_path": "assets/images/words/l3_sleep.png"
       },
       {
         "hindi": "दो (Give)",
         "tamil": "குடுங்க",
         "pronunciation": "कुटुङ्क",
         "audio_path": "assets/audio/l3_give.mp3",
-        "english": "giving handing over"
+        "english": "giving handing over",
+        "image_path": "assets/images/words/l3_give.png"
       }
     ]
   },
@@ -215,56 +230,64 @@
         "tamil": "என்ன?",
         "pronunciation": "ऎऩ्ऩ?",
         "audio_path": "assets/audio/l4_what.mp3",
-        "english": "question mark what"
+        "english": "question mark what",
+        "image_path": "assets/images/words/l4_what.png"
       },
       {
         "hindi": "कहाँ?",
         "tamil": "எங்க?",
         "pronunciation": "ऎङ्क?",
         "audio_path": "assets/audio/l4_where.mp3",
-        "english": "where searching looking around"
+        "english": "where searching looking around",
+        "image_path": "assets/images/words/l4_where.png"
       },
       {
         "hindi": "कब?",
         "tamil": "எப்போ?",
         "pronunciation": "ऎप्पो?",
         "audio_path": "assets/audio/l4_when.mp3",
-        "english": "when clock time"
+        "english": "when clock time",
+        "image_path": "assets/images/words/l4_when.png"
       },
       {
         "hindi": "क्यों?",
         "tamil": "ஏன்?",
         "pronunciation": "एऩ्?",
         "audio_path": "assets/audio/l4_why.mp3",
-        "english": "why curious thinking"
+        "english": "why curious thinking",
+        "image_path": "assets/images/words/l4_why.png"
       },
       {
         "hindi": "कौन?",
         "tamil": "யாரு?",
         "pronunciation": "यारु?",
         "audio_path": "assets/audio/l4_who.mp3",
-        "english": "who person silhouette question"
+        "english": "who person silhouette question",
+        "image_path": "assets/images/words/l4_who.png"
       },
       {
         "hindi": "कितना? (Money)",
         "tamil": "எவ்ளோ?",
         "pronunciation": "ऎव्ळो?",
         "audio_path": "assets/audio/l4_how_much.mp3",
-        "english": "how much money coins"
+        "english": "how much money coins",
+        "image_path": "assets/images/words/l4_how_much.png"
       },
       {
         "hindi": "कैसे?",
         "tamil": "எப்டி?",
         "pronunciation": "ऎप्टि?",
         "audio_path": "assets/audio/l4_how.mp3",
-        "english": "how method thinking"
+        "english": "how method thinking",
+        "image_path": "assets/images/words/l4_how.png"
       },
       {
         "hindi": "खाना खाया? (Ate?)",
         "tamil": "சாப்டாச்சா?",
         "pronunciation": "चाप्टाच्चा?",
         "audio_path": "assets/audio/l4_ate.mp3",
-        "english": "have you eaten meal plate"
+        "english": "have you eaten meal plate",
+        "image_path": "assets/images/words/l4_ate.png"
       }
     ]
   },
@@ -278,42 +301,48 @@
         "tamil": "இங்க",
         "pronunciation": "इङ्क",
         "audio_path": "assets/audio/l5_here.mp3",
-        "english": "here this place arrow down"
+        "english": "here this place arrow down",
+        "image_path": "assets/images/words/l5_here.png"
       },
       {
         "hindi": "वहाँ",
         "tamil": "அங்க",
         "pronunciation": "अङ्क",
         "audio_path": "assets/audio/l5_there.mp3",
-        "english": "there that place arrow away"
+        "english": "there that place arrow away",
+        "image_path": "assets/images/words/l5_there.png"
       },
       {
         "hindi": "अभी",
         "tamil": "இப்போ",
         "pronunciation": "इप्पो",
         "audio_path": "assets/audio/l5_now.mp3",
-        "english": "now present moment clock"
+        "english": "now present moment clock",
+        "image_path": "assets/images/words/l5_now.png"
       },
       {
         "hindi": "बाद में",
         "tamil": "அப்புறம்",
         "pronunciation": "अप्पुऱम्",
         "audio_path": "assets/audio/l5_later.mp3",
-        "english": "later alarm clock future"
+        "english": "later alarm clock future",
+        "image_path": "assets/images/words/l5_later.png"
       },
       {
         "hindi": "लेकिन",
         "tamil": "ஆனா",
         "pronunciation": "आऩा",
         "audio_path": "assets/audio/l5_but.mp3",
-        "english": "but contrast two sides"
+        "english": "but contrast two sides",
+        "image_path": "assets/images/words/l5_but.png"
       },
       {
         "hindi": "और",
         "tamil": "அப்புறம் / இன்னும்",
         "pronunciation": "अप्पुऱम् / इऩ्ऩुम्",
         "audio_path": "assets/audio/l5_and.mp3",
-        "english": "and plus adding together"
+        "english": "and plus adding together",
+        "image_path": "assets/images/words/l5_and.png"
       }
     ]
   },
@@ -327,49 +356,56 @@
         "tamil": "எனக்கு",
         "pronunciation": "ऎऩक्कु",
         "audio_path": "assets/audio/l6_to_me.mp3",
-        "english": "to me pointing at self"
+        "english": "to me pointing at self",
+        "image_path": "assets/images/words/l6_to_me.png"
       },
       {
         "hindi": "तुम्हें (To you)",
         "tamil": "உனக்கு",
         "pronunciation": "उऩक्कु",
         "audio_path": "assets/audio/l6_to_you_casual.mp3",
-        "english": "to you pointing at other"
+        "english": "to you pointing at other",
+        "image_path": "assets/images/words/l6_to_you_casual.png"
       },
       {
         "hindi": "आपको (To you - Respect)",
         "tamil": "உங்களுக்கு",
         "pronunciation": "उङ्कळुक्कु",
         "audio_path": "assets/audio/l6_to_you_respect.mp3",
-        "english": "to you respectfully"
+        "english": "to you respectfully",
+        "image_path": "assets/images/words/l6_to_you_respect.png"
       },
       {
         "hindi": "घर को / घर जाना है",
         "tamil": "வீட்டுக்கு",
         "pronunciation": "वीट्टुक्कु",
         "audio_path": "assets/audio/l6_to_house.mp3",
-        "english": "heading home house direction"
+        "english": "heading home house direction",
+        "image_path": "assets/images/words/l6_to_house.png"
       },
       {
         "hindi": "ऑफिस को",
         "tamil": "ஆபீஸூக்கு",
         "pronunciation": "आपीसूक्कु",
         "audio_path": "assets/audio/l6_to_office.mp3",
-        "english": "heading to office building"
+        "english": "heading to office building",
+        "image_path": "assets/images/words/l6_to_office.png"
       },
       {
         "hindi": "दुकान को",
         "tamil": "கடைக்கு",
         "pronunciation": "कटैक्कु",
         "audio_path": "assets/audio/l6_to_shop.mp3",
-        "english": "heading to shop store"
+        "english": "heading to shop store",
+        "image_path": "assets/images/words/l6_to_shop.png"
       },
       {
         "hindi": "बैंगलोर को",
         "tamil": "பெங்களூருக்கு",
         "pronunciation": "पॆङ्कळूरुक्कु",
         "audio_path": "assets/audio/l6_to_bangalore.mp3",
-        "english": "heading to city travel"
+        "english": "heading to city travel",
+        "image_path": "assets/images/words/l6_to_bangalore.png"
       }
     ]
   },
@@ -383,42 +419,48 @@
         "tamil": "வீட்ல",
         "pronunciation": "वीट्ल",
         "audio_path": "assets/audio/l7_in_house.mp3",
-        "english": "inside a house home interior"
+        "english": "inside a house home interior",
+        "image_path": "assets/images/words/l7_in_house.png"
       },
       {
         "hindi": "रास्ते में (On the way)",
         "tamil": "வழியில",
         "pronunciation": "वऴियिल",
         "audio_path": "assets/audio/l7_on_way.mp3",
-        "english": "on the road path"
+        "english": "on the road path",
+        "image_path": "assets/images/words/l7_on_way.png"
       },
       {
         "hindi": "हाथ में",
         "tamil": "கைல",
         "pronunciation": "कैल",
         "audio_path": "assets/audio/l7_in_hand.mp3",
-        "english": "in hand holding something"
+        "english": "in hand holding something",
+        "image_path": "assets/images/words/l7_in_hand.png"
       },
       {
         "hindi": "गाड़ी में (In the car/bike)",
         "tamil": "வண்டில",
         "pronunciation": "वण्टिल",
         "audio_path": "assets/audio/l7_in_vehicle.mp3",
-        "english": "inside a car vehicle"
+        "english": "inside a car vehicle",
+        "image_path": "assets/images/words/l7_in_vehicle.png"
       },
       {
         "hindi": "बैंगलोर में",
         "tamil": "பெங்களூர்ல",
         "pronunciation": "पॆङ्कळूर्ल",
         "audio_path": "assets/audio/l7_in_bangalore.mp3",
-        "english": "in the city Bangalore"
+        "english": "in the city Bangalore",
+        "image_path": "assets/images/words/l7_in_bangalore.png"
       },
       {
         "hindi": "हिंदी में",
         "tamil": "ஹிந்தில",
         "pronunciation": "हिन्तिल",
         "audio_path": "assets/audio/l7_in_hindi.mp3",
-        "english": "in Hindi language text"
+        "english": "in Hindi language text",
+        "image_path": "assets/images/words/l7_in_hindi.png"
       }
     ]
   },
@@ -432,21 +474,24 @@
         "tamil": "நான் போனேன்",
         "pronunciation": "नाऩ् पोऩेऩ्",
         "audio_path": "assets/audio/l8_i_went.mp3",
-        "english": "person walking away departed"
+        "english": "person walking away departed",
+        "image_path": "assets/images/words/l8_i_went.png"
       },
       {
         "hindi": "मैं आया (I came)",
         "tamil": "நான் வந்தேன்",
         "pronunciation": "नाऩ् वन्तेऩ्",
         "audio_path": "assets/audio/l8_i_came.mp3",
-        "english": "person arriving coming"
+        "english": "person arriving coming",
+        "image_path": "assets/images/words/l8_i_came.png"
       },
       {
         "hindi": "मैंने देखा (I saw)",
         "tamil": "நான் பாத்தேன்",
         "pronunciation": "नाऩ् पात्तेऩ्",
         "audio_path": "assets/audio/l8_i_saw.mp3",
-        "english": "person looking observed"
+        "english": "person looking observed",
+        "image_path": "assets/images/words/l8_i_saw.png"
       },
       {
         "hindi": "मैंने ख़रीदा (I bought)",
@@ -460,14 +505,16 @@
         "tamil": "அவரு குடுத்தாரு",
         "pronunciation": "अवरु कुटुत्तारु",
         "audio_path": "assets/audio/l8_he_gave.mp3",
-        "english": "handing gift giving"
+        "english": "handing gift giving",
+        "image_path": "assets/images/words/l8_he_gave.png"
       },
       {
         "hindi": "खत्म हो गया (Finished)",
         "tamil": "முடிஞ்சுது",
         "pronunciation": "मुटिञ्चुतु",
         "audio_path": "assets/audio/l8_finished.mp3",
-        "english": "finished completed checkmark"
+        "english": "finished completed checkmark",
+        "image_path": "assets/images/words/l8_finished.png"
       }
     ]
   },
@@ -481,28 +528,32 @@
         "tamil": "நான் போறேன்",
         "pronunciation": "नाऩ् पोऱेऩ्",
         "audio_path": "assets/audio/l9_im_going.mp3",
-        "english": "person currently walking going"
+        "english": "person currently walking going",
+        "image_path": "assets/images/words/l9_im_going.png"
       },
       {
         "hindi": "मैं आ रहा हूँ",
         "tamil": "நான் வர்றேன்",
         "pronunciation": "नाऩ् वर्ऱेऩ्",
         "audio_path": "assets/audio/l9_im_coming.mp3",
-        "english": "person on the way coming"
+        "english": "person on the way coming",
+        "image_path": "assets/images/words/l9_im_coming.png"
       },
       {
         "hindi": "बारिश हो रही है",
         "tamil": "மழை பெய்யுது",
         "pronunciation": "मऴै पॆय्युतु",
         "audio_path": "assets/audio/l9_raining.mp3",
-        "english": "rain falling from clouds"
+        "english": "rain falling from clouds",
+        "image_path": "assets/images/words/l9_raining.png"
       },
       {
         "hindi": "समझ आ रहा है?",
         "tamil": "புரியுதா?",
         "pronunciation": "पुरियुता?",
         "audio_path": "assets/audio/l9_understanding.mp3",
-        "english": "understanding lightbulb moment"
+        "english": "understanding lightbulb moment",
+        "image_path": "assets/images/words/l9_understanding.png"
       },
       {
         "hindi": "भूख लग रही है",

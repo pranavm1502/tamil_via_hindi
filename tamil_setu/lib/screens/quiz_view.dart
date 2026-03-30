@@ -350,6 +350,7 @@ class _QuizViewState extends State<QuizView> {
                           key: const ValueKey('flashcard-word-image'),
                           fit: BoxFit.contain,
                           semanticLabel: currentWord.hindi,
+                          errorBuilder: (_, __, ___) => const SizedBox.shrink(),
                         ),
                       ),
                     ),
