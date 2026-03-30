@@ -1,23 +1,29 @@
 #!/usr/bin/env python3
 """
-Generate contextual word images for Tamil Setu using Stable Diffusion.
+Generate contextual word images for Tamil Setu.
 
 Reads master_content.json, finds words without an image_path, generates
-images via the Banana.dev inference API (or a local diffusers pipeline as
-fallback), saves them to assets/images/words/<key>.png, and writes the
+images, saves them to assets/images/words/<key>.png, and writes the
 image_path back into master_content.json.
 
+Backends (pick one):
+    --gemini   (default) Gemini Nano Banana API — best quality, no GPU needed
+    --local    Local Stable Diffusion via diffusers (MPS/CPU)
+    --banana   Banana.dev inference API (legacy)
+
 Usage:
-    python scripts/generate_images.py [--lessons 1-10] [--dry-run] [--local]
+    python scripts/generate_images.py [--lessons 1-10] [--dry-run]
+    python scripts/generate_images.py --gemini --lessons 1 --overwrite
+    python scripts/generate_images.py --local --lessons 1-10
 
 Requirements:
     pip install requests python-dotenv pyyaml pillow
-    For --local: pip install diffusers torch accelerate
+    For --gemini: pip install google-genai
+    For --local:  pip install diffusers torch accelerate
 
 Config:
-    See scripts/image_generation_config.yaml for SD checkpoint, seed, and
-    prompt settings.
-    Copy .env.example to .env and set BANANA_API_KEY and BANANA_MODEL_KEY.
+    See scripts/image_generation_config.yaml for prompt settings.
+    Set GEMINI_API_KEY in .env (get one at https://aistudio.google.com/apikey).
 """
 
 import argparse
@@ -87,6 +93,48 @@ def build_prompt(concept_prefix: str, config: dict) -> str:
     base = config["prompt"]["base_suffix"]
     negative = config["prompt"].get("negative_prompt", "")
     return concept_prefix.rstrip(",") + ", " + base, negative
+
+
+def generate_via_gemini(prompt: str, config: dict) -> bytes:
+    """Generate an image using the Gemini Nano Banana API; returns raw PNG bytes."""
+    try:
+        from google import genai
+        from google.genai import types
+    except ImportError:
+        print("ERROR: Install google-genai for Gemini generation:")
+        print("  pip install google-genai")
+        sys.exit(1)
+
+    load_dotenv(ENV_PATH)
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        raise EnvironmentError(
+            "GEMINI_API_KEY must be set in .env "
+            "(get one at https://aistudio.google.com/apikey)"
+        )
+
+    model = config.get("gemini", {}).get("model", "gemini-2.5-flash-image")
+    client = genai.Client(api_key=api_key)
+
+    response = client.models.generate_content(
+        model=model,
+        contents=[prompt],
+        config=types.GenerateContentConfig(
+            response_modalities=["IMAGE"],
+            image_config=types.ImageConfig(
+                aspect_ratio="1:1",
+            ),
+        ),
+    )
+
+    for part in response.parts:
+        if part.inline_data is not None:
+            img = part.as_image()
+            buf = io.BytesIO()
+            img.save(buf, format="PNG", optimize=True)
+            return buf.getvalue()
+
+    raise ValueError(f"Gemini returned no image. Response: {response.text}")
 
 
 def generate_via_banana(prompt: str, negative_prompt: str, config: dict) -> bytes:
@@ -227,7 +275,6 @@ def parse_lesson_range(s: str) -> set[int]:
 
 COMPARE_MODELS = [
     "Fictiverse/Stable_Diffusion_PaperCut_Model",
-    "prompthero/openjourney",
     "dreamlike-art/dreamlike-diffusion-1.0",
     "runwayml/stable-diffusion-v1-5",
 ]
@@ -302,12 +349,19 @@ def main():
              "Default: all lessons."
     )
     parser.add_argument("--dry-run", action="store_true", help="Print prompts without generating")
-    parser.add_argument("--local", action="store_true", help="Use local diffusers instead of Banana.dev")
     parser.add_argument("--overwrite", action="store_true", help="Re-generate even if image already exists")
     parser.add_argument("--compare-models", action="store_true",
                         help="Generate with multiple models for side-by-side comparison (implies --local)")
+
+    backend = parser.add_mutually_exclusive_group()
+    backend.add_argument("--gemini", action="store_true", default=True,
+                         help="Use Gemini Nano Banana API (default)")
+    backend.add_argument("--local", action="store_true",
+                         help="Use local Stable Diffusion via diffusers")
+    backend.add_argument("--banana", action="store_true",
+                         help="Use Banana.dev inference API (legacy)")
     parser.add_argument("--cuda", action="store_true",
-                        help="Use CUDA GPU if available (default: MPS on Apple Silicon, else CPU)")
+                        help="With --local: use CUDA GPU (default: MPS on Apple Silicon)")
     args = parser.parse_args()
 
     config = load_config()
@@ -360,8 +414,10 @@ def main():
             try:
                 if args.local:
                     png_bytes, pipe = generate_via_local(prompt, negative_prompt, config, pipe=pipe)
-                else:
+                elif args.banana:
                     png_bytes = generate_via_banana(prompt, negative_prompt, config)
+                else:
+                    png_bytes = generate_via_gemini(prompt, config)
 
                 png_bytes = compress_if_needed(png_bytes)
                 out_path.write_bytes(png_bytes)

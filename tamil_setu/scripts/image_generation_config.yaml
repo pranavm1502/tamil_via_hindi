@@ -2,6 +2,15 @@
 # Used by scripts/generate_images.py
 # Keep this file committed so generations are reproducible.
 
+# ── Gemini Nano Banana (default backend) ──────────────────────────────────────
+gemini:
+  # Model options:
+  #   "gemini-2.5-flash-image"           — fast & free-tier friendly (default)
+  #   "gemini-3.1-flash-image-preview"   — higher quality, supports 2K/4K
+  #   "gemini-3-pro-image-preview"       — best quality, "thinking" mode
+  model: "gemini-2.5-flash-image"
+
+# ── Stable Diffusion (--local backend) ────────────────────────────────────────
 generation:
   # Stable Diffusion checkpoint (HuggingFace model ID or local path).
   # Must be a publicly accessible model. Options:
